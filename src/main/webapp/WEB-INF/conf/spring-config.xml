@@ -2,8 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="/WEB-INF/conf/db.properties"/>
+    </bean>
 
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
           destroy-method="close">
@@ -45,4 +50,49 @@
     <context:component-scan base-package="me.zengzy" />
     <jpa:repositories base-package="me.zengzy.repo"/>
 
+    <!-- jedis 配置 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+    <!-- redis服务器中心 -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="poolConfig" ref="poolConfig"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="hostName" value="${redis.host}"/>
+        <property name="password" value="${redis.password}"/>
+        <property name="timeout" value="${redis.timeout}"/>
+    </bean>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+    </bean>
+
+    <!-- cache配置 -->
+    <!--<bean id="methodCacheInterceptor" class="com.crossoverJie.intercept.MethodCacheInterceptor">-->
+        <!--<property name="redisUtil" ref="redisUtil"/>-->
+    <!--</bean>-->
+    <!--<bean id="redisUtil" class="com.crossoverJie.util.RedisUtil">-->
+        <!--<property name="redisTemplate" ref="redisTemplate"/>-->
+    <!--</bean>-->
+
+    <!--配置切面拦截方法 -->
+    <!--<aop:config proxy-target-class="true">-->
+        <!--&lt;!&ndash;将com.crossoverJie.service包下的所有select开头的方法加入拦截-->
+        <!--去掉select则加入所有方法w-->
+        <!--&ndash;&gt;-->
+        <!--<aop:pointcut id="controllerMethodPointcut" expression="-->
+        <!--execution(* com.crossoverJie.service.*.select*(..))"/>-->
+
+        <!--<aop:pointcut id="selectMethodPointcut" expression="-->
+        <!--execution(* com.crossoverJie.dao..*Mapper.select*(..))"/>-->
+
+        <!--<aop:advisor advice-ref="methodCacheInterceptor" pointcut-ref="controllerMethodPointcut"/>-->
+    <!--</aop:config>-->
 </beans>

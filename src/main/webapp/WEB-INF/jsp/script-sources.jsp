@@ -35,7 +35,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <div class="navbar-form navbar-right">
-                <a class="btn btn-default" href="${pageContext.request.contextPath}/order/get-order-view.do" role="button">下单 &raquo;</a>
+                <a class="btn btn-primary" href="${pageContext.request.contextPath}/order/get-order-view.do" role="button">下单</a>
             </div>
         </div><!--/.navbar-collapse -->
     </div>

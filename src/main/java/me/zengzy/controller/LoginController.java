@@ -16,6 +16,11 @@ public class LoginController {
     @Autowired
     UserRepository repository;
 
+    @RequestMapping("/admin-login.do")
+    public String getAdminLoginView(){
+        return "adminLogin";
+    }
+
     @RequestMapping("/login.do")
     @ResponseBody
     public String userLogin(@RequestParam() Map<String, String> userInfo){

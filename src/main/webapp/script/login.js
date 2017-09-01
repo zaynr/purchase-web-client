@@ -18,6 +18,9 @@ $(document).ready(function () {
                 if(data === "log_success"){
                     alert("登录成功");
                 }
+                else{
+                    alert(data.toString());
+                }
             }
         });
     });
@@ -38,6 +41,9 @@ $(document).ready(function () {
             success: function (data) {
                 if(data === "reg_success"){
                     alert("注册成功");
+                }
+                else{
+                    alert(data.toString());
                 }
             }
         });

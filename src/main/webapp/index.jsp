@@ -9,7 +9,7 @@
         <title>登录</title>
     </head>
     <body>
-        <div class="jumbotron" style="padding: 40px 400px 10px;">
+        <div class="jumbotron" style="padding: 1% 40%;">
             <form class="bs-example bs-example-form" role="form">
                 <div class="input-group">
                     <span class="input-group-addon">手机号码：</span>
@@ -21,12 +21,12 @@
                     <input type="password" id="password" class="form-control">
                 </div>
                 <br>
-                <select id="user_type">
+                <select id="user_type" class="form-control">
                     <option value="1">采购商</option>
                     <option value="2">供应商</option>
                 </select>
                 <br>
-                <div class="btn-group" style="padding: 40px 0px 40px;">
+                <div class="btn-group" style="padding: 5% 0% 0%;">
                     <br>
                     <button id="login" type="button" class="btn btn-default">登录</button>
                     <button id="register" type="button" class="btn btn-default">注册</button>
