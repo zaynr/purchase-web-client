@@ -13,9 +13,9 @@ import javax.transaction.Transactional;
 @Transactional
 public interface UserRepository extends CrudRepository<Users, Long> {
     @Modifying
-    @Query(value = "INSERT INTO users(user_name, pwd, user_type) VALUES (:user_name, :pwd, :user_type)", nativeQuery = true)
-    void createNewUser(@Param("user_name") String userName, @Param("pwd") String pwd, @Param("user_type") int userType);
+    @Query(value = "INSERT INTO users(mobile_no, pwd, user_type) VALUES (:mobile_no, :pwd, :user_type)", nativeQuery = true)
+    void createNewUser(@Param("mobile_no") String mobile_no, @Param("pwd") String pwd, @Param("user_type") int userType);
 
-    @Query(value = "SELECT * FROM users WHERE user_name = :user_name", nativeQuery = true)
-    Users queryUserByName(@Param("user_name") String userName);
+    @Query(value = "SELECT * FROM users WHERE mobile_no = :mobile_no", nativeQuery = true)
+    Users queryUserByMobileNo(@Param("mobile_no") String mobile_no);
 }

@@ -12,20 +12,21 @@ DROP TABLE IF EXISTS contracts;
 
 #用户主表
 CREATE TABLE users(
-  user_name nvarchar(63) NOT NULL PRIMARY KEY,
+  mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
+  user_name nvarchar(63),
   pwd varchar(255),
   user_type int	# 0:管理员;1:采购商;2:供应商
 );
 #供应商
 CREATE TABLE providers(
-  user_name nvarchar(63) NOT NULL PRIMARY KEY,
-  mobile_no nvarchar(12),
+  mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
+  user_name nvarchar(63),
   provide_type nvarchar(255)
 );
 #采购商
 CREATE TABLE purchaser(
-  user_name nvarchar(63) NOT NULL PRIMARY KEY,
-  mobile_no nvarchar(12)
+  mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
+  user_name nvarchar(63)
 );
 #订单类型
 CREATE TABLE order_types(

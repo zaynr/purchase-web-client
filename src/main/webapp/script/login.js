@@ -6,7 +6,7 @@ $(document).ready(function () {
         var encrypt = $.md5($("#password").val());
         var map = {};
         map["password"] = encrypt;
-        map["serial_number"] = $("#serial_number").val();
+        map["mobile_no"] = $("#mobile_no").val();
         map["user_type"] = $("#user_type").val();
         var param = {userInfo:map};
 
@@ -25,7 +25,7 @@ $(document).ready(function () {
         var encrypt = $.md5($("#password").val());
         var map = {};
         map["password"] = encrypt;
-        map["serial_number"] = $("#serial_number").val();
+        map["mobile_no"] = $("#mobile_no").val();
         map["user_type"] = $("#user_type").val();
         var param = {userInfo:map};
 

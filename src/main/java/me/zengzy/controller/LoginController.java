@@ -20,7 +20,7 @@ public class LoginController {
     @ResponseBody
     public String userLogin(@RequestParam() Map<String, String> userInfo){
         String status;
-        Users user = repository.queryUserByName(userInfo.get("userInfo[serial_number]"));
+        Users user = repository.queryUserByMobileNo(userInfo.get("userInfo[mobile_no]"));
         if(user != null){
             if(user.getPwd().equals(userInfo.get("userInfo[password]")) && user.getUserType()==Integer.parseInt(userInfo.get("userInfo[user_type]"))){
                 status = "log_success";
@@ -39,12 +39,12 @@ public class LoginController {
     @ResponseBody
     public String userRegister(@RequestParam() Map<String, String> userInfo){
         String status;
-        Users user = repository.queryUserByName(userInfo.get("userInfo[serial_number]"));
+        Users user = repository.queryUserByMobileNo(userInfo.get("userInfo[mobile_no]"));
         if(user != null){
             status = "already_exist";
         }
         else{
-            repository.createNewUser(userInfo.get("userInfo[serial_number]"), userInfo.get("userInfo[password]"), Integer.parseInt(userInfo.get("userInfo[user_type]")));
+            repository.createNewUser(userInfo.get("userInfo[mobile_no]"), userInfo.get("userInfo[password]"), Integer.parseInt(userInfo.get("userInfo[user_type]")));
             status = "reg_success";
         }
         return status;

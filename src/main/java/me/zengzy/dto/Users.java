@@ -4,10 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
+@Entity(name = "users")
 public class Users {
         
     @Id
+    @Column(name = "mobile_no")
+    private String mobileNo;
     @Column(name = "user_name")
     private String userName;
     @Column(name = "pwd")
@@ -37,5 +39,13 @@ public class Users {
 
     public void setUserType(int userType) {
         this.userType = userType;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
 }
