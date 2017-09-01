@@ -7,9 +7,38 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored="false" %>
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<link href="../../css/bootstrap.min.css" rel="stylesheet">
+<link href="../../css/jumbotron.css" rel="stylesheet">
+
 <script type="text/javascript" src="../../script/jquery-3.2.1.js"></script>
-<script type="text/javascript" src="../../script/bootstrap.js"></script>
-<link rel="stylesheet" type="text/css" href="../../css/bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="../../css/bootstrap-grid.css"/>
-<link rel="stylesheet" type="text/css" href="../../css/bootstrap-reboot.css"/>
+<script type="text/javascript" src="../../script/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="${pageContext.request.contextPath}/">简单交易 Simple Trade</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <div class="navbar-form navbar-right">
+                <a class="btn btn-default" href="${pageContext.request.contextPath}/order/get-order-view.do" role="button">下单 &raquo;</a>
+            </div>
+        </div><!--/.navbar-collapse -->
+    </div>
+</nav>
+</body>
+</html>

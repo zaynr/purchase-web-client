@@ -15,7 +15,9 @@ $(document).ready(function () {
             url: "/users/login.do",
             data: param,
             success: function (data) {
-                $("#test").text(data);
+                if(data === "log_success"){
+                    alert("登录成功");
+                }
             }
         });
     });
@@ -34,8 +36,11 @@ $(document).ready(function () {
             url: "/users/register.do",
             data: param,
             success: function (data) {
-                $("#test").text(data);
+                if(data === "reg_success"){
+                    alert("注册成功");
+                }
             }
         });
     });
+
 });

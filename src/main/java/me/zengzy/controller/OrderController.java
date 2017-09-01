@@ -16,6 +16,12 @@ public class OrderController {
     @Autowired
     PurOrderRepository purOrderRepository;
 
+    @RequestMapping("/get-order-view.do")
+    public String getOrderView(@RequestParam() Map<String, String> orderInfo){
+        String res = "orderManage";
+        return res;
+    }
+
     @RequestMapping("/place-order.do")
     @ResponseBody
     public String placeOrder(@RequestParam() Map<String, String> orderInfo){
