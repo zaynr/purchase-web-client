@@ -45,10 +45,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file leaf-file-name="orderManage.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="orderManage.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/webapp/script/orderManage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
+            <state relative-caret-position="120">
               <caret line="4" column="36" lean-forward="false" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
               <folding>
                 <marker date="1504324039598" expanded="true" signature="602:609" ph="×" />
@@ -63,6 +63,22 @@
             <state relative-caret-position="251">
               <caret line="21" column="30" lean-forward="false" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/webapp/script/login.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-150">
+              <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+              <folding>
+                <marker date="1504324135464" expanded="true" signature="849:856" ph="×" />
+                <marker date="1504324135464" expanded="true" signature="1378:1385" ph="×" />
+                <marker date="1504324135464" expanded="true" signature="2151:2158" ph="×" />
+                <marker date="1504324135464" expanded="true" signature="2827:2834" ph="×" />
+                <marker date="1504324135464" expanded="true" signature="3385:3392" ph="×" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -120,7 +136,6 @@
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/adminLogin.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/commonLogin.jsp" />
-        <option value="$PROJECT_DIR$/src/main/webapp/script/login.js" />
         <option value="$PROJECT_DIR$/src/main/webapp/script/error.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/error.jsp" />
         <option value="$PROJECT_DIR$/src/main/java/me/zengzy/dto/OrderTypes.java" />
@@ -132,6 +147,7 @@
         <option value="$PROJECT_DIR$/mysql-script/initialize-database.sql" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/addOrderType.jsp" />
         <option value="$PROJECT_DIR$/src/main/webapp/script/orderManage.js" />
+        <option value="$PROJECT_DIR$/src/main/webapp/script/login.js" />
       </list>
     </option>
   </component>
@@ -500,12 +516,12 @@
       <option name="presentableId" value="Default" />
       <updated>1504227616474</updated>
       <workItem from="1504227622652" duration="26155000" />
-      <workItem from="1504277994543" duration="21241000" />
+      <workItem from="1504277994543" duration="21333000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="47396000" />
+    <option name="totallyTimeSpent" value="47488000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="1942" height="1056" extended-state="6" />
@@ -964,20 +980,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/script/login.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10">
-          <caret line="17" column="43" lean-forward="true" selection-start-line="17" selection-start-column="43" selection-end-line="26" selection-end-column="22" />
-          <folding>
-            <marker date="1504320153298" expanded="true" signature="849:856" ph="×" />
-            <marker date="1504320153298" expanded="true" signature="1378:1385" ph="×" />
-            <marker date="1504320153298" expanded="true" signature="2191:2198" ph="×" />
-            <marker date="1504320153298" expanded="true" signature="2867:2874" ph="×" />
-            <marker date="1504320153298" expanded="true" signature="3425:3432" ph="×" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/addOrderType.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="251">
@@ -988,10 +990,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/script/orderManage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
+        <state relative-caret-position="120">
           <caret line="4" column="36" lean-forward="false" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
           <folding>
             <marker date="1504324039598" expanded="true" signature="602:609" ph="×" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/script/login.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-150">
+          <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+          <folding>
+            <marker date="1504324135464" expanded="true" signature="849:856" ph="×" />
+            <marker date="1504324135464" expanded="true" signature="1378:1385" ph="×" />
+            <marker date="1504324135464" expanded="true" signature="2151:2158" ph="×" />
+            <marker date="1504324135464" expanded="true" signature="2827:2834" ph="×" />
+            <marker date="1504324135464" expanded="true" signature="3385:3392" ph="×" />
           </folding>
         </state>
       </provider>

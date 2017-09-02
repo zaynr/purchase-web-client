@@ -49,7 +49,6 @@ $(document).ready(function () {
         map["password"] = encrypt;
         map["mobile_no"] = $("#mobile_no").val();
         map["user_type"] = $("#user_type").val();
-        alert(map["mobile_no"] === "");
         if(map["mobile_no"] === "" || map["password"] === ""){
             $("#message").html(
                 "<div class=\"alert alert-info alert-dismissable\">\n" +
