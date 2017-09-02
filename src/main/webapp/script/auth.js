@@ -26,7 +26,7 @@ $(document).ready(function () {
                     addTab("/order/addOrderType", "查看联系人");
                 }
                 else if(data === "2"){
-                    addTab("/order/addOrderType", "等待报价");
+                    addTab("/order/recOrder", "等待报价");
                     addTab("/order/addOrderType", "查看订单");
                     addTab("/order/addOrderType", "查看联系人");
                 }
@@ -37,7 +37,7 @@ $(document).ready(function () {
                     type: "POST",
                     url: "/logout.do",
                     success: function () {
-                        window.location.reload();
+                        window.location.href="/";
                     }
                 });
             });

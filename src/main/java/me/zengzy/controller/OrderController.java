@@ -26,6 +26,11 @@ public class OrderController {
     @Autowired
     OrderTypeRepository typeRepository;
 
+    @RequestMapping("/recOrder")
+    public String getRecOrderView(){
+        return "order/recOrder";
+    }
+
     @RequestMapping("/placeOrder")
     public String getPlaceOrderView(){
         return "order/placeOrder";
@@ -47,11 +52,7 @@ public class OrderController {
         }
     }
 
-    @RequestMapping("/showPurOrders.do")
-    @ResponseBody
-    public ArrayList<PurOrderBean> getPurOrders(HttpServletRequest request){
-        String userName = String.valueOf(request.getSession().getAttribute("userName"));
-        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(userName);
+    public ArrayList<PurOrderBean> packPurOrderBean(ArrayList<PurOrders> orders){
         ArrayList<PurOrderBean> beans = new ArrayList<PurOrderBean>();
         for(PurOrders a : orders){
             String typeContent = typeRepository.getTypeByNo(a.getTypeNo()).getType_content();
@@ -61,10 +62,19 @@ public class OrderController {
             bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
             bean.setPurchaserName(a.getPurchaserName());
             bean.setPurSerialNo(a.getPurSerialNo());
+            bean.setOrderStatusNo(a.getOrderStatus());
 
             beans.add(bean);
         }
         return beans;
+    }
+
+    @RequestMapping("/showPurOrders.do")
+    @ResponseBody
+    public ArrayList<PurOrderBean> getPurOrders(HttpServletRequest request){
+        String userName = String.valueOf(request.getSession().getAttribute("userName"));
+        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(userName);
+        return packPurOrderBean(orders);
     }
 
     @RequestMapping("/addOrderType.do")
@@ -78,6 +88,13 @@ public class OrderController {
     @ResponseBody
     public ArrayList<OrderTypes> showOrderTypes(){
         return typeRepository.getAllTypes();
+    }
+
+    @RequestMapping("/showUnRecOrder.do")
+    @ResponseBody
+    public ArrayList<PurOrderBean> showUnRecOrder(){
+        ArrayList<PurOrders> orders = purOrderRepository.getAllUnRecOrder();
+        return packPurOrderBean(orders);
     }
 
     @RequestMapping("/placeOrder.do")

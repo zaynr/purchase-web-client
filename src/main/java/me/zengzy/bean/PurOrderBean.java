@@ -2,11 +2,20 @@ package me.zengzy.bean;
 
 public class PurOrderBean {
     private int purSerialNo;
+    private int orderStatusNo;
     private int contractSerialNo;
     private String purchaserName;
     private String providerName;
     private String orderStatus;
     private String typeContent;
+
+    public int getOrderStatusNo() {
+        return orderStatusNo;
+    }
+
+    public void setOrderStatusNo(int orderStatusNo) {
+        this.orderStatusNo = orderStatusNo;
+    }
 
     public int getPurSerialNo() {
         return purSerialNo;

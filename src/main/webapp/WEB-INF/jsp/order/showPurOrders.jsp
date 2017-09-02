@@ -16,7 +16,7 @@
 <body>
 
 <div class="container"style="padding: 1% 10%;">
-    <table class="table table-bordered" >
+    <table class="table table-bordered table-hover" >
         <thead>
         <tr>
             <th>需求序列号</th>
@@ -25,9 +25,10 @@
             <th>供应商手机号</th>
             <th>需求状态</th>
             <th>需求类型</th>
+            <th>操作</th>
         </tr>
         </thead>
-        <tbody id="tableContent">
+        <tbody id="purTableContent">
 
         </tbody>
     </table>
