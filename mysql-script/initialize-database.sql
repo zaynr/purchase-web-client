@@ -37,14 +37,14 @@ CREATE TABLE order_types(
 CREATE TABLE pur_orders(
   pur_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   purchaser_name nvarchar(63),
-  order_status int,	# 0:待接;1:已报价;2:已签;3:已完成
+  order_status int,
   type_no int
 );
 #供应报价表
 CREATE TABLE pro_orders(
   pro_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	pur_serial_no int,
-  order_status int,	# 0:待接;1:已报价;2:已签;3:已完成
+  order_status int,
   provider_name nvarchar(63)
 );
 #联系人

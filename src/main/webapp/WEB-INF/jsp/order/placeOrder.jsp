@@ -32,7 +32,9 @@
             </div>
         </div>
     </form>
-    <button id="placeOrder" class="btn btn-primary" style="padding: 1% 10%;">发布需求</button>
+    <div align="center">
+        <button id="placeOrder" class="btn btn-primary">发布需求</button>
+    </div>
     <br>
     <div id="message"></div>
 </div>

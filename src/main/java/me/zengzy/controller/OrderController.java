@@ -1,5 +1,6 @@
 package me.zengzy.controller;
 
+import me.zengzy.bean.PurOrderBean;
 import me.zengzy.dict.Status;
 import me.zengzy.dto.OrderTypes;
 import me.zengzy.dto.PurOrders;
@@ -26,8 +27,13 @@ public class OrderController {
     OrderTypeRepository typeRepository;
 
     @RequestMapping("/placeOrder")
-    public String getOrderView(){
+    public String getPlaceOrderView(){
         return "order/placeOrder";
+    }
+
+    @RequestMapping("/showPurOrders")
+    public String getPurOrderView(){
+        return "order/showPurOrders";
     }
 
     @RequestMapping("/addOrderType")
@@ -39,6 +45,26 @@ public class OrderController {
         else{
             return "error";
         }
+    }
+
+    @RequestMapping("/showPurOrders.do")
+    @ResponseBody
+    public ArrayList<PurOrderBean> getPurOrders(HttpServletRequest request){
+        String userName = String.valueOf(request.getSession().getAttribute("userName"));
+        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(userName);
+        ArrayList<PurOrderBean> beans = new ArrayList<PurOrderBean>();
+        for(PurOrders a : orders){
+            String typeContent = typeRepository.getTypeByNo(a.getTypeNo()).getType_content();
+            PurOrderBean bean = new PurOrderBean();
+            bean.setTypeContent(typeContent);
+            //todo：添加字典表
+            bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
+            bean.setPurchaserName(a.getPurchaserName());
+            bean.setPurSerialNo(a.getPurSerialNo());
+
+            beans.add(bean);
+        }
+        return beans;
     }
 
     @RequestMapping("/addOrderType.do")
@@ -59,7 +85,7 @@ public class OrderController {
     public String placeOrder(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
         HttpSession session = request.getSession();
         PurOrders order = new PurOrders();
-        order.setOrderStatus(Status.Order.UNREC);
+        order.setOrderStatus(Status.Order.UN_REC);
         order.setPurchaserName(String.valueOf(session.getAttribute("userName")));
         order.setTypeNo(Integer.parseInt(orderInfo.get("type_no")));
         purOrderRepository.save(order);

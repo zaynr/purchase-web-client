@@ -26,7 +26,7 @@ $(document).ready(function () {
         var param = {"type_no" : $("#typeSelect").val()};
         $.ajax({
             type: "POST",
-            url: "/order/showOrderType.do",
+            url: "/order/placeOrder.do",
             data: param,
             success: function () {
                 $("#message").html(

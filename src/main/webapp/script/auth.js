@@ -22,7 +22,7 @@ $(document).ready(function () {
                 }
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
-                    addTab("/order/addOrderType", "查看订单");
+                    addTab("/order/showPurOrders", "查看订单");
                     addTab("/order/addOrderType", "查看联系人");
                 }
                 else if(data === "2"){
@@ -40,6 +40,12 @@ $(document).ready(function () {
                         window.location.reload();
                     }
                 });
+            });
+
+            $("li").each(function () {
+                if($(this).find("a").attr("href") === window.location.pathname){
+                    $(this).addClass("active");
+                }
             });
         }
     });
