@@ -19,4 +19,7 @@ public interface OrderTypeRepository extends CrudRepository<OrderTypes, Long> {
 
     @Query(value = "SELECT * FROM order_types WHERE type_no = :no", nativeQuery = true)
     OrderTypes getTypeByNo(@Param("no") int no);
+
+    @Query(value = "SELECT * FROM order_types", nativeQuery = true)
+    ArrayList<OrderTypes> getAllTypes();
 }

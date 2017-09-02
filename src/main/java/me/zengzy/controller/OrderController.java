@@ -1,5 +1,8 @@
 package me.zengzy.controller;
 
+import me.zengzy.dict.Status;
+import me.zengzy.dto.OrderTypes;
+import me.zengzy.dto.PurOrders;
 import me.zengzy.repo.OrderTypeRepository;
 import me.zengzy.repo.PurOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping("/order")
@@ -43,11 +48,22 @@ public class OrderController {
         return "success";
     }
 
-    @RequestMapping("/place-order.do")
+    @RequestMapping("/showOrderType.do")
     @ResponseBody
-    public String placeOrder(@RequestParam() Map<String, String> orderInfo){
-        String status = null;
-        return status;
+    public ArrayList<OrderTypes> showOrderTypes(){
+        return typeRepository.getAllTypes();
+    }
+
+    @RequestMapping("/placeOrder.do")
+    @ResponseBody
+    public String placeOrder(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        PurOrders order = new PurOrders();
+        order.setOrderStatus(Status.Order.UNREC);
+        order.setPurchaserName(String.valueOf(session.getAttribute("userName")));
+        order.setTypeNo(Integer.parseInt(orderInfo.get("type_no")));
+        purOrderRepository.save(order);
+        return "success";
     }
 
 }

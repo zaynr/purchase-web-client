@@ -21,7 +21,7 @@ $(document).ready(function () {
                     addTab("/order/addOrderType", "供应商管理");
                 }
                 else if(data === "1"){
-                    addTab("/order/addOrderType", "发出订单");
+                    addTab("/order/placeOrder", "发布需求");
                     addTab("/order/addOrderType", "查看订单");
                     addTab("/order/addOrderType", "查看联系人");
                 }

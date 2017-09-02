@@ -11,6 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>需求下单</title>
+    <script src="../../../script/orderManage.js"></script>
 </head>
 <body>
 
@@ -20,18 +21,20 @@
             <label class="col-sm-2 control-label">购买类型: </label>
             <div class="col-sm-10">
                 <select id="typeSelect" class="form-control">
-                    <option>禁止选择</option>
+
                 </select>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">禁用</label>
             <div class="col-sm-10">
-                <input class="form-control" id="disabledInput" type="text" placeholder="该输入框禁止输入..." >
+                <input class="form-control" id="input" type="text" placeholder="我也不知道这里可以输入啥..." >
             </div>
         </div>
-
     </form>
+    <button id="placeOrder" class="btn btn-primary" style="padding: 1% 10%;">发布需求</button>
+    <br>
+    <div id="message"></div>
 </div>
 
 </body>

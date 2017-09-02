@@ -21,4 +21,40 @@ $(document).ready(function () {
             }
         });
     });
+
+    $("#placeOrder").click(function () {
+        var param = {"type_no" : $("#typeSelect").val()};
+        $.ajax({
+            type: "POST",
+            url: "/order/showOrderType.do",
+            data: param,
+            success: function () {
+                $("#message").html(
+                    "<div class=\"alert alert-success alert-dismissable\">\n" +
+                    "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                    "aria-hidden=\"true\">\n" +
+                    "    &times;\n" +
+                    "   </button>\n" +
+                    "发布成功" +
+                    "</div>"
+                );
+            }
+        });
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/order/showOrderType.do",
+        success: function (data) {
+            $.each(data, function (i, item) {
+                $("#typeSelect").append(
+                    "<option value = \""
+                    + item.type_no
+                    + "\">"
+                    + item.type_content
+                    + "</option>"
+                );
+            });
+        }
+    });
 });
