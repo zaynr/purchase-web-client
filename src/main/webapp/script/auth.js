@@ -5,28 +5,27 @@ $(document).ready(function () {
         url: "/check-auth.do",
         success: function (data) {
             if(data === "unAuth"){
-                $("#navbarButton").html(
+                $("#navbarButton").append(
                     "<a class=\"btn btn-primary\" href=\"/users/user-login\" role=\"button\">登录</a>"
                 );
             }
-            else if(data === "0"){
-                $("#navbarButton").html(
-                    "<a class=\"btn btn-primary\" href=\"/\" role=\"button\">管理订单</a>"
-                    + "<button id=\"logout\" class=\"btn btn-primary\">注销</button>"
+            else{
+                $("#navbarButton").append(
+                    "<button id=\"logout\" class=\"btn btn-primary\">"
+                    + "注销"
+                    + "</button>"
                 );
+                if(data === "0"){
+                    addTab("/order/addOrderType", "添加订单类型");
+                }
+                else if(data === "1"){
+                    addTab("/order/addOrderType", "发出订单");
+                }
+                else if(data === "2"){
+                    addTab("/order/addOrderType", "查看订单");
+                }
             }
-            else if(data === "1"){
-                $("#navbarButton").html(
-                    "<a class=\"btn btn-primary\" href=\"/\" role=\"button\">下单</a>"
-                    + "<button id=\"logout\" class=\"btn btn-primary\">注销</button>"
-                );
-            }
-            else if(data === "2"){
-                $("#navbarButton").html(
-                    "<a class=\"btn btn-primary\" href=\"/\" role=\"button\">接单</a>"
-                    + "<button id=\"logout\" class=\"btn btn-primary\">注销</button>"
-                );
-            }
+
             $("#logout").on("click", function () {
                 $.ajax({
                     type: "POST",
@@ -38,5 +37,15 @@ $(document).ready(function () {
             });
         }
     });
+
+    function addTab(href, content) {
+        $("#navTabs").append(
+            "<li><a href=\""
+            + href
+            + "\">"
+            + content
+            + "</a></li>"
+        );
+    }
 
 });

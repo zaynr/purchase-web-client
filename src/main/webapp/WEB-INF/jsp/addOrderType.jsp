@@ -10,7 +10,7 @@
 <html>
 <head>
     <jsp:include page="script-sources.jsp"/>
-    <title>Title</title>
+    <title>添加订单类型</title>
     <script src="../../script/orderManage.js"></script>
 </head>
 <body>
