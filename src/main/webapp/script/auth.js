@@ -6,7 +6,7 @@ $(document).ready(function () {
         success: function (data) {
             if(data === "unAuth"){
                 $("#navbarButton").append(
-                    "<a class=\"btn btn-primary\" href=\"/users/user-login\" role=\"button\">登录</a>"
+                    "<a class=\"btn btn-primary\" href=\"/login/user-login\" role=\"button\">登录</a>"
                 );
             }
             else{

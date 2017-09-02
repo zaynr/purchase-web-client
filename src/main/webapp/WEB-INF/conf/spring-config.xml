@@ -88,6 +88,17 @@
                     class="org.springframework.data.redis.serializer.StringRedisSerializer" />
         </property>
     </bean>
+    <mvc:interceptors>
+        <!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->
+        <!--<bean class="me.zengzy.filter.SessionInterceptor"/>-->
+        <mvc:interceptor>
+            <mvc:mapping path="/order/*"/>
+            <mvc:mapping path="/account/*"/>
+            <mvc:mapping path="/msg/*"/>
+            <!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->
+            <bean class="me.zengzy.filter.SessionInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
     <!-- cache配置 -->
     <!--<bean id="methodCacheInterceptor" class="com.crossoverJie.intercept.MethodCacheInterceptor">-->
         <!--<property name="redisUtil" ref="redisUtil"/>-->

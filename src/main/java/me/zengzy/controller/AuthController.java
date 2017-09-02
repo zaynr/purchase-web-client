@@ -14,6 +14,11 @@ public class AuthController {
         return "index";
     }
 
+    @RequestMapping("/error")
+    public String error(){
+        return "error";
+    }
+
     @RequestMapping("/check-auth.do")
     @ResponseBody
     public String checkAuth(HttpServletRequest request){

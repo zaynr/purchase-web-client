@@ -12,7 +12,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/users/login.do",
+            url: "/login/login.do",
             data: param,
             success: function (data) {
                 if(data === "log_success"){
@@ -65,7 +65,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/users/register.do",
+            url: "/login/register.do",
             data: param,
             success: function (data) {
                 if(data === "reg_success"){

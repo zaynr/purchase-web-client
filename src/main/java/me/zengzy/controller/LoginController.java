@@ -13,20 +13,20 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/login")
 public class LoginController {
     @Autowired
     UserRepository repository;
 
     @RequestMapping("/admin-login")
     public String getAdminLoginView(){
-        return "account/adminLogin";
+        return "login/adminLogin";
     }
 
     @RequestMapping("/user-login")
     public String getUserLoginView(HttpServletRequest request){
         if(String.valueOf(request.getSession().getAttribute("userName")).equals("null")){
-            return "account/commonLogin";
+            return "login/commonLogin";
         }
         else{
             return "index";
