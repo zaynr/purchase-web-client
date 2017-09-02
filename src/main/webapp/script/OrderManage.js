@@ -42,19 +42,21 @@ $(document).ready(function () {
         });
     });
 
-    $.ajax({
-        type: "POST",
-        url: "/order/showOrderType.do",
-        success: function (data) {
-            $.each(data, function (i, item) {
-                $("#typeSelect").append(
-                    "<option value = \""
-                    + item.type_no
-                    + "\">"
-                    + item.type_content
-                    + "</option>"
-                );
-            });
-        }
-    });
+    if(window.location.pathname === "/order/placeOrder") {
+        $.ajax({
+            type: "POST",
+            url: "/order/showOrderType.do",
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    $("#typeSelect").append(
+                        "<option value = \""
+                        + item.type_no
+                        + "\">"
+                        + item.type_content
+                        + "</option>"
+                    );
+                });
+            }
+        });
+    }
 });

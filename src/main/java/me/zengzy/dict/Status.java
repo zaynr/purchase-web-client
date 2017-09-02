@@ -9,6 +9,7 @@ public class Status {
         public static final int OFFERED_SAMPLE = 3;
         public static final int SIGNED = 4;
         public static final int DONE = 5;
+        public static final int CANCEL = 6;
     }
 
     public static String orderTranslate(int status){
@@ -31,6 +32,9 @@ public class Status {
                 break;
             case Order.DONE:
                 res = "已完成";
+                break;
+            case Order.CANCEL:
+                res = "撤销";
                 break;
         }
         return res;

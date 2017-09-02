@@ -16,15 +16,15 @@
 <body>
 
 <div class="container"style="padding: 1% 10%;">
-    <table class="table table-bordered table-hover" >
+    <table class="table table-bordered table-hover table-responsive" >
         <thead>
         <tr>
             <th>需求序列号</th>
             <th>合同序列号</th>
             <th>采购商手机号</th>
             <th>供应商手机号</th>
-            <th>需求状态</th>
             <th>需求类型</th>
+            <th>需求状态</th>
             <th>操作</th>
         </tr>
         </thead>

@@ -6,24 +6,33 @@ import javax.persistence.Id;
 @Entity(name = "pro_orders")
 public class ProOrders {
     @Id
-    private int pur_serial_no;
-    private String purchaser_name;
-    private int order_status, type_no;
+    private int pro_serial_no;
+    private String provider_name;
+    private int order_status, pur_serial_no;
+    private double offer_price;
 
-    public int getPur_serial_no() {
-        return pur_serial_no;
+    public double getOffer_price() {
+        return offer_price;
     }
 
-    public void setPur_serial_no(int pur_serial_no) {
-        this.pur_serial_no = pur_serial_no;
+    public void setOffer_price(double offer_price) {
+        this.offer_price = offer_price;
     }
 
-    public String getPurchaser_name() {
-        return purchaser_name;
+    public int getPro_serial_no() {
+        return pro_serial_no;
     }
 
-    public void setPurchaser_name(String purchaser_name) {
-        this.purchaser_name = purchaser_name;
+    public void setPro_serial_no(int pro_serial_no) {
+        this.pro_serial_no = pro_serial_no;
+    }
+
+    public String getProvider_name() {
+        return provider_name;
+    }
+
+    public void setProvider_name(String provider_name) {
+        this.provider_name = provider_name;
     }
 
     public int getOrder_status() {
@@ -34,11 +43,11 @@ public class ProOrders {
         this.order_status = order_status;
     }
 
-    public int getType_no() {
-        return type_no;
+    public int getPur_serial_no() {
+        return pur_serial_no;
     }
 
-    public void setType_no(int type_no) {
-        this.type_no = type_no;
+    public void setPur_serial_no(int pur_serial_no) {
+        this.pur_serial_no = pur_serial_no;
     }
 }
