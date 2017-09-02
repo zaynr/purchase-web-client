@@ -11,7 +11,11 @@ $(document).ready(function () {
             }
             else{
                 $("#navbarButton").append(
-                    "<button id=\"logout\" class=\"btn btn-primary\">"
+                    "<a id=\"accountCenter\" class=\"btn btn-primary\"  href=\"/account/info\">"
+                    + "账户中心"
+                    + "</a>"
+                    +
+                    "<button id=\"logout\" class=\"btn btn-danger\">"
                     + "注销"
                     + "</button>"
                 );
