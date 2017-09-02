@@ -9,7 +9,7 @@
 <%@ page isELIgnored="false" %>
 <html>
 <head>
-    <jsp:include page="script-sources.jsp"/>
+    <jsp:include page="../script-sources.jsp"/>
     <title>需求下单</title>
 </head>
 <body>

@@ -9,9 +9,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <jsp:include page="script-sources.jsp"/>
+    <jsp:include page="../script-sources.jsp"/>
     <title>添加订单类型</title>
-    <script src="../../script/orderManage.js"></script>
+    <script src="../../../script/orderManage.js"></script>
 </head>
 <body>
 <div class="container"style="padding: 1% 10%;">

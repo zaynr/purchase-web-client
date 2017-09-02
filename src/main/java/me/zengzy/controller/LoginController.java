@@ -20,13 +20,13 @@ public class LoginController {
 
     @RequestMapping("/admin-login")
     public String getAdminLoginView(){
-        return "adminLogin";
+        return "account/adminLogin";
     }
 
     @RequestMapping("/user-login")
     public String getUserLoginView(HttpServletRequest request){
         if(String.valueOf(request.getSession().getAttribute("userName")).equals("null")){
-            return "commonLogin";
+            return "account/commonLogin";
         }
         else{
             return "index";

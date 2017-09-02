@@ -17,12 +17,18 @@ $(document).ready(function () {
                 );
                 if(data === "0"){
                     addTab("/order/addOrderType", "添加订单类型");
+                    addTab("/order/addOrderType", "采购商管理");
+                    addTab("/order/addOrderType", "供应商管理");
                 }
                 else if(data === "1"){
                     addTab("/order/addOrderType", "发出订单");
+                    addTab("/order/addOrderType", "查看订单");
+                    addTab("/order/addOrderType", "查看联系人");
                 }
                 else if(data === "2"){
+                    addTab("/order/addOrderType", "等待报价");
                     addTab("/order/addOrderType", "查看订单");
+                    addTab("/order/addOrderType", "查看联系人");
                 }
             }
 

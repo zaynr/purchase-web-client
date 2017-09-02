@@ -17,17 +17,21 @@
             <!-- Example row of columns -->
             <div class="row">
                 <div class="col-md-4">
-                    <h2>占位</h2>
-                    <p>在这里可以看到订单信息 </p>
-                    <p><a class="btn btn-default" href="#" role="button">查看详情 &raquo;</a></p>
+                    <h2>可提供报价</h2>
+                    <p>订单详情：</p>
+                    <p>
+                        <a href="#">订单条数 <span class="badge">42</span></a>
+                    </p>
                 </div>
                 <div class="col-md-4">
-                    <h2>占位</h2>
-                    <p>在这里可以看到订单信息 </p>
-                    <p><a class="btn btn-default" href="#" role="button">查看详情 &raquo;</a></p>
+                    <h2>未提供样品</h2>
+                    <p>订单详情：</p>
+                    <p>
+                        <a href="#">订单条数 <span class="badge">42</span></a>
+                    </p>
                 </div>
                 <div class="col-md-4">
-                    <h2>占位</h2>
+                    <h2>已签订的合同</h2>
                     <p>在这里可以看到订单信息 </p>
                     <p><a class="btn btn-default" href="#" role="button">查看详情 &raquo;</a></p>
                 </div>

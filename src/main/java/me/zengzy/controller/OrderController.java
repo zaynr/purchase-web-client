@@ -1,6 +1,5 @@
 package me.zengzy.controller;
 
-import me.zengzy.dto.PurOrders;
 import me.zengzy.repo.OrderTypeRepository;
 import me.zengzy.repo.PurOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +22,14 @@ public class OrderController {
 
     @RequestMapping("/placeOrder")
     public String getOrderView(){
-        return "placeOrder";
+        return "order/placeOrder";
     }
 
     @RequestMapping("/addOrderType")
     public String getAddOrderTypeView(HttpServletRequest request){
         HttpSession session = request.getSession();
         if(String.valueOf(session.getAttribute("userType")).equals("0")){
-            return "addOrderType";
+            return "order/addOrderType";
         }
         else{
             return "error";
