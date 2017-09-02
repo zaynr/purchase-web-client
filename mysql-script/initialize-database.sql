@@ -30,7 +30,7 @@ CREATE TABLE purchaser(
 );
 #订单类型
 CREATE TABLE order_types(
-  type_no int NOT NULL PRIMARY KEY,
+  type_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   type_content nvarchar(255)
 );
 #采购订单表

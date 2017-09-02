@@ -16,10 +16,27 @@ $(document).ready(function () {
             data: param,
             success: function (data) {
                 if(data === "log_success"){
-                    alert("登录成功");
+                    $("#message").html(
+                        "<div class=\"alert alert-success alert-dismissable\">\n" +
+                        "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                        "aria-hidden=\"true\">\n" +
+                        "    &times;\n" +
+                        "   </button>\n" +
+                        "登录成功" +
+                        "</div>"
+                    );
+                    window.location.href="/";
                 }
                 else{
-                    alert(data.toString());
+                    $("#message").html(
+                        "<div class=\"alert alert-info alert-dismissable\">\n" +
+                        "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                        "aria-hidden=\"true\">\n" +
+                        "    &times;\n" +
+                        "   </button>\n" +
+                        "密码错误或用户不存在" +
+                        "</div>"
+                    );
                 }
             }
         });
@@ -32,6 +49,19 @@ $(document).ready(function () {
         map["password"] = encrypt;
         map["mobile_no"] = $("#mobile_no").val();
         map["user_type"] = $("#user_type").val();
+        alert(map["mobile_no"] === "");
+        if(map["mobile_no"] === "" || map["password"] === ""){
+            $("#message").html(
+                "<div class=\"alert alert-info alert-dismissable\">\n" +
+                "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                "aria-hidden=\"true\">\n" +
+                "    &times;\n" +
+                "   </button>\n" +
+                "请输入账号名及密码" +
+                "</div>"
+            );
+            return;
+        }
         var param = {userInfo:map};
 
         $.ajax({
@@ -40,10 +70,27 @@ $(document).ready(function () {
             data: param,
             success: function (data) {
                 if(data === "reg_success"){
-                    alert("注册成功");
+                    $("#message").html(
+                        "<div class=\"alert alert-success alert-dismissable\">\n" +
+                        "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                        "aria-hidden=\"true\">\n" +
+                        "    &times;\n" +
+                        "   </button>\n" +
+                        "注册成功" +
+                        "</div>"
+                    );
+                    window.location.href="/";
                 }
-                else{
-                    alert(data.toString());
+                else if(data === "already_exist"){
+                    $("#message").html(
+                        "<div class=\"alert alert-info alert-dismissable\">\n" +
+                        "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                        "aria-hidden=\"true\">\n" +
+                        "    &times;\n" +
+                        "   </button>\n" +
+                        "该手机号已被注册" +
+                        "</div>"
+                    );
                 }
             }
         });
