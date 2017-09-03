@@ -17,6 +17,7 @@
 <body>
 <div class="jumbotron" style="padding: 1% 10%;">
     <form class="bs-example bs-example-form" role="form">
+        <br>
         <div class="input-group">
             <span class="input-group-addon">管理员账号：</span>
             <input type="text" class="form-control" id="mobile_no" placeholder="账号">

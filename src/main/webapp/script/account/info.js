@@ -4,9 +4,11 @@
 $(document).ready(function () {
     $.ajax({
         type: "POST",
-        url: "account/getInfo.do",
+        url: "/account/getInfo.do",
         success: function (data) {
-
+            $("#userType").text(data.userType);
+            $("#mobileNo").val(data.mobileNo);
+            $("#userName").val(data.userName)
         }
     });
 

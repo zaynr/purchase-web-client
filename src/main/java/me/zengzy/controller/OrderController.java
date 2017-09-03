@@ -1,10 +1,10 @@
 package me.zengzy.controller;
 
-import me.zengzy.bean.PurOrderBean;
+import me.zengzy.dto.PurOrderBean;
 import me.zengzy.dict.Status;
-import me.zengzy.dto.OrderTypes;
-import me.zengzy.dto.ProOrders;
-import me.zengzy.dto.PurOrders;
+import me.zengzy.entity.OrderTypes;
+import me.zengzy.entity.ProOrders;
+import me.zengzy.entity.PurOrders;
 import me.zengzy.repo.OrderTypeRepository;
 import me.zengzy.repo.ProOrderRepository;
 import me.zengzy.repo.PurOrderRepository;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping("/order")
@@ -60,7 +59,7 @@ public class OrderController {
     @RequestMapping("/showPurOrders.do")
     @ResponseBody
     public ArrayList<PurOrderBean> getPurOrders(HttpServletRequest request){
-        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(SessionUtil.getUserName(request));
+        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(SessionUtil.getMobileNo(request));
         return packPurOrderBean(orders);
     }
 
@@ -105,7 +104,7 @@ public class OrderController {
         order.setOrder_status(Status.Order.OFFERED_PRICE);
         System.out.println(orderInfo.get("pur_serial_no"));
         order.setPur_serial_no(Integer.parseInt(orderInfo.get("pur_serial_no")));
-        order.setProvider_name(SessionUtil.getUserName(request));
+        order.setProvider_name(SessionUtil.getMobileNo(request));
         order.setOffer_price(Double.parseDouble(orderInfo.get("offer_price")));
         proOrderRepository.save(order);
         return "success";
@@ -114,7 +113,7 @@ public class OrderController {
     @RequestMapping("/updateProOrderPrice.do")
     @ResponseBody
     public String updateProOrderPrice(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
-        proOrderRepository.updateProOrderPrice(Integer.parseInt(orderInfo.get("pur_serial_no")), SessionUtil.getUserName(request), Double.parseDouble(orderInfo.get("offer_price")));
+        proOrderRepository.updateProOrderPrice(Integer.parseInt(orderInfo.get("pur_serial_no")), SessionUtil.getMobileNo(request), Double.parseDouble(orderInfo.get("offer_price")));
         return "success";
     }
 
@@ -123,7 +122,7 @@ public class OrderController {
     public String placeOrder(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
         PurOrders order = new PurOrders();
         order.setOrderStatus(Status.Order.UN_REC);
-        order.setPurchaserName(SessionUtil.getUserName(request));
+        order.setPurchaserName(SessionUtil.getMobileNo(request));
         order.setTypeNo(Integer.parseInt(orderInfo.get("type_no")));
         purOrderRepository.save(order);
         return "success";

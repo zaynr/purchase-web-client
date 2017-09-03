@@ -1,9 +1,12 @@
-package me.zengzy.dto;
+package me.zengzy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
 
 @Entity(name = "order_types")
+@Table(name = "order_types")
 public class OrderTypes {
     @Id
     private int type_no;

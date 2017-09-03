@@ -1,7 +1,6 @@
 package me.zengzy.repo;
 
-import me.zengzy.dto.Users;
-import org.springframework.data.jpa.repository.Modifying;
+import me.zengzy.entity.Users;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

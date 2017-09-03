@@ -1,9 +1,11 @@
-package me.zengzy.dto;
+package me.zengzy.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity(name = "purchasers")
+@Table(name = "purchasers")
 public class Purchasers {
     @Id
     private String mobile_no;

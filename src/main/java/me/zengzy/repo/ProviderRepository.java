@@ -1,6 +1,6 @@
 package me.zengzy.repo;
 
-import me.zengzy.dto.Providers;
+import me.zengzy.entity.Providers;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

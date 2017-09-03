@@ -1,5 +1,6 @@
 package me.zengzy.controller;
 
+import me.zengzy.util.SessionUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,8 +23,8 @@ public class AuthController {
     @RequestMapping("/check-auth.do")
     @ResponseBody
     public String checkAuth(HttpServletRequest request){
-        String userName = String.valueOf(request.getSession().getAttribute("userName"));
-        if(userName.equals("null")){
+        String mobileNo = SessionUtil.getMobileNo(request);
+        if(mobileNo.equals("null")){
             return "unAuth";
         }
         else{
@@ -34,10 +35,7 @@ public class AuthController {
     @RequestMapping("/logout.do")
     @ResponseBody
     public String logout(HttpServletRequest request){
-        HttpSession session = request.getSession();
-        session.setAttribute("userName", "null");
-        session.setAttribute("userPwd", "null");
-        session.setAttribute("userType", "null");
+        request.getSession().invalidate();
         return "success";
     }
 }

@@ -1,6 +1,6 @@
 package me.zengzy.repo;
 
-import me.zengzy.dto.ProOrders;
+import me.zengzy.entity.ProOrders;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

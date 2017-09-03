@@ -6,7 +6,7 @@ public class Type {
         public final static int PURCHASER = 1;
         public final static int PROVIDER = 2;
     }
-    public String UserTranslate(int type){
+    public static String UserTranslate(int type){
         String res = "undefined";
         switch (type){
             case User.ADMINISTRATOR:

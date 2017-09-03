@@ -1,4 +1,4 @@
-package me.zengzy.bean;
+package me.zengzy.dto;
 
 public class PurOrderBean {
     private int purSerialNo;

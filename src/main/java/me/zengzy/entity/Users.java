@@ -1,21 +1,23 @@
-package me.zengzy.dto;
+package me.zengzy.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity(name = "users")
-public class Users {
+@Entity
+@IdClass(PrimaryKeys.class)
+@Table(name = "users")
+public class Users implements Serializable{
         
     @Id
     @Column(name = "mobile_no")
     private String mobileNo;
+    @Id
+    @Column(name = "user_type")
+    private int userType;
     @Column(name = "user_name")
     private String userName;
     @Column(name = "pwd")
     private String pwd;
-    @Column(name = "user_type")
-    private int userType;
 
     public String getUserName() {
         return userName;
@@ -48,4 +50,9 @@ public class Users {
     public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
     }
+}
+
+class PrimaryKeys implements Serializable{
+    private String mobileNo;
+    private int userType;
 }

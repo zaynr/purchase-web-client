@@ -1,10 +1,12 @@
-package me.zengzy.dto;
+package me.zengzy.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity(name = "pur_orders")
+@Table(name = "pur_orders")
 public class PurOrders {
     @Id
     @Column(name = "pur_serial_no")

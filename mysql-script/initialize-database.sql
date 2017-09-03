@@ -3,7 +3,7 @@ USE purchase;
 
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS providers;
-DROP TABLE IF EXISTS purchaser;
+DROP TABLE IF EXISTS purchasers;
 DROP TABLE IF EXISTS order_types;
 DROP TABLE IF EXISTS pur_orders;
 DROP TABLE IF EXISTS pro_orders;
@@ -12,10 +12,11 @@ DROP TABLE IF EXISTS contracts;
 
 #用户主表
 CREATE TABLE users(
-  mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  user_name nvarchar(63),
+  mobile_no nvarchar(12) NOT NULL,
+  user_type int NOT NULL,	# 0:管理员;1:采购商;2:供应商
   pwd varchar(255),
-  user_type int NOT NULL PRIMARY KEY	# 0:管理员;1:采购商;2:供应商
+  user_name nvarchar(63),
+  PRIMARY KEY(mobile_no, user_type)
 );
 #供应商
 CREATE TABLE providers(
@@ -23,7 +24,7 @@ CREATE TABLE providers(
   provide_type nvarchar(255)
 );
 #采购商
-CREATE TABLE purchaser(
+CREATE TABLE purchasers(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY
 );
 #订单类型

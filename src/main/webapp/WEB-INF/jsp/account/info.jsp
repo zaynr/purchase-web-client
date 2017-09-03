@@ -16,15 +16,18 @@
 <body>
     <div class="jumbotron" style="padding: 1% 10%;">
         <h2>基本信息</h2>
+        <p id="userType"></p>
         <br>
         <div class="input-group">
-            <span class="input-group-addon">用户名：</span>
+            <span class="input-group">用户名：</span>
             <input id="userName" class="form-control">
         </div>
+        <br>
         <div class="input-group">
-            <span class="input-group-addon">绑定手机：</span>
+            <span class="input-group">绑定手机：</span>
             <input id="mobileNo" class="form-control">
         </div>
+        <br>
     </div>
 
     <div class="container"style="padding: 1% 10%;">
@@ -39,17 +42,17 @@
                 <h1>密码</h1>
                 <br>
                 <div class="input-group">
-                    <span class="input-group-addon">旧密码：</span>
+                    <span class="input-group">旧密码：</span>
                     <input type="password" id="oldPwd" class="form-control">
                 </div>
                 <br>
                 <div class="input-group">
-                    <span class="input-group-addon">新密码：</span>
+                    <span class="input-group">新密码：</span>
                     <input type="password" id="newPwd" class="form-control">
                 </div>
                 <br>
                 <div class="input-group">
-                    <span class="input-group-addon">重复新密码：</span>
+                    <span class="input-group">重复新密码：</span>
                     <input type="password" id="rptPwd" class="form-control">
                 </div>
             </div>
