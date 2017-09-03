@@ -8,6 +8,7 @@ import me.zengzy.dto.PurOrders;
 import me.zengzy.repo.OrderTypeRepository;
 import me.zengzy.repo.ProOrderRepository;
 import me.zengzy.repo.PurOrderRepository;
+import me.zengzy.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +60,7 @@ public class OrderController {
     @RequestMapping("/showPurOrders.do")
     @ResponseBody
     public ArrayList<PurOrderBean> getPurOrders(HttpServletRequest request){
-        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(getUserName(request));
+        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(SessionUtil.getUserName(request));
         return packPurOrderBean(orders);
     }
 
@@ -104,7 +105,7 @@ public class OrderController {
         order.setOrder_status(Status.Order.OFFERED_PRICE);
         System.out.println(orderInfo.get("pur_serial_no"));
         order.setPur_serial_no(Integer.parseInt(orderInfo.get("pur_serial_no")));
-        order.setProvider_name(getUserName(request));
+        order.setProvider_name(SessionUtil.getUserName(request));
         order.setOffer_price(Double.parseDouble(orderInfo.get("offer_price")));
         proOrderRepository.save(order);
         return "success";
@@ -113,7 +114,7 @@ public class OrderController {
     @RequestMapping("/updateProOrderPrice.do")
     @ResponseBody
     public String updateProOrderPrice(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
-        proOrderRepository.updateProOrderPrice(Integer.parseInt(orderInfo.get("pur_serial_no")), getUserName(request), Double.parseDouble(orderInfo.get("offer_price")));
+        proOrderRepository.updateProOrderPrice(Integer.parseInt(orderInfo.get("pur_serial_no")), SessionUtil.getUserName(request), Double.parseDouble(orderInfo.get("offer_price")));
         return "success";
     }
 
@@ -122,7 +123,7 @@ public class OrderController {
     public String placeOrder(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
         PurOrders order = new PurOrders();
         order.setOrderStatus(Status.Order.UN_REC);
-        order.setPurchaserName(getUserName(request));
+        order.setPurchaserName(SessionUtil.getUserName(request));
         order.setTypeNo(Integer.parseInt(orderInfo.get("type_no")));
         purOrderRepository.save(order);
         return "success";
@@ -150,10 +151,6 @@ public class OrderController {
             beans.add(bean);
         }
         return beans;
-    }
-
-    private String getUserName(HttpServletRequest request){
-        return String.valueOf(request.getSession().getAttribute("userName"));
     }
 
 }

@@ -4,8 +4,8 @@
 <html>
     <head>
         <jsp:include page="script-sources.jsp"/>
-        <script src="../../script/login.js"></script>
-        <script src="../../script/jQuery-MD5.js"></script>
+        <script src="../../script/login/login.js"></script>
+        <script src="../../script/login/jQuery-MD5.js"></script>
         <title>简单交易 Simple Trade</title>
     </head>
     <body>

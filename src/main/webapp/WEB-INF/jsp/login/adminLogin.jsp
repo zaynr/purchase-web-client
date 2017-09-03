@@ -10,8 +10,8 @@
 <html>
 <head>
     <jsp:include page="../script-sources.jsp"/>
-    <script src="../../../script/login.js"></script>
-    <script src="../../../script/jQuery-MD5.js"></script>
+    <script src="../../../script/login/login.js"></script>
+    <script src="../../../script/login/jQuery-MD5.js"></script>
     <title>管理员登录</title>
 </head>
 <body>

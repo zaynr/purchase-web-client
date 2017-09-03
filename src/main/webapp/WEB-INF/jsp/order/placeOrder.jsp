@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>需求下单</title>
-    <script src="../../../script/orderManage.js"></script>
+    <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>
 

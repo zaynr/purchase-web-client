@@ -11,6 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>账户信息</title>
+    <script src="../../../script/account/info.js"></script>
 </head>
 <body>
     <div class="jumbotron" style="padding: 1% 10%;">
@@ -18,7 +19,11 @@
         <br>
         <div class="input-group">
             <span class="input-group-addon">用户名：</span>
-            <input id="name" class="form-control">
+            <input id="userName" class="form-control">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">绑定手机：</span>
+            <input id="mobileNo" class="form-control">
         </div>
     </div>
 
@@ -51,7 +56,7 @@
         </div>
         <br>
         <div align="center">
-            <button id="placeOrder" class="btn btn-primary">提交更改</button>
+            <button id="commitChange" class="btn btn-primary">提交更改</button>
         </div>
         <br>
         <div id="message"></div>

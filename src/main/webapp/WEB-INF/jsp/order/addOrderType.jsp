@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>添加订单类型</title>
-    <script src="../../../script/orderManage.js"></script>
+    <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>
 <div class="container"style="padding: 1% 10%;">

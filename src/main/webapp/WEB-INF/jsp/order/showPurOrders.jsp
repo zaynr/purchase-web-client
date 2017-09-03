@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>查看订单</title>
-    <script src="../../../script/orderDisplay.js"></script>
+    <script src="../../../script/order/orderDisplay.js"></script>
 </head>
 <body>
 

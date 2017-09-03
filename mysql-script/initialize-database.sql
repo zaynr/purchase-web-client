@@ -15,18 +15,16 @@ CREATE TABLE users(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
   user_name nvarchar(63),
   pwd varchar(255),
-  user_type int	# 0:管理员;1:采购商;2:供应商
+  user_type int NOT NULL PRIMARY KEY	# 0:管理员;1:采购商;2:供应商
 );
 #供应商
 CREATE TABLE providers(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  user_name nvarchar(63),
   provide_type nvarchar(255)
 );
 #采购商
 CREATE TABLE purchaser(
-  mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  user_name nvarchar(63)
+  mobile_no nvarchar(12) NOT NULL PRIMARY KEY
 );
 #订单类型
 CREATE TABLE order_types(
@@ -38,6 +36,7 @@ CREATE TABLE pur_orders(
   pur_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   purchaser_name nvarchar(63),
   order_status int,
+  order_amount varchar(10),
   type_no int
 );
 #供应报价表
@@ -45,6 +44,7 @@ CREATE TABLE pro_orders(
   pro_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	pur_serial_no int,
   order_status int,
+  offer_price double,
   provider_name nvarchar(63)
 );
 #联系人

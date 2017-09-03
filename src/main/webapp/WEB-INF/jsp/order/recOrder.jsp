@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>等待报价</title>
-    <script src="../../../script/orderDisplay.js"></script>
+    <script src="../../../script/order/orderDisplay.js"></script>
     <script>
         function num(obj){
             obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符

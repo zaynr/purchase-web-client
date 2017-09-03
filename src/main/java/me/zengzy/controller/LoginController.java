@@ -37,9 +37,9 @@ public class LoginController {
     @ResponseBody
     public String userLogin(@RequestParam Map<String, String> userInfo, HttpServletRequest request){
         String status;
-        Users user = repository.queryUserByMobileNo(userInfo.get("userInfo[mobile_no]"));
+        Users user = repository.queryUserByPriKey(userInfo.get("userInfo[mobile_no]"), Integer.parseInt(userInfo.get("userInfo[user_type]")));
         if(user != null){
-            if(user.getPwd().equals(userInfo.get("userInfo[password]")) && user.getUserType()==Integer.parseInt(userInfo.get("userInfo[user_type]"))){
+            if(user.getPwd().equals(userInfo.get("userInfo[password]"))){
                 status = "log_success";
                 HttpSession session = request.getSession();
                 session.setMaxInactiveInterval(10*60);
@@ -62,12 +62,16 @@ public class LoginController {
     @ResponseBody
     public String userRegister(@RequestParam() Map<String, String> userInfo){
         String status;
-        Users user = repository.queryUserByMobileNo(userInfo.get("userInfo[mobile_no]"));
+        Users user = repository.queryUserByPriKey(userInfo.get("userInfo[mobile_no]"), Integer.parseInt(userInfo.get("userInfo[user_type]")));
         if(user != null){
             status = "already_exist";
         }
         else{
-            repository.createNewUser(userInfo.get("userInfo[mobile_no]"), userInfo.get("userInfo[password]"), Integer.parseInt(userInfo.get("userInfo[user_type]")));
+            user = new Users();
+            user.setMobileNo(userInfo.get("userInfo[mobile_no]"));
+            user.setUserType(Integer.parseInt(userInfo.get("userInfo[user_type]")));
+            user.setPwd(userInfo.get("userInfo[password]"));
+            repository.save(user);
             status = "reg_success";
         }
         return status;
