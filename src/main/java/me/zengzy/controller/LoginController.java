@@ -83,12 +83,11 @@ public class LoginController {
     @ResponseBody
     public String userRegister(@RequestParam() Map<String, String> userInfo){
         String status;
-        Users user = repository.queryUserByPriKey(userInfo.get("mobile_no"), Integer.parseInt(userInfo.get("user_type")));
-        if(user != null){
+        if(repository.queryUserByPriKey(userInfo.get("mobile_no"), Integer.parseInt(userInfo.get("user_type"))) != null){
             status = "already_exist";
         }
         else{
-            user = new Users();
+            Users user = new Users();
             user.setMobileNo(userInfo.get("mobile_no"));
             user.setUserType(Integer.parseInt(userInfo.get("user_type")));
             user.setPwd(userInfo.get("password"));
