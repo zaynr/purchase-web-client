@@ -32,13 +32,15 @@
             <option value="1">采购商</option>
             <option value="2">供应商</option>
         </select>
-        <div class="btn-group" style="padding: 5% 0% 0%;">
-            <button id="login" type="button" class="btn btn-default">登录</button>
-            <a href="/login/register" type="button" class="btn btn-default">注册</a>
-        </div>
-        <br>
-        <div id="message"></div>
     </form>
+    <div align="center" style="padding: 1% 10%;">
+    <div class="btn-group">
+        <button id="login" type="button" class="btn btn-default">登录</button>
+        <a href="/login/register" type="button" class="btn btn-default">注册</a>
+    </div>
+    </div>
+    <br>
+    <div id="message"></div>
 </div>
 </body>
 </html>

@@ -12,9 +12,10 @@
     <jsp:include page="../script-sources.jsp"/>
     <title>账户信息</title>
     <script src="../../../script/account/info.js"></script>
+    <script src="../../../script/login/jQuery-MD5.js"></script>
 </head>
 <body>
-    <div class="jumbotron" style="padding: 1% 10%;">
+    <div class="jumbotron" style="padding: 1% 10%;" align="center">
         <h2>基本信息</h2>
         <p id="userType"></p>
         <br>
@@ -33,10 +34,12 @@
     <div class="container"style="padding: 1% 10%;">
         <div class="row">
             <div class="col-md-4">
-                <h1>信息1</h1>
+                <div id="provideType">
+
+                </div>
             </div>
             <div class="col-md-4">
-                <h1>信息2</h1>
+
             </div>
             <div class="col-md-4">
                 <h1>密码</h1>

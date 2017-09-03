@@ -40,26 +40,29 @@
         </select>
         <br>
     </form>
-    <div id="provide_type">
+    <div align="center">
+        <div id="provide_type">
 
+        </div>
+        <div class="btn-group">
+            <button id="addMoreType" class="btn btn-default" >添加类型</button>
+            <button id="register" type="button" class="btn btn-default">注册</button>
+        </div>
+        <br>
+        <div id="message"></div>
     </div>
-    <br>
-    <button id="register" type="button" class="btn btn-default">注册</button>
-    <br>
-    <div id="message"></div>
 </div>
 <div class="modal fade" id="type_detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">选择可供应类型</h4>
+                <h4 class="modal-title" id="myModalLabel">选择偏好类型</h4>
             </div>
             <br>
-            <div align="center">
             <form class="bs-example bs-example-form" role="form">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">供应类型: </label>
+                    <label class="col-sm-2 control-label">类型: </label>
                     <div class="col-sm-10">
                         <select id="typeSelect" class="form-control">
 
@@ -67,14 +70,15 @@
                     </div>
                 </div>
             </form>
-            <br>
-            <button type="button" id="add" class="btn btn-primary">添加</button>
-            </div>
-            <br>
-            <div id="provide_type_dialog">
+            <div align="center">
+                <br>
+                <button type="button" id="add" class="btn btn-primary">添加</button>
+                <br>
+                <div id="provide_type_dialog">
 
+                </div>
+                <br>
             </div>
-            <br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" id="confirm" class="btn btn-primary" data-dismiss="modal">确认</button>

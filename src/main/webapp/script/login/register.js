@@ -4,6 +4,7 @@
 $(document).ready(function () {
 
     $("#register").click(function () {
+        var provide_type = "";
         var encrypt = $.md5($("#password").val());
         var map = {};
         map["password"] = encrypt;
@@ -21,6 +22,10 @@ $(document).ready(function () {
             );
             return;
         }
+        $("div.alert-content").each(function (i, item) {
+            provide_type += $(item).attr("my-attr") + ",";
+        });
+        map["provide_type"] = provide_type;
 
         $.ajax({
             type: "POST",
@@ -40,7 +45,7 @@ $(document).ready(function () {
                     $.ajax({
                         type: "POST",
                         url: "/login/login.do",
-                        data: param,
+                        data: map,
                         success: function () {
                             window.location.href="/";
                         }
@@ -79,10 +84,14 @@ $(document).ready(function () {
 
     $("#user_type").change(function () {
         if($("#user_type").val() === '2'){
+            $("#provide_type").html("");
+            $("#myModalLabel").text("选择可供应类型");
             $("#type_detail").modal();
         }
-        else{
+        else if($("#user_type").val() === '1'){
+            $("#myModalLabel").text("选择偏好类型");
             $("#provide_type").html("");
+            $("#type_detail").modal();
         }
     });
 
@@ -96,23 +105,22 @@ $(document).ready(function () {
         if(flag) {
             $("#provide_type_dialog").append(
                 "<div class=\"alert alert-success alert-dismissable\">\n" +
-                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
-                "aria-hidden=\"true\">\n" +
-                "&times;" +
-                "</button>\n<div class='alert-content'>" +
+                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
+                "<div class='alert-content' my-attr=\"" +
+                $("#typeSelect").val() +
+                "\">" +
                 $("#typeSelect").find("option:selected").text() +
-                "</div></div>"
+                "</div></div><br>"
             );
         }
     });
 
     $("#confirm").click(function () {
         $("#provide_type").html($("#provide_type_dialog").html());
-        $("#provide_type").append("<button id=\"addMoreType\" class=\"btn btn-primary\" >添加更多</button>");
-
-        $("#addMoreType").on("click", function () {
-            $("#type_detail").modal();
-        });
+        $("#provide_type_dialog").html("");
     });
 
+    $("#addMoreType").on("click", function () {
+        $("#type_detail").modal();
+    });
 });

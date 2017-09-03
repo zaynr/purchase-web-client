@@ -1,7 +1,20 @@
 package me.zengzy.dto;
 
+import me.zengzy.entity.OrderTypes;
+
+import java.util.ArrayList;
+
 public class AccountInfoBean {
-    private String userName, mobileNo, provideType, pwd, userType;
+    private String userName, mobileNo, pwd, userType;
+    private ArrayList<OrderTypes> provideType;
+
+    public ArrayList<OrderTypes> getProvideType() {
+        return provideType;
+    }
+
+    public void setProvideType(ArrayList<OrderTypes> provideType) {
+        this.provideType = provideType;
+    }
 
     public String getUserType() {
         return userType;
@@ -35,11 +48,4 @@ public class AccountInfoBean {
         this.mobileNo = mobileNo;
     }
 
-    public String getProvideType() {
-        return provideType;
-    }
-
-    public void setProvideType(String provideType) {
-        this.provideType = provideType;
-    }
 }

@@ -38,6 +38,9 @@ $(document).ready(function () {
                     "发布成功" +
                     "</div>"
                 );
+                setTimeout(function () {
+                    window.location.href="/order/showPurOrders";
+                }, 1000);
             }
         });
     });

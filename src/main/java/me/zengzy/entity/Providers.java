@@ -9,7 +9,15 @@ import javax.persistence.Table;
 public class Providers {
     @Id
     private String mobile_no;
-    private String privide_type;
+    private String provide_type;
+
+    public String getProvide_type() {
+        return provide_type;
+    }
+
+    public void setProvide_type(String provide_type) {
+        this.provide_type = provide_type;
+    }
 
     public String getMobile_no() {
         return mobile_no;
@@ -19,11 +27,4 @@ public class Providers {
         this.mobile_no = mobile_no;
     }
 
-    public String getPrivide_type() {
-        return privide_type;
-    }
-
-    public void setPrivide_type(String privide_type) {
-        this.privide_type = privide_type;
-    }
 }

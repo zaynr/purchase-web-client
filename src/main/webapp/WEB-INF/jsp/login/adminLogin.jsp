@@ -31,13 +31,15 @@
         <select id="user_type" class="form-control">
             <option value="0">管理员</option>
         </select>
-        <br>
-        <div id="message"></div>
-        <div class="btn-group" style="padding: 5% 0% 0%;">
-            <br>
-            <button id="login" type="button" class="btn btn-default">登录</button>
-        </div>
     </form>
+    <div align="center" style="padding: 1% 10%;">
+    <div class="btn-group" >
+        <br>
+        <button id="login" type="button" class="btn btn-default">登录</button>
+    </div>
+    </div>
+    <br>
+    <div id="message"></div>
 </div>
 </body>
 </html>

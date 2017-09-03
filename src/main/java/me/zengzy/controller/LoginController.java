@@ -1,8 +1,12 @@
 package me.zengzy.controller;
 
 import me.zengzy.entity.OrderTypes;
+import me.zengzy.entity.Providers;
+import me.zengzy.entity.Purchasers;
 import me.zengzy.entity.Users;
 import me.zengzy.repo.OrderTypeRepository;
+import me.zengzy.repo.ProviderRepository;
+import me.zengzy.repo.PurchasersRepository;
 import me.zengzy.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,12 @@ import java.util.Map;
 public class LoginController {
     @Autowired
     UserRepository repository;
+
+    @Autowired
+    ProviderRepository providerRepository;
+
+    @Autowired
+    PurchasersRepository purchasersRepository;
 
     @Autowired
     OrderTypeRepository typeRepository;
@@ -83,6 +93,18 @@ public class LoginController {
             user.setUserType(Integer.parseInt(userInfo.get("user_type")));
             user.setPwd(userInfo.get("password"));
             repository.save(user);
+            if(userInfo.get("user_type").equals("1")){
+                Purchasers purchaser = new Purchasers();
+                purchaser.setMobile_no(userInfo.get("mobile_no"));
+                purchaser.setPerfer_type(userInfo.get("provide_type"));
+                purchasersRepository.save(purchaser);
+            }
+            else if(userInfo.get("user_type").equals("2")){
+                Providers provider = new Providers();
+                provider.setMobile_no(userInfo.get("mobile_no"));
+                provider.setProvide_type(userInfo.get("provide_type"));
+                providerRepository.save(provider);
+            }
             status = "reg_success";
         }
         return status;
