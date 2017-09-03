@@ -17,20 +17,26 @@
 
 <div class="container"style="padding: 1% 10%;">
     <form class="form-horizontal" role="form">
-        <div class="form-group">
-            <label class="col-sm-2 control-label">购买类型: </label>
-            <div class="col-sm-10">
-                <select id="typeSelect" class="form-control">
+        <br>
+        <div class="input-group">
+            <label class="input-group-addon">购买类型</label>
+            <select id="typeSelect" class="form-control">
 
-                </select>
-            </div>
+            </select>
         </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">禁用</label>
-            <div class="col-sm-10">
-                <input class="form-control" id="input" type="text" placeholder="我也不知道这里可以输入啥..." >
-            </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon">订购数量</span>
+            <input type="number" id="orderAmount" class="form-control" placeholder="需求数量">
+            <span id="typeUnit" class="input-group-addon">单位</span>
         </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon">期望报价</span>
+            <input id="expect" class="form-control" onkeyup="num(this)" placeholder="供应商将会看到">
+            <span class="input-group-addon">元</span>
+        </div>
+        <br>
     </form>
     <div align="center">
         <button id="placeOrder" class="btn btn-primary">发布需求</button>

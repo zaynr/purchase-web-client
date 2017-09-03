@@ -12,15 +12,6 @@
     <jsp:include page="../script-sources.jsp"/>
     <title>等待报价</title>
     <script src="../../../script/order/orderDisplay.js"></script>
-    <script>
-        function num(obj){
-            obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符
-            obj.value = obj.value.replace(/^\./g,""); //验证第一个字符是数字
-            obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个, 清除多余的
-            obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
-            obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3'); //只能输入两个小数
-        }
-    </script>
 </head>
 <body>
 <div class="table-responsive">
@@ -29,9 +20,10 @@
             <thead>
             <tr>
                 <th>需求序列号</th>
-                <th>合同序列号</th>
+                <th>期望价格</th>
+                <th>需求数量</th>
                 <th>采购商手机号</th>
-                <th>供应商手机号</th>
+                <th>已报价人次</th>
                 <th>需求类型</th>
                 <th>需求状态</th>
                 <th>操作</th>

@@ -4,6 +4,9 @@
 $(document).ready(function () {
 
     $("#register").click(function () {
+        if(!checkInputNull()){
+            return;
+        }
         var provide_type = "";
         var encrypt = $.md5($("#password").val());
         var map = {};
@@ -98,12 +101,10 @@ $(document).ready(function () {
         if($("#user_type").val() === '2'){
             $("#provide_type").html("");
             $("#myModalLabel").text("选择可供应类型");
-            $("#type_detail").modal();
         }
         else if($("#user_type").val() === '1'){
             $("#myModalLabel").text("选择偏好类型");
             $("#provide_type").html("");
-            $("#type_detail").modal();
         }
     });
 

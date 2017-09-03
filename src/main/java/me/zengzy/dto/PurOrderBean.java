@@ -8,6 +8,24 @@ public class PurOrderBean {
     private String providerName;
     private String orderStatus;
     private String typeContent;
+    private String orderAmount;
+    private String expectPrice;
+
+    public String getOrderAmount() {
+        return orderAmount;
+    }
+
+    public void setOrderAmount(String orderAmount) {
+        this.orderAmount = orderAmount;
+    }
+
+    public String getExpectPrice() {
+        return expectPrice;
+    }
+
+    public void setExpectPrice(String expectPrice) {
+        this.expectPrice = expectPrice;
+    }
 
     public int getOrderStatusNo() {
         return orderStatusNo;

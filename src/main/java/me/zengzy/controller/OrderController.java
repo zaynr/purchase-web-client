@@ -66,7 +66,10 @@ public class OrderController {
     @RequestMapping("/addOrderType.do")
     @ResponseBody
     public String addOrderType(@RequestParam Map<String, String> orderInfo){
-        typeRepository.addNewType(orderInfo.get("orderType"));
+        OrderTypes type = new OrderTypes();
+        type.setType_content(orderInfo.get("orderType"));
+        type.setType_unit(orderInfo.get("typeUnit"));
+        typeRepository.save(type);
         return "success";
     }
 
@@ -124,6 +127,8 @@ public class OrderController {
         order.setOrderStatus(Status.Order.UN_REC);
         order.setPurchaserName(SessionUtil.getMobileNo(request));
         order.setTypeNo(Integer.parseInt(orderInfo.get("type_no")));
+        order.setOrder_amount(Double.parseDouble(orderInfo.get("orderAmount")));
+        order.setExpect_price(Double.parseDouble(orderInfo.get("expect")));
         purOrderRepository.save(order);
         return "success";
     }
@@ -131,21 +136,18 @@ public class OrderController {
     private ArrayList<PurOrderBean> packPurOrderBean(ArrayList<PurOrders> orders){
         ArrayList<PurOrderBean> beans = new ArrayList<PurOrderBean>();
         for(PurOrders a : orders){
-            String typeContent = typeRepository.getTypeByNo(a.getTypeNo()).getType_content();
+            OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
             ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
             PurOrderBean bean = new PurOrderBean();
-            bean.setTypeContent(typeContent);
+            bean.setTypeContent(type.getType_content());
             //todo：添加字典表
             bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
             bean.setPurchaserName(a.getPurchaserName());
             bean.setPurSerialNo(a.getPurSerialNo());
             bean.setOrderStatusNo(a.getOrderStatus());
-            if(proOrders.size() > 0) {
-                bean.setProviderName(proOrders.get(0).getProvider_name());
-            }
-            else{
-                bean.setProviderName("尚未接单");
-            }
+            bean.setProviderName(proOrders.size() + "人次");
+            bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
+            bean.setExpectPrice("￥" + a.getExpect_price() + "元");
 
             beans.add(bean);
         }

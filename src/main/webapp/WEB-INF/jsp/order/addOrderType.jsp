@@ -16,18 +16,26 @@
 <body>
 <div class="container"style="padding: 1% 10%;">
     <form class="form-horizontal" role="form">
+        <br>
         <div class="form-group">
             <label class="col-sm-2 control-label">添加类型</label>
             <div class="col-sm-10">
                 <input id="orderType" class="form-control" type="text">
             </div>
         </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon">类型单位</span>
+            <input type="number" id="orderAmount" class="form-control" placeholder="吨，台，等单位名称">
+        </div>
+        <br>
     </form>
     <div align="center">
     <button id="addNew" class="btn btn-primary">添加</button>
     <br>
     <div id="message"></div>
     </div>
+    <br>
 </div>
 </body>
 </html>

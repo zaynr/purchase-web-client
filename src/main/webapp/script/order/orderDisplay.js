@@ -14,7 +14,10 @@ $(document).ready(function () {
                         item.purSerialNo +
                         "</td>" +
                         "<td>" +
-                        item.contractSerialNo +
+                        item.expectPrice +
+                        "</td>" +
+                        "<td>" +
+                        item.orderAmount +
                         "</td>" +
                         "<td>" +
                         item.purchaserName +
@@ -28,21 +31,34 @@ $(document).ready(function () {
                         "<td>" +
                         item.orderStatus +
                         "</td>" +
-                        "<td><button id=\"cancelOrder\" type=\"button\" class=\"btn btn-danger\">取消订单</button></td>" +
+                        "<td><button my-attr='op' id=\"cancelOrder\" type=\"button\" class=\"btn btn-danger\">取消订单</button></td>" +
                         "</tr>"
                     );
                 });
-                $("button.btn-danger").each(function (i, item) {
+                $("button.btn").each(function (i, item) {
                     if($(item).parent().prevAll().first().html() === "撤销"){
-                        $(item).remove();
+                        $(item).removeClass("btn-danger");
                     }
-                    if($(item).text() !== "取消订单"){
+                    if($(item).parent().prevAll().first().html() === "已报价"){
+                        $(item).removeClass("btn-danger");
+                        $(item).addClass("btn-info");
+                        $(item).text("查看全部报价");
+                    }
+                    if($(item).attr("my-attr") !== "op"){
                         return;
                     }
                     $(item).on("click", function () {
                         var param = {"pur_serial_no" : $(this).parent().prevAll().last().html()};
-                        param["order_status"] = 6;
-                        var result = confirm('是否取消需求');
+                        if($(item).text() === "取消订单"){
+                            var order_status = 6;
+                            var hint = "是否取消需求";
+                        }
+                        else if($(item).text() === "查看全部报价"){
+                            window.location.href="/order/viewAllOffer";
+                            return;
+                        }
+                        param["order_status"] = order_status;
+                        var result = confirm(hint);
                         if (result) {
                             $.ajax({
                                 type: "POST",
@@ -52,7 +68,7 @@ $(document).ready(function () {
                                     window.location.reload();
                                 },
                                 error: function () {
-                                    alert("取消失败");
+                                    alert("操作失败");
                                 }
                             });
                         }
@@ -74,7 +90,10 @@ $(document).ready(function () {
                         item.purSerialNo +
                         "</td>" +
                         "<td>" +
-                        item.contractSerialNo +
+                        item.expectPrice +
+                        "</td>" +
+                        "<td>" +
+                        item.orderAmount +
                         "</td>" +
                         "<td>" +
                         item.purchaserName +

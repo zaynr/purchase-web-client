@@ -31,6 +31,7 @@ CREATE TABLE purchasers(
 #订单类型
 CREATE TABLE order_types(
   type_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  type_unit nvarchar(10),
   type_content nvarchar(255)
 );
 #采购订单表
@@ -38,7 +39,8 @@ CREATE TABLE pur_orders(
   pur_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   purchaser_name nvarchar(63),
   order_status int,
-  order_amount varchar(10),
+  order_amount double,
+  expect_price double,
   type_no int
 );
 #供应报价表

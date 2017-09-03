@@ -95,7 +95,7 @@ public class LoginController {
             if(userInfo.get("user_type").equals("1")){
                 Purchasers purchaser = new Purchasers();
                 purchaser.setMobile_no(userInfo.get("mobile_no"));
-                purchaser.setPerfer_type(userInfo.get("provide_type"));
+                purchaser.setPrefer_type(userInfo.get("provide_type"));
                 purchasersRepository.save(purchaser);
             }
             else if(userInfo.get("user_type").equals("2")){

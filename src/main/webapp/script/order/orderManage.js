@@ -3,7 +3,11 @@
  */
 $(document).ready(function () {
     $("#addNew").click(function () {
+        if(!checkInputNull()){
+            return;
+        }
         var param = {'orderType' : $("#orderType").val()};
+        param["typeUnit"] = $("#").val();
         $.ajax({
             type: "POST",
             url: "/order/addOrderType.do",
@@ -23,7 +27,12 @@ $(document).ready(function () {
     });
 
     $("#placeOrder").click(function () {
+        if(!checkInputNull()){
+            return;
+        }
         var param = {"type_no" : $("#typeSelect").val()};
+        param["orderAmount"] = $("#orderAmount").val();
+        param["expect"] = $("#expect").val();
         $.ajax({
             type: "POST",
             url: "/order/placeOrder.do",
@@ -52,12 +61,19 @@ $(document).ready(function () {
             success: function (data) {
                 $.each(data, function (i, item) {
                     $("#typeSelect").append(
-                        "<option value = \""
-                        + item.type_no
-                        + "\">"
-                        + item.type_content
-                        + "</option>"
+                        "<option value = \"" +
+                        item.type_no +
+                        "\" type-unit='" +
+                        item.type_unit +
+                        "'>" +
+                        item.type_content +
+                        "</option>"
                     );
+                });
+                $("#typeUnit").text($("#typeSelect").find("option:selected").attr("type-unit"));
+
+                $("#typeSelect").change(function () {
+                    $("#typeUnit").text($("#typeSelect").find("option:selected").attr("type-unit"));
                 });
             }
         });

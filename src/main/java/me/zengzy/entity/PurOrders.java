@@ -17,6 +17,24 @@ public class PurOrders {
     private int orderStatus;
     @Column(name = "type_no")
     private int typeNo;
+    private double expect_price;
+    private double order_amount;
+
+    public double getExpect_price() {
+        return expect_price;
+    }
+
+    public void setExpect_price(double expect_price) {
+        this.expect_price = expect_price;
+    }
+
+    public double getOrder_amount() {
+        return order_amount;
+    }
+
+    public void setOrder_amount(double order_amount) {
+        this.order_amount = order_amount;
+    }
 
     public int getPurSerialNo() {
         return purSerialNo;

@@ -52,7 +52,7 @@ public class AccountController {
         }
         else if(SessionUtil.getUserType(request) == 1){
             Purchasers purchaser = purchasersRepository.getPurchaserByMobileNo(SessionUtil.getMobileNo(request));
-            temp = purchaser.getPerfer_type().split(",");
+            temp = purchaser.getPrefer_type().split(",");
         }
         ArrayList<OrderTypes> orderTypes = new ArrayList<OrderTypes>();
         for(String a : temp){

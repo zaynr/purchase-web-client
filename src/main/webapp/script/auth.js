@@ -65,5 +65,41 @@ $(document).ready(function () {
             + "</a></li>"
         );
     }
-
 });
+
+function num(obj){
+    obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符
+    obj.value = obj.value.replace(/^\./g,""); //验证第一个字符是数字
+    obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个, 清除多余的
+    obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+    obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3'); //只能输入两个小数
+}
+
+function checkInputNull(){
+    var flag = true;
+    $("input").each(function (i, item) {
+        if($.trim($(item).val()).length === 0){
+            errorMessage("请全部输入");
+            flag = false;
+        }
+    });
+    return flag;
+}
+
+function normalMessage(message) {
+    $("#message").html(
+        "<div class=\"alert alert-info alert-dismissable\">" +
+        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
+        message +
+        "</div>"
+    );
+}
+
+function errorMessage(message) {
+    $("#message").html(
+        "<div class=\"alert alert-danger alert-dismissable\">" +
+        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
+        message +
+        "</div>"
+    );
+}

@@ -49,7 +49,9 @@
             <button id="register" type="button" class="btn btn-default">注册</button>
         </div>
         <br>
+        <br>
         <div id="message"></div>
+        <br>
     </div>
 </div>
 <div class="modal fade" id="type_detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -72,7 +74,9 @@
             </form>
             <div align="center">
                 <br>
+                <br>
                 <button type="button" id="add" class="btn btn-primary">添加</button>
+                <br>
                 <br>
                 <div id="provide_type_dialog">
 

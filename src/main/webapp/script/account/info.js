@@ -88,22 +88,4 @@ $(document).ready(function () {
             }
         });
     });
-
-    function normalMessage(message) {
-        $("#message").html(
-            "<div class=\"alert alert-info alert-dismissable\">" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
-            message +
-            "</div>"
-        );
-    }
-
-    function errorMessage(message) {
-        $("#message").html(
-            "<div class=\"alert alert-danger alert-dismissable\">" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
-            message +
-            "</div>"
-        );
-    }
 });

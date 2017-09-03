@@ -3,6 +3,9 @@
  */
 $(document).ready(function () {
     $("#login").click(function () {
+        if(!checkInputNull()){
+            return;
+        }
         var encrypt = $.md5($("#password").val());
         var map = {};
         map["password"] = encrypt;
