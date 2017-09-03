@@ -65,10 +65,12 @@ public class AccountController {
     @RequestMapping("/updateInfo.do")
     @ResponseBody
     public String updateInfo(@RequestParam Map<String, String> param, HttpServletRequest request){
-        if(userRepository.queryUserByPriKey(param.get("mobileNo"), SessionUtil.getUserType(request)) != null && !param.get("mobileNo").equals(SessionUtil.getMobileNo(request))){
+        Users user = userRepository.queryUserByPriKey(param.get("mobileNo"), SessionUtil.getUserType(request));
+        if(user != null && !param.get("mobileNo").equals(SessionUtil.getMobileNo(request))){
             return "already_exist";
         }
-        Users user = new Users();
+        userRepository.delete(userRepository.queryUserByPriKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request)));
+        user = new Users();
         Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
         Purchasers purchaser = purchasersRepository.getPurchaserByMobileNo(SessionUtil.getMobileNo(request));
         user.setUserType(SessionUtil.getUserType(request));
@@ -76,14 +78,18 @@ public class AccountController {
         user.setMobileNo(param.get("mobileNo"));
         user.setUserName("userName");
         if(SessionUtil.getUserType(request) == 1){
+            purchasersRepository.delete(purchaser);
             purchaser.setMobile_no(param.get("mobileNo"));
             purchasersRepository.save(purchaser);
         }
         else if(SessionUtil.getUserType(request) == 2){
+            providerRepository.delete(provider);
             provider.setMobile_no(param.get("mobileNo"));
             providerRepository.save(provider);
         }
         userRepository.save(user);
+        SessionUtil.setUserPwd(request, param.get("password"));
+        SessionUtil.setMobileNo(request, param.get("mobileNo"));
         return "success";
     }
 }

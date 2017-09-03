@@ -16,7 +16,8 @@
 <body>
 
 <div class="container"style="padding: 1% 10%;">
-    <table class="table table-bordered table-hover table-responsive" >
+    <div class="table-responsive">
+    <table class="table table-bordered table-hover" >
         <thead>
         <tr>
             <th>需求序列号</th>
@@ -32,6 +33,7 @@
 
         </tbody>
     </table>
+    </div>
 </div>
 </body>
 </html>

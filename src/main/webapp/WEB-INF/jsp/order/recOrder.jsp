@@ -23,6 +23,7 @@
     </script>
 </head>
 <body>
+<div class="table-responsive">
     <div class="container"style="padding: 1% 10%;">
         <table class="table table-bordered table-hover table-responsive" >
             <thead>
@@ -41,6 +42,7 @@
             </tbody>
         </table>
     </div>
+</div>
     <div class="modal fade" id="recOrderDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

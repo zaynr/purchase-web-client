@@ -33,6 +33,12 @@ $(document).ready(function () {
                     );
                 });
                 $("button.btn-danger").each(function (i, item) {
+                    if($(item).parent().prevAll().first().html() === "撤销"){
+                        $(item).remove();
+                    }
+                    if($(item).text() !== "取消订单"){
+                        return;
+                    }
                     $(item).on("click", function () {
                         var param = {"pur_serial_no" : $(this).parent().prevAll().last().html()};
                         param["order_status"] = 6;

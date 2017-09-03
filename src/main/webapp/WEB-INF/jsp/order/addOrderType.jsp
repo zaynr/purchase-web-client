@@ -17,15 +17,17 @@
 <div class="container"style="padding: 1% 10%;">
     <form class="form-horizontal" role="form">
         <div class="form-group">
-            <label class="col-sm-2 control-label">添加新的订单类型</label>
+            <label class="col-sm-2 control-label">添加类型</label>
             <div class="col-sm-10">
                 <input id="orderType" class="form-control" type="text">
             </div>
         </div>
     </form>
-    <button id="addNew" class="btn btn-primary" style="padding: 1% 10%;">添加</button>
+    <div align="center">
+    <button id="addNew" class="btn btn-primary">添加</button>
     <br>
     <div id="message"></div>
+    </div>
 </div>
 </body>
 </html>

@@ -21,8 +21,10 @@ $(document).ready(function () {
                 );
                 if(data === "0"){
                     addTab("/order/addOrderType", "添加订单类型");
-                    addTab("/order/addOrderType", "采购商管理");
-                    addTab("/order/addOrderType", "供应商管理");
+                    addTab("/order/allOrder", "订单管理");
+                    addTab("/order/allContract", "合同管理");
+                    addTab("/account/purchaser", "采购商管理");
+                    addTab("/order/provider", "供应商管理");
                 }
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");

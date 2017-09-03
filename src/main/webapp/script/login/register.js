@@ -25,6 +25,18 @@ $(document).ready(function () {
         $("div.alert-content").each(function (i, item) {
             provide_type += $(item).attr("my-attr") + ",";
         });
+        if(provide_type === ""){
+            $("#message").html(
+                "<div class=\"alert alert-info alert-dismissable\">\n" +
+                "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
+                "aria-hidden=\"true\">\n" +
+                "    &times;\n" +
+                "   </button>\n" +
+                "请选择类型" +
+                "</div>"
+            );
+            return;
+        }
         map["provide_type"] = provide_type;
 
         $.ajax({
