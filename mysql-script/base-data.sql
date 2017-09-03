@@ -1,6 +1,8 @@
 USE purchase;
 
 INSERT INTO users(mobile_no, pwd, user_type) VALUES(99980001, 'c4ca4238a0b923820dcc509a6f75849b', 0);
+INSERT INTO users(mobile_no, pwd, user_type) VALUES(1, 'c4ca4238a0b923820dcc509a6f75849b', 1);
+INSERT INTO users(mobile_no, pwd, user_type) VALUES(1, 'c4ca4238a0b923820dcc509a6f75849b', 2);
 
 INSERT INTO purchasers(mobile_no, prefer_type) VALUES('1', '3,');
 
