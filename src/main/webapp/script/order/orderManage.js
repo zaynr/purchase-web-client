@@ -7,7 +7,7 @@ $(document).ready(function () {
             return;
         }
         var param = {'orderType' : $("#orderType").val()};
-        param["typeUnit"] = $("#").val();
+        param["typeUnit"] = $("#unitType").val();
         $.ajax({
             type: "POST",
             url: "/order/addOrderType.do",

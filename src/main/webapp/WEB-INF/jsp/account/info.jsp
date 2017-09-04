@@ -31,16 +31,8 @@
         <br>
     </div>
 
-    <div class="container"style="padding: 1% 10%;">
+    <div class="container" style="padding: 1% 10%;">
         <div class="row">
-            <div class="col-md-4">
-                <div id="provideType">
-
-                </div>
-            </div>
-            <div class="col-md-4">
-
-            </div>
             <div class="col-md-4">
                 <h1>密码</h1>
                 <br>
@@ -59,13 +51,24 @@
                     <input type="password" id="rptPwd" class="form-control">
                 </div>
             </div>
+            <div class="col-md-4">
+                <div id="address">
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="provideType">
+
+                </div>
+            </div>
         </div>
+        <br>
+        <div id="message"></div>
         <br>
         <div align="center">
             <button id="commitChange" class="btn btn-primary">提交更改</button>
         </div>
         <br>
-        <div id="message"></div>
     </div>
 
 </body>

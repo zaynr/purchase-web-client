@@ -3,38 +3,46 @@ package me.zengzy.dict;
 public class Status {
 
     public static class Order {
-        public static final int UN_REC = 0;
-        public static final int OFFERED_PRICE = 1;
-        public static final int UN_OFFERED_SAMPLE = 2;
-        public static final int OFFERED_SAMPLE = 3;
-        public static final int SIGNED = 4;
-        public static final int DONE = 5;
-        public static final int CANCEL = 6;
+        public static final int UN_REC = 0;//待报价
+        public static final int OFFERED_PRICE = 1;//已报价
+        public static final int REQUIRE_SAMPLE = 2;//待提供样品
+        public static final int OFFERED_SAMPLE = 3;//已寄送样品
+        public static final int CONFIRM_SAMPLE = 4;//已确认样品
+        public static final int SIGNED = 5;//已签合同
+        public static final int UN_SIGNED = 6;//未被采纳
+        public static final int DONE = 7;//已完成
+        public static final int CANCEL = 8;//撤销
     }
 
     public static String orderTranslate(int status){
         String res = "undefined";
         switch(status){
             case Order.UN_REC:
-                res = "待接";
+                res = "待报价";
                 break;
             case Order.OFFERED_PRICE:
                 res = "已报价";
                 break;
-            case Order.UN_OFFERED_SAMPLE:
+            case Order.REQUIRE_SAMPLE:
                 res = "待提供样品";
                 break;
             case Order.OFFERED_SAMPLE:
-                res = "已提供样品";
+                res = "已寄送样品";
                 break;
             case Order.SIGNED:
-                res = "已签";
+                res = "已签合同";
                 break;
             case Order.DONE:
                 res = "已完成";
                 break;
             case Order.CANCEL:
                 res = "撤销";
+                break;
+            case Order.CONFIRM_SAMPLE:
+                res = "已确认样品";
+                break;
+            case Order.UN_SIGNED:
+                res = "未被采纳";
                 break;
         }
         return res;

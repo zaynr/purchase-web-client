@@ -50,6 +50,7 @@ CREATE TABLE pro_orders(
 	pur_serial_no int,
   order_status int,
   offer_price double,
+  express_no nvarchar(255),
   provider_name nvarchar(63)
 );
 #联系人

@@ -15,6 +15,9 @@
 </head>
 <body>
 <div class="container"style="padding: 1% 10%;">
+    <br>
+    <div id="message"></div>
+    <br>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>

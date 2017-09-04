@@ -12,31 +12,23 @@ $(document).ready(function () {
             $("#userName").val(data.userName);
             oldPwd = data.pwd;
             if(data.userType === "供应商"){
-                $("#provideType").html("<h1>供应类型：</h1>");
+                $("#provideType").html("<h1>供应类型</h1><br>");
                 $.each(data.provideType, function (i, item) {
-                    $("#provideType").append(
-                        "<div class='alert alert-success' my-attr='" +
-                        item.type_no + "'>\n" +
-                        item.type_content +
-                        "</div>"
-                    );
+                    addType(item);
                 });
             }
             else if(data.userType === "采购商"){
-                $("#provideType").html("<h1>偏好类型：</h1>");
+                $("#provideType").html("<h1>偏好类型</h1><br>");
                 $.each(data.provideType, function (i, item) {
                     if(i < 5) {
-                        $("#provideType").append(
-                            "<div class='alert alert-success' my-attr='" +
-                            item.type_no + "'>\n" +
-                            item.type_content +
-                            "</div>"
-                        );
+                        addType(item);
                     }
                 });
+                $("#address").html("<h1>地址</h1><br><div class=\"input-group\"><span class=\"input-group\">样品寄送地址：</span><input id=\"sendAddress\" class=\"form-control\"></div>");
+                $("#sendAddress").val(data.address);
             }
             else{
-                $("#provideType").html("<h1>管理账号：</h1>");
+                $("#provideType").html("<h1>管理账号</h1>");
                 $("#provideType").append(
                     "<h3><a href='/account/purchaser'>采购商管理</a></h3>" +
                     "<h3><a href='/account/provider'>供应商管理</a></h3>"
@@ -68,6 +60,7 @@ $(document).ready(function () {
         }
         map["userName"] = $("#userName").val();
         map["mobileNo"] = $("#mobileNo").val();
+        map["address"] = $("#sendAddress").val();
         $.ajax({
             type: "POST",
             url: "/account/updateInfo.do",
@@ -88,4 +81,13 @@ $(document).ready(function () {
             }
         });
     });
+
+    function addType(item){
+        $("#provideType").append(
+            "<div class='alert alert-success' my-attr='" +
+            item.type_no + "'>\n" +
+            item.type_content +
+            "</div>"
+        );
+    }
 });

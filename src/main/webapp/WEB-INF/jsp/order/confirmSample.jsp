@@ -14,16 +14,28 @@
     <title>查看样品</title>
 </head>
 <body>
+
 <div class="container"style="padding: 1% 10%;">
-    <div align="center" style="padding: 1% 10%;">
-        <div class="btn-group" >
-            <br>
-            <button id="confirm" type="button" class="btn btn-primary btn-lg">确认订单</button>
-            <br>
-        </div>
-    </div>
     <br>
     <div id="message"></div>
+    <br>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover" >
+            <thead>
+            <tr>
+                <th>需求序列号</th>
+                <th>报价序列号</th>
+                <th>供应商报价</th>
+                <th>供应商手机号</th>
+                <th>快递单号</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="orderTableContent">
+
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>

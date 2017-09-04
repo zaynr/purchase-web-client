@@ -19,4 +19,10 @@ public interface ProOrderRepository extends CrudRepository<ProOrders, Long> {
 
     @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :no", nativeQuery = true)
     ArrayList<ProOrders> getByPurSerialNo(@Param("no") int pur_serial_no);
+
+    @Query(value = "SELECT * FROM pro_orders WHERE pro_serial_no = :no", nativeQuery = true)
+    ProOrders getByProSerialNo(@Param("no") int pro_serial_no);
+
+    @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :no AND provider_name = :provider_name", nativeQuery = true)
+    ProOrders getByPurSalNoAndName(@Param("no") int pro_serial_no, @Param("provider_name") String provider_name);
 }

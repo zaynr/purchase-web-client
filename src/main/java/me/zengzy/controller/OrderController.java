@@ -1,5 +1,6 @@
 package me.zengzy.controller;
 
+import me.zengzy.dto.ProOrderBean;
 import me.zengzy.dto.PurOrderBean;
 import me.zengzy.dict.Status;
 import me.zengzy.entity.OrderTypes;
@@ -34,15 +35,13 @@ public class OrderController {
     ProviderRepository providerRepository;
 
     @RequestMapping("/viewAllOffer")
-    public String getViewAllOfferView(@RequestParam Map<String, String> param, Map<String, String> map){
-        String purSerialNo = param.get("serialNo");
-        map.put("serialNo", purSerialNo);
+    public String getViewAllOfferView(){
         return "order/viewAllOffer";
     }
 
-    @RequestMapping("/viewSample")
-    public String getViewSampleView(){
-        return "order/viewSample";
+    @RequestMapping("/confirmSample")
+    public String getConfirmSampleView(){
+        return "order/confirmSample";
     }
 
     @RequestMapping("/recOrder")
@@ -71,13 +70,44 @@ public class OrderController {
         }
     }
 
+    @RequestMapping("querySentSample.do")
+    @ResponseBody
+    public ArrayList<ProOrderBean> querySentSample(HttpServletRequest request){
+        ArrayList<PurOrders> orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), Status.Order.REQUIRE_SAMPLE);
+        ArrayList<ProOrderBean> beans = new ArrayList<ProOrderBean>();
+        for(PurOrders a : orders){
+            beans.addAll(packProOrderBean(proOrderRepository.getByPurSerialNo(a.getPurSerialNo()), a));
+        }
+        return beans;
+    }
+
+    @RequestMapping("confirmSample.do")
+    @ResponseBody
+    public void confirmSample(@RequestParam() Map<String, String> orderInfo){
+        ProOrders proOrder = proOrderRepository.getByProSerialNo(Integer.parseInt(orderInfo.get("proSerialNo")));
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(Integer.parseInt(orderInfo.get("purSerialNo")));
+        proOrder.setOrder_status(Status.Order.CONFIRM_SAMPLE);
+        purOrder.setOrderStatus(Status.Order.CONFIRM_SAMPLE);
+        proOrderRepository.save(proOrder);
+        purOrderRepository.save(purOrder);
+    }
+
+    @RequestMapping("getAllOffer.do")
+    @ResponseBody
+    public ArrayList<ProOrderBean> getAllOffer(@RequestParam Map<String, String> param){
+        int purSerialNo = Integer.parseInt(param.get("serialNo"));
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(purSerialNo);
+        ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(purSerialNo);
+        return packProOrderBean(proOrders, purOrder);
+    }
+
     @RequestMapping("/showPurOrders.do")
     @ResponseBody
     public ArrayList<PurOrderBean> getPurOrders(@RequestParam Map<String, String> param, HttpServletRequest request){
         ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(SessionUtil.getMobileNo(request));
         if(param.get("queryType").equals("his")){
             for(int i = 0; i < orders.size(); i++){
-                if(orders.get(i).getOrderStatus() != 5 && orders.get(i).getOrderStatus() != 6){
+                if(orders.get(i).getOrderStatus() != Status.Order.DONE && orders.get(i).getOrderStatus() != Status.Order.CANCEL){
                     orders.remove(i);
                     i--;
                 }
@@ -85,13 +115,13 @@ public class OrderController {
         }
         else{
             for(int i = 0; i < orders.size(); i++){
-                if(orders.get(i).getOrderStatus() == 5 || orders.get(i).getOrderStatus() == 6){
+                if(orders.get(i).getOrderStatus() == Status.Order.DONE || orders.get(i).getOrderStatus() == Status.Order.CANCEL){
                     orders.remove(i);
                     i--;
                 }
             }
         }
-        return packPurOrderBean(orders);
+        return packPurOrderBean(orders, request);
     }
 
     @RequestMapping("/addOrderType.do")
@@ -110,25 +140,30 @@ public class OrderController {
         return typeRepository.getAllTypes();
     }
 
-    @RequestMapping("/showUnRecOrder.do")
+    @RequestMapping("/showSpicStatusPurOrder.do")
     @ResponseBody
     public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
-        ArrayList<PurOrders> orders;
+        ArrayList<PurOrders> orders = null;
         Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
         List<String> types = Arrays.asList(provider.getProvide_type().split(","));
         if(param.get("queryType").equals("unOffer")) {
-            orders = purOrderRepository.getPurOrderByStatus(0);
+            orders = purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC);
         }
-        else {
-            orders = purOrderRepository.getPurOrderByStatus(1);
+        else if(param.get("queryType").equals("sendSample")){
+            orders = purOrderRepository.getPurOrderByStatus(Status.Order.REQUIRE_SAMPLE);
         }
-        for(int i = 0; i < orders.size(); i++){
-            if(!types.contains(String.valueOf(orders.get(i).getTypeNo()))){
-                orders.remove(i);
-                i--;
+        else if(param.get("queryType").equals("offered")){
+            orders = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
+        }
+        if(orders != null) {
+            for (int i = 0; i < orders.size(); i++) {
+                if (!types.contains(String.valueOf(orders.get(i).getTypeNo()))) {
+                    orders.remove(i);
+                    i--;
+                }
             }
         }
-        return packPurOrderBean(orders);
+        return packPurOrderBean(orders, request);
     }
 
     @RequestMapping("/updatePurOrderStatus.do")
@@ -165,6 +200,18 @@ public class OrderController {
         return "success";
     }
 
+    @RequestMapping("/requestSample.do")
+    @ResponseBody
+    public String requestSample(@RequestParam() Map<String, String> orderInfo){
+        ProOrders proOrder = proOrderRepository.getByProSerialNo(Integer.parseInt(orderInfo.get("proSerialNo")));
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(Integer.parseInt(orderInfo.get("purSerialNo")));
+        proOrder.setOrder_status(Status.Order.REQUIRE_SAMPLE);
+        purOrder.setOrderStatus(Status.Order.REQUIRE_SAMPLE);
+        proOrderRepository.save(proOrder);
+        purOrderRepository.save(purOrder);
+        return "success";
+    }
+
     @RequestMapping("/placeOrder.do")
     @ResponseBody
     public String placeOrder(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
@@ -178,11 +225,32 @@ public class OrderController {
         return "success";
     }
 
-    private ArrayList<PurOrderBean> packPurOrderBean(ArrayList<PurOrders> orders){
+    private ArrayList<ProOrderBean> packProOrderBean(ArrayList<ProOrders> proOrders, PurOrders purOrder){
+        ArrayList<ProOrderBean> beans = new ArrayList<ProOrderBean>();
+        OrderTypes type = typeRepository.getTypeByNo(purOrder.getTypeNo());
+        for(ProOrders order : proOrders){
+            ProOrderBean bean = new ProOrderBean();
+            bean.setProSerialNo(order.getPro_serial_no());
+            bean.setOfferPrice("￥" + order.getOffer_price() + "元");
+            bean.setProviderMobileNo(order.getProvider_name());
+            bean.setPurSerialNo(purOrder.getPurSerialNo());
+            bean.setOrderAmount(purOrder.getOrder_amount() + type.getType_unit());
+            bean.setOrderType(type.getType_content());
+            bean.setOrderTypeNo(type.getType_no());
+            bean.setOrderStatus(Status.orderTranslate(order.getOrder_status()));
+            if(order.getExpress_no() != null){
+                bean.setExpressNo(order.getExpress_no());
+            }
+
+            beans.add(bean);
+        }
+        return beans;
+    }
+
+    private ArrayList<PurOrderBean> packPurOrderBean(ArrayList<PurOrders> orders, HttpServletRequest request){
         ArrayList<PurOrderBean> beans = new ArrayList<PurOrderBean>();
         for(PurOrders a : orders){
             OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
-            ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
             PurOrderBean bean = new PurOrderBean();
             bean.setTypeContent(type.getType_content());
             //todo：添加字典表
@@ -190,7 +258,9 @@ public class OrderController {
             bean.setPurchaserName(a.getPurchaserName());
             bean.setPurSerialNo(a.getPurSerialNo());
             bean.setOrderStatusNo(a.getOrderStatus());
+            ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
             bean.setProviderName(proOrders.size() + "人次");
+            bean.setOfferedPrice("￥" + proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), SessionUtil.getMobileNo(request)).getOffer_price() + "元");
             bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
             bean.setExpectPrice("￥" + a.getExpect_price() + "元");
 

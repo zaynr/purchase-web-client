@@ -1,5 +1,6 @@
-$(document).ready(function () {
+var map = {};
 
+$(document).ready(function () {
     $.ajax({
         type: "POST",
         url: "/check-auth.do",
@@ -27,21 +28,59 @@ $(document).ready(function () {
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
                     addTab("/order/showPurOrders", "查看订单");
-                    addTab("/order/addOrderType", "查看合同");
+                    addTabWithBadge("/order/confirmSample", "接收样品", "confirmSample");
                     addTab("/order/addOrderType", "查看联系人");
+
+                    map["queryType"] = "confirmSample";
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/querySentSample.do",
+                        data: map,
+                        success: function (data) {
+                            if(data.length === 0){
+                                $("#confirmSample").text("");
+                            }
+                            else{
+                                $("#confirmSample").text(data.length);
+                            }
+                        }
+                    });
                 }
                 else if(data === "2"){
-                    $("#navTabs").append(
-                        "<li><a href=\"" +
-                        "/order/recOrder" +
-                        "\">" +
-                        "等待报价" +
-                        "<span id='unOffer' class='badge'></span></a></li>"
-                    );
-
+                    addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
+                    addTabWithBadge("/order/sendSample", "寄送样品", "sendSample");
                     addTab("/order/addOrderType", "查看订单");
-                    addTab("/order/addOrderType", "查看合同");
                     addTab("/order/addOrderType", "查看联系人");
+
+                    map["queryType"] = "unOffer";
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/showSpicStatusPurOrder.do",
+                        data: map,
+                        success: function (data) {
+                            if(data.length === 0){
+                                $("#unOffer").text("");
+                            }
+                            else{
+                                $("#unOffer").text(data.length);
+                            }
+                        }
+                    });
+
+                    map["queryType"] = "sendSample";
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/showSpicStatusPurOrder.do",
+                        data: map,
+                        success: function (data) {
+                            if(data.length === 0){
+                                $("#sendSample").text("");
+                            }
+                            else{
+                                $("#sendSample").text(data.length);
+                            }
+                        }
+                    });
                 }
             }
 
@@ -61,21 +100,6 @@ $(document).ready(function () {
                 }
             });
 
-            var map = {};
-            map["queryType"] = "unOffer";
-            $.ajax({
-                type: "POST",
-                url: "/order/showUnRecOrder.do",
-                data: map,
-                success: function (data) {
-                    if(data.length === 0){
-                        $("#unOffer").text("");
-                    }
-                    else{
-                        $("#unOffer").text(data.length);
-                    }
-                }
-            });
         }
     });
 
@@ -86,6 +110,18 @@ $(document).ready(function () {
             "\">" +
             content +
             "</a></li>"
+        );
+    }
+
+    function addTabWithBadge(href, content, badgeId) {
+        $("#navTabs").append(
+            "<li><a href=\"" +
+            href +
+            "\">" +
+            content +
+            "<span id='" +
+            badgeId +
+            "' class='badge'></span></a></li>"
         );
     }
 });

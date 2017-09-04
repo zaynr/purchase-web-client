@@ -12,6 +12,15 @@ public class ProOrders {
     private String provider_name;
     private int order_status, pur_serial_no;
     private double offer_price;
+    private String express_no;
+
+    public String getExpress_no() {
+        return express_no;
+    }
+
+    public void setExpress_no(String express_no) {
+        this.express_no = express_no;
+    }
 
     public double getOffer_price() {
         return offer_price;

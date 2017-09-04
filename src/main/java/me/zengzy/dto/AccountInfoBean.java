@@ -5,8 +5,16 @@ import me.zengzy.entity.OrderTypes;
 import java.util.ArrayList;
 
 public class AccountInfoBean {
-    private String userName, mobileNo, pwd, userType;
+    private String userName, mobileNo, pwd, userType, address;
     private ArrayList<OrderTypes> provideType;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public ArrayList<OrderTypes> getProvideType() {
         return provideType;

@@ -10,6 +10,15 @@ public class PurOrderBean {
     private String typeContent;
     private String orderAmount;
     private String expectPrice;
+    private String offeredPrice;
+
+    public String getOfferedPrice() {
+        return offeredPrice;
+    }
+
+    public void setOfferedPrice(String offeredPrice) {
+        this.offeredPrice = offeredPrice;
+    }
 
     public String getOrderAmount() {
         return orderAmount;

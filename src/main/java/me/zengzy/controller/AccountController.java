@@ -46,13 +46,14 @@ public class AccountController {
         bean.setPwd(SessionUtil.getUserPwd(request));
         bean.setUserType(Type.UserTranslate(SessionUtil.getUserType(request)));
         String[] temp = {};
-        if(SessionUtil.getUserType(request) == 2){
-            Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
-            temp = provider.getProvide_type().split(",");
-        }
-        else if(SessionUtil.getUserType(request) == 1){
+        if(SessionUtil.getUserType(request) == 1){
             Purchasers purchaser = purchasersRepository.getPurchaserByMobileNo(SessionUtil.getMobileNo(request));
             temp = purchaser.getPrefer_type().split(",");
+            bean.setAddress(purchaser.getAddress());
+        }
+        else if(SessionUtil.getUserType(request) == 2){
+            Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
+            temp = provider.getProvide_type().split(",");
         }
         ArrayList<OrderTypes> orderTypes = new ArrayList<OrderTypes>();
         for(String a : temp){
@@ -80,6 +81,7 @@ public class AccountController {
         if(SessionUtil.getUserType(request) == 1){
             purchasersRepository.delete(purchaser);
             purchaser.setMobile_no(param.get("mobileNo"));
+            purchaser.setAddress(param.get("address"));
             purchasersRepository.save(purchaser);
         }
         else if(SessionUtil.getUserType(request) == 2){

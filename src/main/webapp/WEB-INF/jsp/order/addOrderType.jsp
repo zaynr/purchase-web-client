@@ -26,7 +26,7 @@
         <br>
         <div class="input-group">
             <span class="input-group-addon">类型单位</span>
-            <input type="number" id="orderAmount" class="form-control" placeholder="吨，台，等单位名称">
+            <input id="unitType" class="form-control" placeholder="吨，台，等单位名称">
         </div>
         <br>
     </form>

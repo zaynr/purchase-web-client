@@ -21,6 +21,9 @@ public interface PurOrderRepository extends CrudRepository<PurOrders, Long> {
     @Query(value = "SELECT * FROM pur_orders WHERE order_status = :status", nativeQuery = true)
     ArrayList<PurOrders> getPurOrderByStatus(@Param("status") int status);
 
+    @Query(value = "SELECT * FROM pur_orders WHERE purchaser_name = :purchaser_name AND order_status = :status", nativeQuery = true)
+    ArrayList<PurOrders> getPurOrderByNameAndStatus(@Param("purchaser_name") String name, @Param("status") int status);
+
     @Query(value = "SELECT * FROM pur_orders WHERE FIND_IN_SET(order_type, :provide_type)", nativeQuery = true)
     PurOrders getPurOrderByType(@Param("provide_type") int provide_type);
 
