@@ -265,6 +265,9 @@ public class OrderController {
             if(order != null) {
                 bean.setOfferedPrice("￥" + order.getOffer_price() + "元");
             }
+            else{
+                bean.setOfferedPrice("未报价");
+            }
             bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
             bean.setExpectPrice("￥" + a.getExpect_price() + "元");
 
