@@ -26,7 +26,8 @@ CREATE TABLE providers(
 #采购商
 CREATE TABLE purchasers(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  prefer_type varchar(255)
+  address nvarchar(255),
+  prefer_type nvarchar(255)
 );
 #订单类型
 CREATE TABLE order_types(

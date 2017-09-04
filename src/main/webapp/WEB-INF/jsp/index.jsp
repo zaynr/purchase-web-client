@@ -19,20 +19,14 @@
                 <div class="col-md-4">
                     <h2>可提供报价</h2>
                     <p>订单详情：</p>
-                    <div>
-                        <a href="#">订单条数 <span class="badge">42</span></a>
-                    </div>
                 </div>
                 <div class="col-md-4">
                     <h2>未提供样品</h2>
                     <p>订单详情：</p>
-                    <div>
-                        <a href="#">订单条数 <span class="badge">42</span></a>
-                    </div>
                 </div>
                 <div class="col-md-4">
                     <h2>已签订的合同</h2>
-                    <p>在这里可以看到订单信息 </p>
+                    <p>合同</p>
                     <div>
                         <a class="btn btn-default" href="#" role="button">查看详情 &raquo;</a>
                     </div>

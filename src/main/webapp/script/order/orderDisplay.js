@@ -183,7 +183,7 @@ $(document).ready(function () {
         if(window.location.pathname === "/order/showPurOrders") {
             queryPurOrder(map);
         }
-        else if(window.location.pathname === "/order/showPurOrders"){
+        else if(window.location.pathname === "/order/recOrder"){
             queryUnOfferOrder(map);
         }
     }

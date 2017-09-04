@@ -31,7 +31,14 @@ $(document).ready(function () {
                     addTab("/order/addOrderType", "查看联系人");
                 }
                 else if(data === "2"){
-                    addTab("/order/recOrder", "等待报价");
+                    $("#navTabs").append(
+                        "<li><a href=\"" +
+                        "/order/recOrder" +
+                        "\">" +
+                        "等待报价" +
+                        "<span id='unOffer' class='badge'></span></a></li>"
+                    );
+
                     addTab("/order/addOrderType", "查看订单");
                     addTab("/order/addOrderType", "查看合同");
                     addTab("/order/addOrderType", "查看联系人");
@@ -53,16 +60,32 @@ $(document).ready(function () {
                     $(this).addClass("active");
                 }
             });
+
+            var map = {};
+            map["queryType"] = "unOffer";
+            $.ajax({
+                type: "POST",
+                url: "/order/showUnRecOrder.do",
+                data: map,
+                success: function (data) {
+                    if(data.length === 0){
+                        $("#unOffer").text("");
+                    }
+                    else{
+                        $("#unOffer").text(data.length);
+                    }
+                }
+            });
         }
     });
 
     function addTab(href, content) {
         $("#navTabs").append(
-            "<li><a href=\""
-            + href
-            + "\">"
-            + content
-            + "</a></li>"
+            "<li><a href=\"" +
+            href +
+            "\">" +
+            content +
+            "</a></li>"
         );
     }
 });

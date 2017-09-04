@@ -4,9 +4,11 @@ import me.zengzy.dto.PurOrderBean;
 import me.zengzy.dict.Status;
 import me.zengzy.entity.OrderTypes;
 import me.zengzy.entity.ProOrders;
+import me.zengzy.entity.Providers;
 import me.zengzy.entity.PurOrders;
 import me.zengzy.repo.OrderTypeRepository;
 import me.zengzy.repo.ProOrderRepository;
+import me.zengzy.repo.ProviderRepository;
 import me.zengzy.repo.PurOrderRepository;
 import me.zengzy.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 @RequestMapping("/order")
 @Controller
@@ -30,6 +30,8 @@ public class OrderController {
     OrderTypeRepository typeRepository;
     @Autowired
     ProOrderRepository proOrderRepository;
+    @Autowired
+    ProviderRepository providerRepository;
 
     @RequestMapping("/viewAllOffer")
     public String getViewAllOfferView(@RequestParam Map<String, String> param, Map<String, String> map){
@@ -110,13 +112,21 @@ public class OrderController {
 
     @RequestMapping("/showUnRecOrder.do")
     @ResponseBody
-    public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param){
+    public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
         ArrayList<PurOrders> orders;
+        Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
+        List<String> types = Arrays.asList(provider.getProvide_type().split(","));
         if(param.get("queryType").equals("unOffer")) {
             orders = purOrderRepository.getPurOrderByStatus(0);
         }
         else {
             orders = purOrderRepository.getPurOrderByStatus(1);
+        }
+        for(int i = 0; i < orders.size(); i++){
+            if(!types.contains(String.valueOf(orders.get(i).getTypeNo()))){
+                orders.remove(i);
+                i--;
+            }
         }
         return packPurOrderBean(orders);
     }
