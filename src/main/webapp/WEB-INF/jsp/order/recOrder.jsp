@@ -14,8 +14,16 @@
     <script src="../../../script/order/orderDisplay.js"></script>
 </head>
 <body>
-<div class="table-responsive">
-    <div class="container"style="padding: 1% 10%;">
+<div class="container"style="padding: 1% 10%;">
+    <div align="center">
+        <br>
+        <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a id="unOffer">未报价订单</a></li>
+            <li role="presentation"><a id="offered">已报价订单</a></li>
+        </ul>
+        <br>
+    </div>
+    <div class="table-responsive">
         <table class="table table-bordered table-hover table-responsive" >
             <thead>
             <tr>
@@ -29,7 +37,7 @@
                 <th>操作</th>
             </tr>
             </thead>
-            <tbody id="purTableContent">
+            <tbody id="orderTableContent">
 
             </tbody>
         </table>

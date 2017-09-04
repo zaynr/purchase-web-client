@@ -2,48 +2,47 @@
  * Created by zengzy19585 on 2017/9/1.
  */
 $(document).ready(function () {
-    if(window.location.pathname === "/order/showPurOrders") {
+    var map = {};
+
+    function queryPurOrder(map) {
         $.ajax({
             type: "POST",
             url: "/order/showPurOrders.do",
+            data: map,
             success: function (data) {
                 $.each(data, function (i, item) {
-                    $("#purTableContent").append(
-                        "<tr>\n" +
-                        "<td>" +
-                        item.purSerialNo +
-                        "</td>" +
-                        "<td>" +
-                        item.expectPrice +
-                        "</td>" +
-                        "<td>" +
-                        item.orderAmount +
-                        "</td>" +
-                        "<td>" +
-                        item.purchaserName +
-                        "</td>" +
-                        "<td>" +
-                        item.providerName +
-                        "</td>" +
-                        "<td>" +
-                        item.typeContent +
-                        "</td>" +
-                        "<td>" +
-                        item.orderStatus +
-                        "</td>" +
-                        "<td><button my-attr='op' id=\"cancelOrder\" type=\"button\" class=\"btn btn-danger\">取消订单</button></td>" +
+                    $("#orderTableContent").append(
+                        "<tr>" +
+                        tableItemWrap(item.purSerialNo) +
+                        tableItemWrap(item.expectPrice) +
+                        tableItemWrap(item.orderAmount) +
+                        tableItemWrap(item.purchaserName) +
+                        tableItemWrap(item.providerName) +
+                        tableItemWrap(item.typeContent) +
+                        tableItemWrap(item.orderStatus) +
+                        tableItemWrap("<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消订单</button>") +
                         "</tr>"
                     );
                 });
                 $("button.btn").each(function (i, item) {
-                    if($(item).parent().prevAll().first().html() === "撤销"){
+                    if($(item).parent().prevAll().first().html() === "撤销" || $(item).parent().prevAll().first().html() === "已完成"){
                         $(item).removeClass("btn-danger");
                         $(item).text("查看详情");
                     }
-                    if($(item).parent().prevAll().first().html() === "已报价"){
+                    else if($(item).parent().prevAll().first().html() === "已报价"){
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-info");
                         $(item).text("查看报价");
+                    }
+                    else if($(item).parent().prevAll().first().html() === "已提供样品"){
+                        $(item).removeClass("btn-danger");
+                        $(item).addClass("btn-info");
+                        $(item).text("查看样品");
+                    }
+                    else if($(item).parent().prevAll().first().html() === "已签"){
+                        $(item).removeClass("btn-danger");
+                        $(item).addClass("btn-success");
+                        $(item).text("查看合同");
                     }
                     if($(item).attr("my-attr") !== "op"){
                         return;
@@ -55,7 +54,7 @@ $(document).ready(function () {
                             var hint = "是否取消需求";
                         }
                         else if($(item).text() === "查看报价"){
-                            window.location.href="/order/viewAllOffer";
+                            window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"];
                             return;
                         }
                         else{
@@ -81,37 +80,23 @@ $(document).ready(function () {
             }
         });
     }
-
-    if(window.location.pathname === "/order/recOrder") {
+    function queryUnOfferOrder(map) {
         $.ajax({
             type: "POST",
             url: "/order/showUnRecOrder.do",
+            data: map,
             success: function (data) {
                 $.each(data, function (i, item) {
-                    $("#purTableContent").append(
-                        "<tr>\n" +
-                        "<td>" +
-                        item.purSerialNo +
-                        "</td>" +
-                        "<td>" +
-                        item.expectPrice +
-                        "</td>" +
-                        "<td>" +
-                        item.orderAmount +
-                        "</td>" +
-                        "<td>" +
-                        item.purchaserName +
-                        "</td>" +
-                        "<td>" +
-                        item.providerName +
-                        "</td>" +
-                        "<td>" +
-                        item.typeContent +
-                        "</td>" +
-                        "<td>" +
-                        item.orderStatus +
-                        "</td>" +
-                        "<td><button id=\"cancelOrder\" type=\"button\" class=\"btn btn-success\">提供报价</button></td>" +
+                    $("#orderTableContent").append(
+                        "<tr>" +
+                        tableItemWrap(item.purSerialNo) +
+                        tableItemWrap(item.expectPrice) +
+                        tableItemWrap(item.orderAmount) +
+                        tableItemWrap(item.purchaserName) +
+                        tableItemWrap(item.providerName) +
+                        tableItemWrap(item.typeContent) +
+                        tableItemWrap(item.orderStatus) +
+                        tableItemWrap("<button type=\"button\" class=\"btn btn-success\">提供报价</button>") +
                         "</tr>"
                     );
                 });
@@ -161,4 +146,65 @@ $(document).ready(function () {
             }
         });
     }
+    function queryOfferOrder(map){
+        $.ajax({
+            type: "POST",
+            url: "/order/showAllOffer.do",
+            data: map,
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    $("#orderTableContent").append(
+                        "<tr>" +
+                        tableItemWrap(item.orderStatus) +
+                        tableItemWrap("<button type=\"button\" class=\"btn btn-info\">索取样品</button>") +
+                        "</tr>"
+                    );
+                });
+                $("button.btn-info").each(function (i, item) {
+                    if($(item).parent().parent().prevAll().first().html() === "已提供样品"){
+                        $(item).text("查看样品");
+                    }
+                    $(item).on("click", function () {
+                        var postUrl;
+                        if($(item).text() === "索取样品"){
+                            postUrl = "/order/requestSample.do"
+                        }
+                        else if($(item).text() === "查看样品"){
+                            window.location.href = "/order/viewSample"
+                        }
+                    });
+                });
+            }
+        });
+    }
+    function queryByType(item){
+        map["queryType"] = $(item).children().attr("id");
+        $("#orderTableContent").html("");
+        if(window.location.pathname === "/order/showPurOrders") {
+            queryPurOrder(map);
+        }
+        else if(window.location.pathname === "/order/showPurOrders"){
+            queryUnOfferOrder(map);
+        }
+    }
+
+    $("li").each(function (i, item) {
+        $(item).click(function () {
+            $("li").each(function (i, item) {
+                $(item).removeClass("active");
+            });
+            $(item).addClass("active");
+            queryByType(item);
+        });
+        if($(item).attr("class") === "active"){
+            queryByType(item);
+        }
+    });
+
 });
+
+function tableItemWrap(content){
+    var item = "<td>" + content + "</td>";
+    return item;
+}
+

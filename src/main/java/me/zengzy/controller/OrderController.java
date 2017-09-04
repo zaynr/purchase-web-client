@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 @RequestMapping("/order")
@@ -29,6 +30,18 @@ public class OrderController {
     OrderTypeRepository typeRepository;
     @Autowired
     ProOrderRepository proOrderRepository;
+
+    @RequestMapping("/viewAllOffer")
+    public String getViewAllOfferView(@RequestParam Map<String, String> param, Map<String, String> map){
+        String purSerialNo = param.get("serialNo");
+        map.put("serialNo", purSerialNo);
+        return "order/viewAllOffer";
+    }
+
+    @RequestMapping("/viewSample")
+    public String getViewSampleView(){
+        return "order/viewSample";
+    }
 
     @RequestMapping("/recOrder")
     public String getRecOrderView(){
@@ -58,8 +71,24 @@ public class OrderController {
 
     @RequestMapping("/showPurOrders.do")
     @ResponseBody
-    public ArrayList<PurOrderBean> getPurOrders(HttpServletRequest request){
+    public ArrayList<PurOrderBean> getPurOrders(@RequestParam Map<String, String> param, HttpServletRequest request){
         ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(SessionUtil.getMobileNo(request));
+        if(param.get("queryType").equals("his")){
+            for(int i = 0; i < orders.size(); i++){
+                if(orders.get(i).getOrderStatus() != 5 && orders.get(i).getOrderStatus() != 6){
+                    orders.remove(i);
+                    i--;
+                }
+            }
+        }
+        else{
+            for(int i = 0; i < orders.size(); i++){
+                if(orders.get(i).getOrderStatus() == 5 || orders.get(i).getOrderStatus() == 6){
+                    orders.remove(i);
+                    i--;
+                }
+            }
+        }
         return packPurOrderBean(orders);
     }
 
@@ -81,8 +110,14 @@ public class OrderController {
 
     @RequestMapping("/showUnRecOrder.do")
     @ResponseBody
-    public ArrayList<PurOrderBean> showUnRecOrder(){
-        ArrayList<PurOrders> orders = purOrderRepository.getAllUnRecOrder();
+    public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param){
+        ArrayList<PurOrders> orders;
+        if(param.get("queryType").equals("unOffer")) {
+            orders = purOrderRepository.getPurOrderByStatus(0);
+        }
+        else {
+            orders = purOrderRepository.getPurOrderByStatus(1);
+        }
         return packPurOrderBean(orders);
     }
 

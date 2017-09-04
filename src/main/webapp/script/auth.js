@@ -13,9 +13,7 @@ $(document).ready(function () {
                 $("#navbarButton").append(
                     "<a id=\"accountCenter\" class=\"btn btn-primary\"  href=\"/account/info\">"
                     + "账户中心"
-                    + "</a>"
-                    +
-                    "<button id=\"logout\" class=\"btn btn-danger\">"
+                    + "</a><button id=\"logout\" class=\"btn btn-danger\">"
                     + "注销"
                     + "</button>"
                 );
@@ -29,11 +27,13 @@ $(document).ready(function () {
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
                     addTab("/order/showPurOrders", "查看订单");
+                    addTab("/order/addOrderType", "查看合同");
                     addTab("/order/addOrderType", "查看联系人");
                 }
                 else if(data === "2"){
                     addTab("/order/recOrder", "等待报价");
                     addTab("/order/addOrderType", "查看订单");
+                    addTab("/order/addOrderType", "查看合同");
                     addTab("/order/addOrderType", "查看联系人");
                 }
             }

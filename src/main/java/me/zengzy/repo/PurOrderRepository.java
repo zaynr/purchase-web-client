@@ -14,11 +14,11 @@ import java.util.ArrayList;
 @Transactional
 public interface PurOrderRepository extends CrudRepository<PurOrders, Long> {
 
-    @Query(value = "SELECT * FROM pur_orders WHERE purchaser_name = :name", nativeQuery = true)
-    ArrayList<PurOrders> getOrderByName(@Param("name") String name);
+    @Query(value = "SELECT * FROM pur_orders WHERE purchaser_name = :purchaser_name", nativeQuery = true)
+    ArrayList<PurOrders> getOrderByName(@Param("purchaser_name") String name);
 
-    @Query(value = "SELECT * FROM pur_orders WHERE order_status = 0 OR order_status = 1", nativeQuery = true)
-    ArrayList<PurOrders> getAllUnRecOrder();
+    @Query(value = "SELECT * FROM pur_orders WHERE order_status = :status", nativeQuery = true)
+    ArrayList<PurOrders> getPurOrderByStatus(@Param("status") int status);
 
     @Query(value = "SELECT * FROM pur_orders WHERE pur_serial_no = :serial_no", nativeQuery = true)
     PurOrders getPurOrderBySerialNo(@Param("serial_no") int serial_no);

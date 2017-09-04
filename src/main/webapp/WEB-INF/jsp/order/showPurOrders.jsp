@@ -16,6 +16,14 @@
 <body>
 
 <div class="container"style="padding: 1% 10%;">
+    <div align="center">
+        <br>
+        <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a id="current">查看当前需求</a></li>
+            <li role="presentation"><a id="his">查看历史需求</a></li>
+        </ul>
+        <br>
+    </div>
     <div class="table-responsive">
     <table class="table table-bordered table-hover" >
         <thead>
@@ -30,7 +38,7 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody id="purTableContent">
+        <tbody id="orderTableContent">
 
         </tbody>
     </table>
