@@ -1,6 +1,12 @@
 package me.zengzy.controller;
 
-import me.zengzy.dto.Users;
+import me.zengzy.entity.OrderTypes;
+import me.zengzy.entity.Providers;
+import me.zengzy.entity.Purchasers;
+import me.zengzy.entity.Users;
+import me.zengzy.repo.OrderTypeRepository;
+import me.zengzy.repo.ProviderRepository;
+import me.zengzy.repo.PurchasersRepository;
 import me.zengzy.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,22 +14,60 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/login")
 public class LoginController {
     @Autowired
     UserRepository repository;
 
+    @Autowired
+    ProviderRepository providerRepository;
+
+    @Autowired
+    PurchasersRepository purchasersRepository;
+
+    @Autowired
+    OrderTypeRepository typeRepository;
+
+    @RequestMapping("/register")
+    public String getRegisterView(){
+        return "login/register";
+    }
+
+    @RequestMapping("/admin-login")
+    public String getAdminLoginView(){
+        return "login/adminLogin";
+    }
+
+    @RequestMapping("/user-login")
+    public String getUserLoginView(HttpServletRequest request){
+        if(String.valueOf(request.getSession().getAttribute("mobileNo")).equals("null")){
+            return "login/commonLogin";
+        }
+        else{
+            return "index";
+        }
+    }
+
     @RequestMapping("/login.do")
     @ResponseBody
-    public String userLogin(@RequestParam() Map<String, String> userInfo){
+    public String userLogin(@RequestParam Map<String, String> userInfo, HttpServletRequest request){
         String status;
-        Users user = repository.queryUserByMobileNo(userInfo.get("userInfo[mobile_no]"));
+        Users user = repository.queryUserByPriKey(userInfo.get("mobile_no"), Integer.parseInt(userInfo.get("user_type")));
         if(user != null){
-            if(user.getPwd().equals(userInfo.get("userInfo[password]")) && user.getUserType()==Integer.parseInt(userInfo.get("userInfo[user_type]"))){
+            if(user.getPwd().equals(userInfo.get("password"))){
                 status = "log_success";
+                HttpSession session = request.getSession();
+                session.setMaxInactiveInterval(30*60);
+//                session.setMaxInactiveInterval(10);
+                session.setAttribute("mobileNo", userInfo.get("mobile_no"));
+                session.setAttribute("userPwd", userInfo.get("password"));
+                session.setAttribute("userType", userInfo.get("user_type"));
             }
             else{
                 status = "pwd_wrong";
@@ -39,14 +83,36 @@ public class LoginController {
     @ResponseBody
     public String userRegister(@RequestParam() Map<String, String> userInfo){
         String status;
-        Users user = repository.queryUserByMobileNo(userInfo.get("userInfo[mobile_no]"));
-        if(user != null){
+        if(repository.queryUserByPriKey(userInfo.get("mobile_no"), Integer.parseInt(userInfo.get("user_type"))) != null){
             status = "already_exist";
         }
         else{
-            repository.createNewUser(userInfo.get("userInfo[mobile_no]"), userInfo.get("userInfo[password]"), Integer.parseInt(userInfo.get("userInfo[user_type]")));
+            Users user = new Users();
+            user.setMobileNo(userInfo.get("mobile_no"));
+            user.setUserType(Integer.parseInt(userInfo.get("user_type")));
+            user.setPwd(userInfo.get("password"));
+            repository.save(user);
+            if(userInfo.get("user_type").equals("1")){
+                Purchasers purchaser = new Purchasers();
+                purchaser.setMobile_no(userInfo.get("mobile_no"));
+                purchaser.setPrefer_type(userInfo.get("provide_type"));
+                purchasersRepository.save(purchaser);
+            }
+            else if(userInfo.get("user_type").equals("2")){
+                Providers provider = new Providers();
+                provider.setMobile_no(userInfo.get("mobile_no"));
+                provider.setProvide_type(userInfo.get("provide_type"));
+                providerRepository.save(provider);
+            }
             status = "reg_success";
         }
         return status;
+    }
+
+
+    @RequestMapping("/showOrderType.do")
+    @ResponseBody
+    public ArrayList<OrderTypes> showOrderTypes(){
+        return typeRepository.getAllTypes();
     }
 }

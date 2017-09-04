@@ -3,3 +3,19 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+.alert{
+  margin: auto;
+  max-width: 400px;
+}
+input {
+  margin: auto;
+  max-width: 400px;
+}
+button {
+  margin: auto;
+  max-width: 400px;
+}
+form {
+  margin: auto;
+  max-width: 400px;
+}

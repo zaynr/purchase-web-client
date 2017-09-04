@@ -20,12 +20,13 @@
 
 <script type="text/javascript" src="../../script/jquery-3.2.1.js"></script>
 <script type="text/javascript" src="../../script/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../script/auth.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -34,8 +35,11 @@
             <a class="navbar-brand" href="${pageContext.request.contextPath}/">简单交易 Simple Trade</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <div class="navbar-form navbar-right">
-                <a class="btn btn-default" href="${pageContext.request.contextPath}/order/get-order-view.do" role="button">下单 &raquo;</a>
+            <ul id="navTabs" class="nav navbar-nav">
+
+            </ul>
+            <div id="navbarButton" class="navbar-form navbar-right">
+
             </div>
         </div><!--/.navbar-collapse -->
     </div>

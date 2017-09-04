@@ -3,7 +3,7 @@ USE purchase;
 
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS providers;
-DROP TABLE IF EXISTS purchaser;
+DROP TABLE IF EXISTS purchasers;
 DROP TABLE IF EXISTS order_types;
 DROP TABLE IF EXISTS pur_orders;
 DROP TABLE IF EXISTS pro_orders;
@@ -12,39 +12,43 @@ DROP TABLE IF EXISTS contracts;
 
 #用户主表
 CREATE TABLE users(
-  mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  user_name nvarchar(63),
+  mobile_no nvarchar(12) NOT NULL,
+  user_type int NOT NULL,	# 0:管理员;1:采购商;2:供应商
   pwd varchar(255),
-  user_type int	# 0:管理员;1:采购商;2:供应商
+  user_name nvarchar(63),
+  PRIMARY KEY(mobile_no, user_type)
 );
 #供应商
 CREATE TABLE providers(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  user_name nvarchar(63),
   provide_type nvarchar(255)
 );
 #采购商
-CREATE TABLE purchaser(
+CREATE TABLE purchasers(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  user_name nvarchar(63)
+  prefer_type varchar(255)
 );
 #订单类型
 CREATE TABLE order_types(
-  type_no int NOT NULL PRIMARY KEY,
+  type_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  type_unit nvarchar(10),
   type_content nvarchar(255)
 );
 #采购订单表
 CREATE TABLE pur_orders(
   pur_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   purchaser_name nvarchar(63),
-  order_status int,	# 0:待接;1:已报价;2:已签;3:已完成
+  order_status int,
+  order_amount double,
+  expect_price double,
   type_no int
 );
 #供应报价表
 CREATE TABLE pro_orders(
   pro_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	pur_serial_no int,
-  order_status int,	# 0:待接;1:已报价;2:已签;3:已完成
+  order_status int,
+  offer_price double,
   provider_name nvarchar(63)
 );
 #联系人
