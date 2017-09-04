@@ -53,6 +53,9 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                     <button type="button" id="confirm" class="btn btn-primary">确认价格</button>
                 </div>
+                <br>
+                <div id="message"></div>
+                <br>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>

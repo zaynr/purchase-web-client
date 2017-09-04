@@ -38,11 +38,12 @@ $(document).ready(function () {
                 $("button.btn").each(function (i, item) {
                     if($(item).parent().prevAll().first().html() === "撤销"){
                         $(item).removeClass("btn-danger");
+                        $(item).text("查看详情");
                     }
                     if($(item).parent().prevAll().first().html() === "已报价"){
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-info");
-                        $(item).text("查看全部报价");
+                        $(item).text("查看报价");
                     }
                     if($(item).attr("my-attr") !== "op"){
                         return;
@@ -53,8 +54,11 @@ $(document).ready(function () {
                             var order_status = 6;
                             var hint = "是否取消需求";
                         }
-                        else if($(item).text() === "查看全部报价"){
+                        else if($(item).text() === "查看报价"){
                             window.location.href="/order/viewAllOffer";
+                            return;
+                        }
+                        else{
                             return;
                         }
                         param["order_status"] = order_status;
@@ -119,6 +123,9 @@ $(document).ready(function () {
                         var param = {"pur_serial_no": $(item).parent().prevAll().last().html()};
                         $("#recOrderDetail").modal();
                         $("#confirm").click(function () {
+                            if(!checkInputNull()){
+                                return;
+                            }
                             var postUrl;
                             if($(item).parent().prevAll().first().html() === "待接"){
                                 postUrl = "/order/placeProOrder.do";
