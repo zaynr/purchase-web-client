@@ -251,7 +251,9 @@ public class OrderController {
         ArrayList<PurOrderBean> beans = new ArrayList<PurOrderBean>();
         for(PurOrders a : orders){
             OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
+            ProOrders order = proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), SessionUtil.getMobileNo(request));
             PurOrderBean bean = new PurOrderBean();
+
             bean.setTypeContent(type.getType_content());
             //todo：添加字典表
             bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
@@ -260,7 +262,9 @@ public class OrderController {
             bean.setOrderStatusNo(a.getOrderStatus());
             ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
             bean.setProviderName(proOrders.size() + "人次");
-            bean.setOfferedPrice("￥" + proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), SessionUtil.getMobileNo(request)).getOffer_price() + "元");
+            if(order != null) {
+                bean.setOfferedPrice("￥" + order.getOffer_price() + "元");
+            }
             bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
             bean.setExpectPrice("￥" + a.getExpect_price() + "元");
 
