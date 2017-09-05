@@ -88,6 +88,7 @@ public class LoginController {
         }
         else{
             Users user = new Users();
+            user.setUserName(userInfo.get("user_name"));
             user.setMobileNo(userInfo.get("mobile_no"));
             user.setUserType(Integer.parseInt(userInfo.get("user_type")));
             user.setPwd(userInfo.get("password"));

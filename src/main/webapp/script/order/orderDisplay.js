@@ -4,6 +4,7 @@
 var map = {};
 
 $(document).ready(function () {
+    $("th").addClass("NoNewline");
 
     $("li").each(function (i, item) {
         $(item).click(function () {
@@ -26,10 +27,18 @@ $(document).ready(function () {
     if(window.location.pathname === "/order/confirmSample"){
         querySentSample();
     }
+
+    if(window.location.pathname === "/order/sendSample"){
+        queryRequiredSample();
+    }
+
+    if(window.location.pathname === "/order/viewProOrder"){
+        queryProOrder();
+    }
 });
 
 function tableItemWrap(content){
-    var item = "<td>" + content + "</td>";
+    var item = "<td class='NoNewline'>" + content + "</td>";
     return item;
 }
 
@@ -80,9 +89,10 @@ function queryPurOrder(map) {
                 }
                 $(item).on("click", function () {
                     var param = {"pur_serial_no" : $(this).parent().prevAll().last().html()};
+                    var hint;
                     if($(item).text() === "取消订单"){
                         var order_status = 8;
-                        var hint = "是否取消需求";
+                         hint = "是否取消需求";
                     }
                     else if($(item).text() === "查看报价"){
                         window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"];
@@ -143,7 +153,7 @@ function queryUnOfferOrder(map) {
                             return;
                         }
                         var postUrl;
-                        if($(item).parent().prevAll().first().html() === "待接"){
+                        if($(item).parent().prevAll().first().html() === "待报价"){
                             postUrl = "/order/placeProOrder.do";
                         }
                         else if($(item).parent().prevAll().first().html() === "已报价"){
@@ -192,25 +202,24 @@ function queryOfferOrder(map){
                     tableItemWrap(item.purSerialNo) +
                     tableItemWrap(item.orderAmount) +
                     tableItemWrap(item.orderType) +
+                    tableItemWrap(item.expressNo) +
                     tableItemWrap(item.orderStatus) +
-                    tableItemWrap("<button type=\"button\" class=\"btn btn-info\">索取样品</button>") +
+                    tableItemWrap("<button type=\"button\" class=\"btn btn-info\">索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button>") +
                     "</tr>"
                 );
             });
-            $("button.btn-info").each(function (i, item) {
-                if($(item).parent().prevAll().last().html() === "已寄送样品"){
+            $("button.btn").each(function (i, item) {
+                if($(item).parent().prevAll().first().html() === "已寄送样品" && $(item).text() === "索取样品"){
                     $(item).removeClass("btn-info");
-                    $(item).addClass("btn-success");
+                    $(item).addClass("btn-primary");
                     $(item).text("确认样品");
                 }
-                else if($(item).parent().prevAll().last().html() === "已确认样品"){
-                    $(item).removeClass("btn-info");
-                    $(item).addClass("btn-success");
-                    $(item).text("签订合同");
+                else if($(item).parent().prevAll().first().html() === "已确认样品" && $(item).text() === "索取样品"){
+                    $(item).remove();
                 }
                 $(item).on("click", function () {
                     map["proSerialNo"] = $(item).parent().prevAll().last().html();
-                    map["purSerialNo"] = $(item).parent().prevAll().eq(3).html();
+                    map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
                     if($(item).text() === "索取样品"){
                         $.ajax({
                             type: "POST",
@@ -231,7 +240,26 @@ function queryOfferOrder(map){
                         window.location.href = "/order/confirmSample"
                     }
                     else if($(item).text() === "签订合同"){
-                        window.location.href = "/order/signContract"
+                        $("#confirmContract").modal();
+                        $("#confirmDate").click(function () {
+                            if(!checkInputNull()){
+                                return;
+                            }
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/genContract.do",
+                                data: map,
+                                success: function () {
+                                    normalMessage("生成合同成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                },
+                                error: function () {
+                                    alert("生成合同失败");
+                                }
+                            });
+                        });
                     }
                 });
             });
@@ -251,11 +279,11 @@ function querySentSample(){
                     tableItemWrap(item.offerPrice) +
                     tableItemWrap(item.providerMobileNo) +
                     tableItemWrap(item.expressNo) +
-                    tableItemWrap("<button type=\"button\" class=\"btn btn-success\">确认收到</button>") +
+                    tableItemWrap("<button type=\"button\" class=\"btn btn-primary\">确认收到</button>") +
                     "</tr>"
                 );
             });
-            $("button.btn-success").each(function (i, item) {
+            $("button.btn-primary").each(function (i, item) {
                 $(item).on("click", function () {
                     map["proSerialNo"] = $(item).parent().prevAll().eq(3).html();
                     map["purSerialNo"] = $(item).parent().prevAll().last().html();
@@ -274,6 +302,79 @@ function querySentSample(){
                         }
                     });
                 });
+            });
+        }
+    });
+}
+function queryRequiredSample(){
+    $.ajax({
+        type: "POST",
+        url: "/order/queryRequiredSample.do",
+        success: function (data) {
+            $.each(data, function (i, item) {
+                $("#orderTableContent").append(
+                    "<tr>" +
+                    tableItemWrap(item.purSerialNo) +
+                    tableItemWrap(item.proSerialNo) +
+                    tableItemWrap(item.purchaserMobileNo) +
+                    tableItemWrap(item.purAddress) +
+                    "<td><input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\"></td>" +
+                    tableItemWrap("<button type=\"button\" class=\"btn btn-primary\">确认寄送</button>") +
+                    "</tr>"
+                );
+            });
+            $("button.btn-primary").each(function (i, item) {
+                $(item).on("click", function () {
+                    if(!checkInputNull()){
+                        return;
+                    }
+                    map["proSerialNo"] = $(item).parent().prevAll().eq(3).html();
+                    map["purSerialNo"] = $(item).parent().prevAll().last().html();
+                    map["expressNo"] = $(item).parent().prevAll().first().children().val();
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/sendSample.do",
+                        data: map,
+                        success: function () {
+                            normalMessage("确认成功");
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 1000);
+                        },
+                        error: function () {
+                            errorMessage("确认失败");
+                        }
+                    });
+                });
+            });
+        }
+    });
+}
+function queryProOrder(){
+    $.ajax({
+        type: "POST",
+        url: "/order/viewProOrder.do",
+        success: function (data) {
+            $.each(data, function (i, item) {
+                $("#orderTableContent").append(
+                    "<tr>" +
+                    tableItemWrap(item.proSerialNo) +
+                    tableItemWrap(item.offerPrice) +
+                    tableItemWrap(item.purchaserMobileNo) +
+                    tableItemWrap(item.purSerialNo) +
+                    tableItemWrap(item.orderAmount) +
+                    tableItemWrap(item.orderType) +
+                    tableItemWrap(item.orderStatus) +
+                    tableItemWrap("<button type=\"button\" class=\"btn btn-info\">查看详情</button>") +
+                    "</tr>"
+                );
+            });
+            $("button.btn-info").each(function (i, item) {
+                if($(item).parent().prevAll().last().html() === "查看详情"){
+                    $(item).removeClass("btn-info");
+                    $(item).addClass("btn-success");
+                    $(item).text("查看详情");
+                }
             });
         }
     });

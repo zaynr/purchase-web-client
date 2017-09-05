@@ -49,7 +49,7 @@ $(document).ready(function () {
                 else if(data === "2"){
                     addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
                     addTabWithBadge("/order/sendSample", "寄送样品", "sendSample");
-                    addTab("/order/addOrderType", "查看订单");
+                    addTab("/order/viewProOrder", "查看订单");
                     addTab("/order/addOrderType", "查看联系人");
 
                     map["queryType"] = "unOffer";
@@ -67,11 +67,9 @@ $(document).ready(function () {
                         }
                     });
 
-                    map["queryType"] = "sendSample";
                     $.ajax({
                         type: "POST",
-                        url: "/order/showSpicStatusPurOrder.do",
-                        data: map,
+                        url: "/order/queryRequiredSample.do",
                         success: function (data) {
                             if(data.length === 0){
                                 $("#sendSample").text("");

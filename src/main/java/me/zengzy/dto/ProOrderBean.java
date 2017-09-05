@@ -2,14 +2,32 @@ package me.zengzy.dto;
 
 public class ProOrderBean {
     private int proSerialNo;
-    private String offerPrice;
-    private String providerMobileNo;
     private int purSerialNo;
+    private String providerMobileNo;
+    private String purchaserMobileNo;
+    private String purAddress;
+    private String offerPrice;
     private String orderAmount;
     private String orderType;
     private int orderTypeNo;
     private String orderStatus;
     private String expressNo;
+
+    public String getPurchaserMobileNo() {
+        return purchaserMobileNo;
+    }
+
+    public void setPurchaserMobileNo(String purchaserMobileNo) {
+        this.purchaserMobileNo = purchaserMobileNo;
+    }
+
+    public String getPurAddress() {
+        return purAddress;
+    }
+
+    public void setPurAddress(String purAddress) {
+        this.purAddress = purAddress;
+    }
 
     public String getExpressNo() {
         return expressNo;

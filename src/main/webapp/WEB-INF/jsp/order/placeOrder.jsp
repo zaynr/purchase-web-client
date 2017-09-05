@@ -15,7 +15,7 @@
 </head>
 <body>
 
-<div class="container"style="padding: 1% 10%;">
+<div class="container">
     <form class="form-horizontal" role="form">
         <br>
         <div class="input-group">

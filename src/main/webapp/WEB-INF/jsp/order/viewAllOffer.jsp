@@ -14,7 +14,7 @@
     <title>查看报价</title>
 </head>
 <body>
-<div class="container"style="padding: 1% 10%;">
+<div class="container">
     <br>
     <div id="message"></div>
     <br>
@@ -28,6 +28,7 @@
                 <th>需求序列号</th>
                 <th>需求数量</th>
                 <th>需求类型</th>
+                <th>快递单号</th>
                 <th>报价状态</th>
                 <th>操作</th>
             </tr>
@@ -37,6 +38,26 @@
             </tbody>
         </table>
     </div>
+</div>
+<div class="modal fade" id="confirmContract" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">合同详情</h4>
+            </div>
+            <form class="bs-example bs-example-form" role="form">
+                <div class="input-group">
+                    <span class="input-group-addon">交货日期</span>
+                    <input type="date" class="form-control" id="offerPrice" placeholder="选择交货日期">
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="confirmDate" class="btn btn-primary">确认日期</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
 </div>
 </body>
 </html>

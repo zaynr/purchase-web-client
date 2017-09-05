@@ -15,7 +15,7 @@
 </head>
 <body>
 
-<div class="container"style="padding: 1% 10%;">
+<div class="container">
     <div align="center">
         <br>
         <ul class="nav nav-pills" role="tablist">

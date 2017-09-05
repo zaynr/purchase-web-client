@@ -60,6 +60,13 @@ public class AccountController {
             orderTypes.add(orderTypeRepository.getTypeByNo(Integer.parseInt(a)));
         }
         bean.setProvideType(orderTypes);
+        String userName = userRepository.queryUserByPriKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request)).getUserName();
+        if(userName != null){
+            bean.setUserName(userName);
+        }
+        else{
+            bean.setUserName("");
+        }
         return bean;
     }
 
@@ -77,7 +84,7 @@ public class AccountController {
         user.setUserType(SessionUtil.getUserType(request));
         user.setPwd(param.get("password"));
         user.setMobileNo(param.get("mobileNo"));
-        user.setUserName("userName");
+        user.setUserName(param.get("userName"));
         if(SessionUtil.getUserType(request) == 1){
             purchasersRepository.delete(purchaser);
             purchaser.setMobile_no(param.get("mobileNo"));

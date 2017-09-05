@@ -11,6 +11,7 @@ $(document).ready(function () {
         var encrypt = $.md5($("#password").val());
         var map = {};
         map["password"] = encrypt;
+        map["user_name"] = $("#user_name").val();
         map["mobile_no"] = $("#mobile_no").val();
         map["user_type"] = $("#user_type").val();
         if(map["mobile_no"] === "" || map["password"] === ""){
