@@ -11,6 +11,23 @@ public class PurOrderBean {
     private String orderAmount;
     private String expectPrice;
     private String offeredPrice;
+    private String moreDetail, addonUrl;
+
+    public String getMoreDetail() {
+        return moreDetail;
+    }
+
+    public void setMoreDetail(String moreDetail) {
+        this.moreDetail = moreDetail;
+    }
+
+    public String getAddonUrl() {
+        return addonUrl;
+    }
+
+    public void setAddonUrl(String addonUrl) {
+        this.addonUrl = addonUrl;
+    }
 
     public String getOfferedPrice() {
         return offeredPrice;

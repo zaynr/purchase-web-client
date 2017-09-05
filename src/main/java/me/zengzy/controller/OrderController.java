@@ -1,5 +1,7 @@
 package me.zengzy.controller;
 
+import com.qiniu.util.Auth;
+import me.zengzy.dict.ApiKey;
 import me.zengzy.dto.ProOrderBean;
 import me.zengzy.dto.PurOrderBean;
 import me.zengzy.dict.Status;
@@ -166,6 +168,14 @@ public class OrderController {
         return typeRepository.getAllTypes();
     }
 
+    @RequestMapping("/getUploadToken.do")
+    @ResponseBody
+    public String getUploadToken(){
+        //genUploadKey
+        Auth auth = Auth.create(ApiKey.Qiniu.AccessKey, ApiKey.Qiniu.SecretKey);
+        return auth.uploadToken(ApiKey.Qiniu.BucketName);
+    }
+
     @RequestMapping("/showSpicStatusPurOrder.do")
     @ResponseBody
     public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
@@ -246,7 +256,25 @@ public class OrderController {
         order.setPurchaserName(SessionUtil.getMobileNo(request));
         order.setTypeNo(Integer.parseInt(orderInfo.get("type_no")));
         order.setOrder_amount(Double.parseDouble(orderInfo.get("orderAmount")));
-        order.setExpect_price(Double.parseDouble(orderInfo.get("expect")));
+        if(!orderInfo.get("expect").trim().equals("")) {
+            order.setExpect_price(Double.parseDouble(orderInfo.get("expect")));
+        }
+        else{
+            order.setExpect_price(-1);
+        }
+        if(!orderInfo.get("hash").trim().equals("")) {
+            order.setAddon_url(ApiKey.Qiniu.baseUrl + orderInfo.get("hash"));
+        }
+        else{
+            order.setAddon_url("未上传附件");
+        }
+        if(!orderInfo.get("more_detail").trim().equals("")) {
+            order.setMore_detail(orderInfo.get("more_detail"));
+        }
+        else{
+            order.setAddon_url("未添加详细需求");
+        }
+
         purOrderRepository.save(order);
         return "success";
     }
@@ -307,7 +335,12 @@ public class OrderController {
                 bean.setOfferedPrice("未报价");
             }
             bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
-            bean.setExpectPrice("￥" + a.getExpect_price() + "元");
+            if(a.getExpect_price() == -1){
+                bean.setExpectPrice("采购商未展示");
+            }
+            else {
+                bean.setExpectPrice("￥" + a.getExpect_price() + "元");
+            }
 
             beans.add(bean);
         }

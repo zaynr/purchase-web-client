@@ -135,8 +135,8 @@ function num(obj){
 function checkInputNull(){
     var flag = true;
     $("input").each(function (i, item) {
-        if($.trim($(item).val()).length === 0){
-            errorMessage("请全部输入");
+        if($.trim($(item).val()).length === 0 && $(item).attr("not-nec") !== "true"){
+            errorMessage("请输入必要项目");
             flag = false;
         }
     });
@@ -155,6 +155,15 @@ function normalMessage(message) {
 function errorMessage(message) {
     $("#message").html(
         "<div class=\"alert alert-danger alert-dismissable\">" +
+        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
+        message +
+        "</div>"
+    );
+}
+
+function successMessage(message) {
+    $("#message").html(
+        "<div class=\"alert alert-success alert-dismissable\">" +
         "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" +
         message +
         "</div>"

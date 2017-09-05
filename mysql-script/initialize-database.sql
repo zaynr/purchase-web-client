@@ -1,3 +1,5 @@
+SET PASSWORD=PASSWORD('Sjx0shR0Uk,5');
+
 CREATE DATABASE IF NOT EXISTS purchase;
 USE purchase;
 
@@ -42,6 +44,8 @@ CREATE TABLE pur_orders(
   order_status int,
   order_amount double,
   expect_price double,
+  more_detail nvarchar(1023),
+  addon_url nvarchar(1023),
   type_no int
 );
 #供应报价表
