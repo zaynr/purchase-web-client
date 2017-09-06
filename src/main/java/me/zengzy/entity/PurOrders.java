@@ -19,7 +19,7 @@ public class PurOrders {
     private int typeNo;
     private double expect_price;
     private double order_amount;
-    private String more_detail, addon_url;
+    private String more_detail;
 
     public String getMore_detail() {
         return more_detail;
@@ -27,14 +27,6 @@ public class PurOrders {
 
     public void setMore_detail(String more_detail) {
         this.more_detail = more_detail;
-    }
-
-    public String getAddon_url() {
-        return addon_url;
-    }
-
-    public void setAddon_url(String addon_url) {
-        this.addon_url = addon_url;
     }
 
     public double getExpect_price() {

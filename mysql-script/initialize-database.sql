@@ -11,6 +11,9 @@ DROP TABLE IF EXISTS pur_orders;
 DROP TABLE IF EXISTS pro_orders;
 DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS contracts;
+DROP TABLE IF EXISTS serial_no_gen;
+DROP TABLE IF EXISTS all_orders;
+DROP TABLE IF EXISTS all_addons;
 
 #用户主表
 CREATE TABLE users(
@@ -37,20 +40,36 @@ CREATE TABLE order_types(
   type_unit nvarchar(10),
   type_content nvarchar(255)
 );
+#序列号生成表
+CREATE TABLE serial_no_gen(
+  serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT
+);
+#订单主表
+CREATE TABLE all_orders(
+  serial_no int NOT NULL PRIMARY KEY,
+  mobile_no nvarchar(63),
+  order_status int,
+  order_cat int
+);
+#附件表
+CREATE TABLE all_addons(
+  addon_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  order_serial_no int NOT NULL,
+  addon_url nvarchar(1023)
+);
 #采购订单表
 CREATE TABLE pur_orders(
-  pur_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  pur_serial_no int NOT NULL PRIMARY KEY,
   purchaser_name nvarchar(63),
   order_status int,
   order_amount double,
   expect_price double,
   more_detail nvarchar(1023),
-  addon_url nvarchar(1023),
   type_no int
 );
 #供应报价表
 CREATE TABLE pro_orders(
-  pro_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  pro_serial_no int NOT NULL PRIMARY KEY,
 	pur_serial_no int,
   order_status int,
   offer_price double,

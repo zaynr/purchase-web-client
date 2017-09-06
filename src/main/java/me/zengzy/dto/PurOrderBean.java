@@ -11,7 +11,7 @@ public class PurOrderBean {
     private String orderAmount;
     private String expectPrice;
     private String offeredPrice;
-    private String moreDetail, addonUrl;
+    private String moreDetail, addonNum;
 
     public String getMoreDetail() {
         return moreDetail;
@@ -21,12 +21,12 @@ public class PurOrderBean {
         this.moreDetail = moreDetail;
     }
 
-    public String getAddonUrl() {
-        return addonUrl;
+    public String getAddonNum() {
+        return addonNum;
     }
 
-    public void setAddonUrl(String addonUrl) {
-        this.addonUrl = addonUrl;
+    public void setAddonNum(String addonNum) {
+        this.addonNum = addonNum;
     }
 
     public String getOfferedPrice() {

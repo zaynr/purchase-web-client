@@ -15,13 +15,21 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<link href="../../css/bootstrap.min.css" rel="stylesheet">
-<link href="../../css/jumbotron.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/jumbotron.css" rel="stylesheet">
+    <link href="../../css/fileinput.min.css" rel="stylesheet">
 
-<script type="text/javascript" src="../../script/jquery-3.2.1.js"></script>
-<script type="text/javascript" src="../../script/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../script/auth.js"></script>
-<script type="text/javascript" src="../../script/jquery.autocomplete.min.js"></script>
+
+
+    <script type="text/javascript" src="../../script/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="../../script/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../script/auth.js"></script>
+    <script type="text/javascript" src="../../script/jquery.autocomplete.min.js"></script>
+
+    <script type="text/javascript" src="../../script/plugins/sortable.min.js"></script>
+    <script type="text/javascript" src="../../script/fileinput.min.js"></script>
+    <script type="text/javascript" src="../../script/locales/zh.js"></script>
+    <script type="text/javascript" src="../../script/themes/fa/theme.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">

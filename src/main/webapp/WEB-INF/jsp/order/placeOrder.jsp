@@ -11,13 +11,6 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>需求下单</title>
-
-    <link href="../../../css/fileinput.min.css" rel="stylesheet">
-
-    <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
-    <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
-    <script type="text/javascript" src="../../../script/locales/zh.js"></script>
-    <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
     <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>

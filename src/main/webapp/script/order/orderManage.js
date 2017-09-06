@@ -40,18 +40,26 @@ $(document).ready(function () {
             url: "/order/getUploadToken.do",
             data: param,
             success: function (data) {
-                var uptoken = data;
-                var fileIns;
-                $("#putAddOn").fileinput({
+                var putAddOn = $("#putAddOn");
+                var files = [];
+                putAddOn.fileinput({
                     uploadUrl: "http://up-z2.qiniu.com",
                     theme: "fa",
-                    uploadExtraData: {"token" : uptoken},
+                    uploadExtraData: {"token" : data},
                     language: "zh",
+                    showCaption: false,
                     allowedFileExtensions: ["jpg", "png", "jpeg", "gif", "txt", "doc", "docx", "xls", "xlsx", "pdf"],
                     hideThumbnailContent: true,
                     maxFileSize: 20480
                 }).on("fileuploaded", function(event, data, previewId, index) {
-                    param["hash"] = data.response.hash
+                    var item = {};
+                    var temp = data.filenames[index].split(".");
+                    item["name"] = data.filenames[index];
+                    item["size"] = (data.files[index].size / Math.pow(1024, 2)).toFixed(2);
+                    item["extension"] = temp[temp.length - 1];
+                    item["hash"] = data.response.hash;
+                    files.push(item);
+                    param['hash'] = files;
                 });
 
                 $("#typeSelectText").devbridgeAutocomplete({
@@ -76,16 +84,21 @@ $(document).ready(function () {
                             param["expect"] = $("#expect").val();
                             param["type_no"] = suggestion.data;
                             param["more_detail"] = $("#moreDetail").val();
-                            param["addon_url"] = $("#putAddOn").val();
+                            var data = {"data" : JSON.stringify(param)}
                             $.ajax({
                                 type: "POST",
                                 url: "/order/placeOrder.do",
-                                data: param,
-                                success: function () {
-                                    successMessage("发布成功");
-                                    setTimeout(function () {
-                                        window.location.href = "/order/showPurOrders";
-                                    }, 1000);
+                                data: data,
+                                success: function (data) {
+                                    if(data === "success") {
+                                        successMessage("发布成功");
+                                        setTimeout(function () {
+                                            window.location.href = "/order/showPurOrders";
+                                        }, 1000);
+                                    }
+                                    else{
+                                        errorMessage("发布失败");
+                                    }
                                 }
                             });
                         });
@@ -101,6 +114,7 @@ function checkShowExp() {
     if($("#showExpect").prop('checked')){
         exp.prop("disabled", "true");
         exp.attr("not-nec", "true");
+        exp.val("");
     }
     else{
         exp.removeAttr("disabled");
