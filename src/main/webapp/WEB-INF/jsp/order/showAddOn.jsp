@@ -18,7 +18,7 @@
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-responsive" >
             <thead>
-            <tr>
+            <tr id="tableHead">
                 <th>需求序列号</th>
                 <th>附件名</th>
                 <th>附件大小</th>

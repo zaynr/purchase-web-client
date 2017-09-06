@@ -12,11 +12,11 @@ INSERT INTO `purchase`.`users` (`mobile_no`, `user_type`, `pwd`, `user_name`, `s
 
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('123', '1', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('321', '2', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
-INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('12321', '2', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
+INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('12321', '2', '浙江省', '杭州市', '西湖区', '啊啊啊啊');
 
 INSERT INTO serial_no_gen(serial_no) VALUES('123');
 
-INSERT INTO pur_orders(pur_serial_no, purchaser_name, order_status, order_amount, expect_price, type_no) VALUES('1', '123', '0', '12', '321', '6');
+INSERT INTO pur_orders(pur_serial_no, purchaser_name, order_status, order_amount, expect_price, type_no, filter_dict) VALUES('1', '123', '0', '12', '321', '6', '1,2,3,');
 INSERT INTO pur_orders(pur_serial_no, purchaser_name, order_status, order_amount, expect_price, type_no) VALUES('2', '123', '1', '123', '321', '5');
 INSERT INTO pur_orders(pur_serial_no, purchaser_name, order_status, order_amount, expect_price, type_no) VALUES('3', '123', '2', '123', '321', '4');
 INSERT INTO pur_orders(pur_serial_no, purchaser_name, order_status, order_amount, expect_price, type_no) VALUES('4', '123', '3', '123', '321', '3');
@@ -32,6 +32,10 @@ INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, 
 INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, provider_name, express_no) VALUES('13', '5', '4', '321', '321', 'A1B2C3E4');
 INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, provider_name, express_no) VALUES('14', '5', '4', '312', '12321', 'C3E4A1B2');
 INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, provider_name, express_no) VALUES('15', '6', '6', '321', '321', 'A1B2C3E4');
+
+INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`, `dict`) VALUES ('1', '浙江省', '杭州市', '滨江区', NULL);
+INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`, `dict`) VALUES ('1', '福建省', '泉州市', 'null', NULL);
+INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`, `dict`) VALUES ('1', '重庆市', 'null', 'null', NULL);
 
 INSERT INTO order_types(type_content, type_unit) VALUES("原油", "桶");
 INSERT INTO order_types(type_content, type_unit) VALUES("糖果", "吨");

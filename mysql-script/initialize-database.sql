@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS serial_no_gen;
 DROP TABLE IF EXISTS all_orders;
 DROP TABLE IF EXISTS all_addons;
 DROP TABLE IF EXISTS user_address;
+DROP TABLE IF EXISTS filter_dict;
 
 #用户主表
 CREATE TABLE users(
@@ -79,7 +80,16 @@ CREATE TABLE pur_orders(
   order_amount double,
   expect_price double,
   more_detail nvarchar(1023),
+  filter_dict nvarchar(255),
   type_no int
+);
+#过滤地区表
+CREATE TABLE filter_dict(
+  serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  order_serial_no int,
+  province nvarchar(30),
+  city nvarchar(30),
+  dist nvarchar(30)
 );
 #供应报价表
 CREATE TABLE pro_orders(

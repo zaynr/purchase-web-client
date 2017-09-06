@@ -19,4 +19,7 @@ public interface OrderTypeRepository extends CrudRepository<OrderTypes, Long> {
 
     @Query(value = "SELECT * FROM order_types", nativeQuery = true)
     ArrayList<OrderTypes> getAllTypes();
+
+    @Query(value = "SELECT * FROM order_types WHERE type_content LIKE %:content%", nativeQuery = true)
+    ArrayList<OrderTypes> patternMatch(@Param("content") String content);
 }

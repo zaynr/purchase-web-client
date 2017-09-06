@@ -1,5 +1,6 @@
 package me.zengzy.controller;
 
+import com.google.gson.JsonArray;
 import com.qiniu.util.Auth;
 import me.zengzy.dict.ApiKey;
 import me.zengzy.dict.Type;
@@ -12,6 +13,7 @@ import me.zengzy.util.SessionUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +48,8 @@ public class OrderController {
     UserRepository userRepository;
     @Autowired
     UserAddressRepository addressRepository;
+    @Autowired
+    FilterDictRepository filterDictRepository;
 
     @RequestMapping("/sendSample")
     public String getSendSampleView(){
@@ -79,6 +83,12 @@ public class OrderController {
 
     @RequestMapping("/placeOrder")
     public String getPlaceOrderView(){
+        return "order/placeOrder";
+    }
+
+
+    @RequestMapping("/modifyPurOrder")
+    public String getModifyPurOrderView(){
         return "order/placeOrder";
     }
 
@@ -172,7 +182,7 @@ public class OrderController {
                 }
             }
         }
-        return packPurOrderBean(orders, request);
+        return packPurOrderBeans(orders, request);
     }
 
     @RequestMapping("/addOrderType.do")
@@ -187,8 +197,24 @@ public class OrderController {
 
     @RequestMapping("/showOrderType.do")
     @ResponseBody
-    public ArrayList<OrderTypes> showOrderTypes(){
-        return typeRepository.getAllTypes();
+    public ArrayList<OrderTypes> showOrderTypes(@RequestParam Map<String, String> param){
+        String pattern = param.get("typeContent");
+        if(pattern == null || pattern.trim().equals("")) {
+            return typeRepository.getAllTypes();
+        }
+        else{
+            return typeRepository.patternMatch(pattern);
+        }
+    }
+
+    @RequestMapping("/getCurrentPurOrder.do")
+    @ResponseBody
+    public PurOrderBean getCurrentPurOrder(@RequestParam Map<String, String> map, HttpServletRequest request){
+        String serialNo = map.get("serialNo");
+        if(serialNo == null){
+            return null;
+        }
+        return packPurOrderBean(purOrderRepository.getPurOrderBySerialNo(Integer.parseInt(serialNo)), request);
     }
 
     @RequestMapping("/getUploadToken.do")
@@ -216,13 +242,40 @@ public class OrderController {
         }
         if(orders != null) {
             for (int i = 0; i < orders.size(); i++) {
-                if (!types.contains(String.valueOf(orders.get(i).getTypeNo()))) {
+                ArrayList<FilterDict> filters = filterDictRepository.getByOrderSerialNo(orders.get(i).getPurSerialNo());
+                UserAddress address = addressRepository.queryByPrimaryKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
+                boolean flag = true;
+                if (filters.size() > 0) {
+                    for (FilterDict a : filters) {
+                        if (a.getProvince().equals(address.getProvince())) {
+                            if (a.getCity().equals(address.getCity())) {
+                                if (a.getDist().equals(address.getDist())) {
+                                    flag = false;
+                                    break;
+                                }
+                                else if(a.getDist().equals("null")){
+                                    flag = false;
+                                }
+                            }
+                            else if(a.getCity().equals("null")){
+                                flag = false;
+                            }
+                        }
+                        else if(a.getProvince().equals("null")){
+                            flag = false;
+                        }
+                    }
+                }
+                else{
+                    flag = false;
+                }
+                if (!types.contains(String.valueOf(orders.get(i).getTypeNo())) || flag) {
                     orders.remove(i);
                     i--;
                 }
             }
         }
-        return packPurOrderBean(orders, request);
+        return packPurOrderBeans(orders, request);
     }
 
     @RequestMapping("/updatePurOrderStatus.do")
@@ -284,21 +337,31 @@ public class OrderController {
         return "success";
     }
 
+    @RequestMapping("/modifyPurOrder.do")
+    @ResponseBody
+    public String modifyPurOrder(){
+        return "success";
+    }
+
     @RequestMapping("/placeOrder.do")
     @ResponseBody
     public String placeOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
         PurOrders order = new PurOrders();
         AllOrders allOrder = new AllOrders();
         SerialNoGen gen = getSerialNo();
+        //向用户主表添加数据
         allOrder.setSerial_no(gen.getSerial_no());
         allOrder.setMobile_no(SessionUtil.getMobileNo(request));
         allOrder.setOrder_status(Status.Order.UN_REC);
         allOrder.setOrder_cat(Type.Order.PURCHASE_ORDER);
         ordersRepository.save(allOrder);
+        //向需求表添加数据
         order.setPurSerialNo(gen.getSerial_no());
         order.setOrderStatus(Status.Order.UN_REC);
         order.setPurchaserName(SessionUtil.getMobileNo(request));
-
+        if(param.get("type_no") == null){
+            return "no_such_type";
+        }
         order.setTypeNo(Integer.parseInt(param.get("type_no")));
         order.setOrder_amount(Double.parseDouble(param.get("orderAmount")));
         if (!param.get("expect").trim().equals("")) {
@@ -306,33 +369,60 @@ public class OrderController {
         } else {
             order.setExpect_price(-1);
         }
-        try {
-            JSONArray array = new JSONArray(param.get("hash"));
-            double usedSpaceMb = 0;
-            for (int i = 0; i < array.length(); i++) {
-                String fileHash = array.getJSONObject(i).getString("hash");
-                String fileName = array.getJSONObject(i).getString("name");
-                String extension = array.getJSONObject(i).getString("extension");
-                double fileSizeMb = array.getJSONObject(i).getDouble("size");
-                usedSpaceMb += fileSizeMb;
-                AllAddons addon = new AllAddons();
-                addon.setOrder_serial_no(gen.getSerial_no());
-                addon.setFile_key(fileHash);
-                addon.setFile_name(fileName);
-                addon.setFile_size(fileSizeMb);
-                addon.setAddon_url(ApiKey.Qiniu.baseUrl + fileHash + "?attname=" + fileHash + "." + extension);
-                addonsRepository.save(addon);
-            }
-            userRepository.updateUsedSpace(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request), usedSpaceMb);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        if (!("more_detail").trim().equals("")) {
+        if (!param.get("more_detail").trim().equals("")) {
             order.setMore_detail(param.get("more_detail"));
         } else {
             order.setMore_detail("未添加详细需求");
         }
-
+        //文件上传数据
+        if(param.get("hash") != null) {
+            try {
+                JSONArray array = new JSONArray(param.get("hash"));
+                double usedSpaceMb = 0;
+                for (int i = 0; i < array.length(); i++) {
+                    String fileHash = array.getJSONObject(i).getString("hash");
+                    String fileName = array.getJSONObject(i).getString("name");
+                    String extension = array.getJSONObject(i).getString("extension");
+                    double fileSizeMb = array.getJSONObject(i).getDouble("size");
+                    usedSpaceMb += fileSizeMb;
+                    //记录附件上传数据
+                    AllAddons addon = new AllAddons();
+                    addon.setOrder_serial_no(gen.getSerial_no());
+                    addon.setFile_key(fileHash);
+                    addon.setFile_name(fileName);
+                    addon.setFile_size(fileSizeMb);
+                    addon.setAddon_url(ApiKey.Qiniu.baseUrl + fileHash + "?attname=" + fileHash + "." + extension);
+                    addonsRepository.save(addon);
+                }
+                //记录用户上传空间用量
+                userRepository.updateUsedSpace(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request), usedSpaceMb);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if(param.get("filter") != null) {
+            try {
+                //设置采购商对供应商的地址过滤
+                JSONArray array = new JSONArray(param.get("filter"));
+                for (int i = 0; i < array.length(); i++) {
+                    FilterDict dict = new FilterDict();
+                    dict.setOrder_serial_no(gen.getSerial_no());
+                    dict.setProvince(array.getJSONObject(i).getString("province"));
+                    dict.setCity(array.getJSONObject(i).getString("city"));
+                    dict.setDist(array.getJSONObject(i).getString("dist"));
+                    filterDictRepository.save(dict);
+                }
+                ArrayList<FilterDict> filters = filterDictRepository.getByOrderSerialNo(gen.getSerial_no());
+                StringBuilder builder = new StringBuilder();
+                for(FilterDict a : filters){
+                    String foo = a.getSerial_no() + ",";
+                    builder.append(foo);
+                }
+                order.setFilter_dict(builder.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         purOrderRepository.save(order);
         return "success";
     }
@@ -371,44 +461,45 @@ public class OrderController {
         return beans;
     }
 
-    private ArrayList<PurOrderBean> packPurOrderBean(ArrayList<PurOrders> orders, HttpServletRequest request){
+    private PurOrderBean packPurOrderBean(PurOrders a, HttpServletRequest request){
+        OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
+        ProOrders order = proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), SessionUtil.getMobileNo(request));
+        PurOrderBean bean = new PurOrderBean();
+        ArrayList<AllAddons> addons = addonsRepository.queryByOrderSerialNo(a.getPurSerialNo());
+
+        bean.setTypeContent(type.getType_content());
+        //todo：添加字典表
+        bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
+        bean.setPurchaserName(a.getPurchaserName());
+        bean.setPurSerialNo(a.getPurSerialNo());
+        bean.setOrderStatusNo(a.getOrderStatus());
+        ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
+        bean.setProviderName(proOrders.size() + "人次");
+        bean.setMoreDetail(a.getMore_detail());
+        bean.setFilters(filterDictRepository.getByOrderSerialNo(a.getPurSerialNo()));
+        if(order != null) {
+            bean.setOfferedPrice(order.getOffer_price());
+        }
+        else{
+            bean.setOfferedPrice(-1);
+        }
+        bean.setOrderAmount(a.getOrder_amount());
+        bean.setTypeUnit(type.getType_unit());
+        bean.setTypeNo(type.getType_no());
+        bean.setExpectPrice(a.getExpect_price());
+        if(addons.size() > 0){
+            bean.setAddonNum(addons.size() + " 个附件");
+        }
+        else{
+            bean.setAddonNum("未添加附件");
+        }
+        return bean;
+    }
+
+    private ArrayList<PurOrderBean> packPurOrderBeans(ArrayList<PurOrders> orders, HttpServletRequest request){
         ArrayList<PurOrderBean> beans = new ArrayList<PurOrderBean>();
         for(PurOrders a : orders){
-            OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
-            ProOrders order = proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), SessionUtil.getMobileNo(request));
-            PurOrderBean bean = new PurOrderBean();
-            ArrayList<AllAddons> addons = addonsRepository.queryByOrderSerialNo(a.getPurSerialNo());
-
-            bean.setTypeContent(type.getType_content());
-            //todo：添加字典表
-            bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
-            bean.setPurchaserName(a.getPurchaserName());
-            bean.setPurSerialNo(a.getPurSerialNo());
-            bean.setOrderStatusNo(a.getOrderStatus());
-            ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
-            bean.setProviderName(proOrders.size() + "人次");
-            bean.setMoreDetail(a.getMore_detail());
-            if(order != null) {
-                bean.setOfferedPrice("￥" + order.getOffer_price() + "元");
-            }
-            else{
-                bean.setOfferedPrice("未报价");
-            }
-            bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
-            if(a.getExpect_price() == -1){
-                bean.setExpectPrice("采购商未展示");
-            }
-            else {
-                bean.setExpectPrice("￥" + a.getExpect_price() + "元");
-            }
-            if(addons.size() > 0){
-                bean.setAddonNum(addons.size() + " 个附件");
-            }
-            else{
-                bean.setAddonNum("未添加附件");
-            }
-
-            beans.add(bean);
+            beans.add(packPurOrderBean(a, request));
         }
         return beans;
     }

@@ -45,7 +45,9 @@
                 <form class="form">
                     <div style="position:relative;">
                         <div class="form-group">
-                            <input id="distpicker" class="form-control" readonly type="text">
+                            <div style="position: relative;">
+                                <input id="distpicker" class="form-control" readonly type="text">
+                            </div>
                             <br>
                             <div class="input-group">
                                 <span class="input-group">详细地址</span>

@@ -1,5 +1,10 @@
 package me.zengzy.dto;
 
+import me.zengzy.entity.AllAddons;
+import me.zengzy.entity.FilterDict;
+
+import java.util.ArrayList;
+
 public class PurOrderBean {
     private int purSerialNo;
     private int orderStatusNo;
@@ -8,57 +13,29 @@ public class PurOrderBean {
     private String providerName;
     private String orderStatus;
     private String typeContent;
-    private String orderAmount;
-    private String expectPrice;
-    private String offeredPrice;
+    private double orderAmount;
+    private double expectPrice;
+    private double offeredPrice;
+    private int typeNo;
+    private String typeUnit;
     private String moreDetail, addonNum;
+    private ArrayList<FilterDict> filters;
+    private ArrayList<AllAddons> addons;
 
-    public String getMoreDetail() {
-        return moreDetail;
+    public int getTypeNo() {
+        return typeNo;
     }
 
-    public void setMoreDetail(String moreDetail) {
-        this.moreDetail = moreDetail;
+    public void setTypeNo(int typeNo) {
+        this.typeNo = typeNo;
     }
 
-    public String getAddonNum() {
-        return addonNum;
+    public String getTypeUnit() {
+        return typeUnit;
     }
 
-    public void setAddonNum(String addonNum) {
-        this.addonNum = addonNum;
-    }
-
-    public String getOfferedPrice() {
-        return offeredPrice;
-    }
-
-    public void setOfferedPrice(String offeredPrice) {
-        this.offeredPrice = offeredPrice;
-    }
-
-    public String getOrderAmount() {
-        return orderAmount;
-    }
-
-    public void setOrderAmount(String orderAmount) {
-        this.orderAmount = orderAmount;
-    }
-
-    public String getExpectPrice() {
-        return expectPrice;
-    }
-
-    public void setExpectPrice(String expectPrice) {
-        this.expectPrice = expectPrice;
-    }
-
-    public int getOrderStatusNo() {
-        return orderStatusNo;
-    }
-
-    public void setOrderStatusNo(int orderStatusNo) {
-        this.orderStatusNo = orderStatusNo;
+    public void setTypeUnit(String typeUnit) {
+        this.typeUnit = typeUnit;
     }
 
     public int getPurSerialNo() {
@@ -67,6 +44,14 @@ public class PurOrderBean {
 
     public void setPurSerialNo(int purSerialNo) {
         this.purSerialNo = purSerialNo;
+    }
+
+    public int getOrderStatusNo() {
+        return orderStatusNo;
+    }
+
+    public void setOrderStatusNo(int orderStatusNo) {
+        this.orderStatusNo = orderStatusNo;
     }
 
     public int getContractSerialNo() {
@@ -107,5 +92,61 @@ public class PurOrderBean {
 
     public void setTypeContent(String typeContent) {
         this.typeContent = typeContent;
+    }
+
+    public double getOrderAmount() {
+        return orderAmount;
+    }
+
+    public void setOrderAmount(double orderAmount) {
+        this.orderAmount = orderAmount;
+    }
+
+    public double getExpectPrice() {
+        return expectPrice;
+    }
+
+    public void setExpectPrice(double expectPrice) {
+        this.expectPrice = expectPrice;
+    }
+
+    public double getOfferedPrice() {
+        return offeredPrice;
+    }
+
+    public void setOfferedPrice(double offeredPrice) {
+        this.offeredPrice = offeredPrice;
+    }
+
+    public String getMoreDetail() {
+        return moreDetail;
+    }
+
+    public void setMoreDetail(String moreDetail) {
+        this.moreDetail = moreDetail;
+    }
+
+    public String getAddonNum() {
+        return addonNum;
+    }
+
+    public void setAddonNum(String addonNum) {
+        this.addonNum = addonNum;
+    }
+
+    public ArrayList<FilterDict> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(ArrayList<FilterDict> filters) {
+        this.filters = filters;
+    }
+
+    public ArrayList<AllAddons> getAddons() {
+        return addons;
+    }
+
+    public void setAddons(ArrayList<AllAddons> addons) {
+        this.addons = addons;
     }
 }

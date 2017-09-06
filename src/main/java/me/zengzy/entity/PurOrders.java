@@ -20,6 +20,15 @@ public class PurOrders {
     private double expect_price;
     private double order_amount;
     private String more_detail;
+    private String filter_dict;
+
+    public String getFilter_dict() {
+        return filter_dict;
+    }
+
+    public void setFilter_dict(String filter_dict) {
+        this.filter_dict = filter_dict;
+    }
 
     public String getMore_detail() {
         return more_detail;
