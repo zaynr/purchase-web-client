@@ -17,5 +17,5 @@ public interface UserRepository extends CrudRepository<Users, Long> {
 
     @Modifying
     @Query(value = "UPDATE users SET space_used = space_used + :space_used WHERE mobile_no = :mobile_no and user_type = :user_type", nativeQuery = true)
-    Users updateUsedSpace(@Param("mobile_no") String mobile_no, @Param("user_type") int userType, @Param("space_used") double space_used);
+    void updateUsedSpace(@Param("mobile_no") String mobile_no, @Param("user_type") int userType, @Param("space_used") double space_used);
 }

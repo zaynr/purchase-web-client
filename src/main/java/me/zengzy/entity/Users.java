@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@IdClass(PrimaryKeys.class)
+@IdClass(UserPrimaryKeys.class)
 @Table(name = "users")
 public class Users implements Serializable{
         
@@ -61,7 +61,7 @@ public class Users implements Serializable{
     }
 }
 
-class PrimaryKeys implements Serializable{
+class UserPrimaryKeys implements Serializable{
     private String mobileNo;
     private int userType;
 }

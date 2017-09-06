@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS contracts;
 DROP TABLE IF EXISTS serial_no_gen;
 DROP TABLE IF EXISTS all_orders;
 DROP TABLE IF EXISTS all_addons;
+DROP TABLE IF EXISTS user_address;
 
 #用户主表
 CREATE TABLE users(
@@ -21,6 +22,7 @@ CREATE TABLE users(
   user_type int NOT NULL,	# 0:管理员;1:采购商;2:供应商
   pwd varchar(255),
   user_name nvarchar(63),
+  space_used double,
   PRIMARY KEY(mobile_no, user_type)
 );
 #供应商
@@ -31,8 +33,17 @@ CREATE TABLE providers(
 #采购商
 CREATE TABLE purchasers(
   mobile_no nvarchar(12) NOT NULL PRIMARY KEY,
-  address nvarchar(255),
   prefer_type nvarchar(255)
+);
+#地址表
+CREATE TABLE user_address(
+  mobile_no nvarchar(12) NOT NULL,
+  user_type nvarchar(255) NOT NULL,
+  province nvarchar(30),
+  city nvarchar(30),
+  dist nvarchar(30),
+  detail_address nvarchar(255),
+  PRIMARY KEY(mobile_no, user_type)
 );
 #订单类型
 CREATE TABLE order_types(
@@ -55,6 +66,9 @@ CREATE TABLE all_orders(
 CREATE TABLE all_addons(
   addon_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   order_serial_no int NOT NULL,
+  file_name nvarchar(1023),
+  file_key nvarchar(255),
+  file_size double,
   addon_url nvarchar(1023)
 );
 #采购订单表

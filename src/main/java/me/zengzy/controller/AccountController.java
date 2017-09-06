@@ -2,14 +2,8 @@ package me.zengzy.controller;
 
 import me.zengzy.dto.AccountInfoBean;
 import me.zengzy.dict.Type;
-import me.zengzy.entity.OrderTypes;
-import me.zengzy.entity.Providers;
-import me.zengzy.entity.Purchasers;
-import me.zengzy.entity.Users;
-import me.zengzy.repo.OrderTypeRepository;
-import me.zengzy.repo.ProviderRepository;
-import me.zengzy.repo.PurchasersRepository;
-import me.zengzy.repo.UserRepository;
+import me.zengzy.entity.*;
+import me.zengzy.repo.*;
 import me.zengzy.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +26,8 @@ public class AccountController {
     PurchasersRepository purchasersRepository;
     @Autowired
     OrderTypeRepository orderTypeRepository;
+    @Autowired
+    UserAddressRepository addressRepository;
 
     @RequestMapping("/info")
     public String getInfoView(){
@@ -42,6 +38,7 @@ public class AccountController {
     @ResponseBody
     public AccountInfoBean getInfo(HttpServletRequest request){
         AccountInfoBean bean = new AccountInfoBean();
+        UserAddress address = addressRepository.queryByPrimaryKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
         bean.setMobileNo(SessionUtil.getMobileNo(request));
         bean.setPwd(SessionUtil.getUserPwd(request));
         bean.setUserType(Type.UserTranslate(SessionUtil.getUserType(request)));
@@ -49,12 +46,12 @@ public class AccountController {
         if(SessionUtil.getUserType(request) == 1){
             Purchasers purchaser = purchasersRepository.getPurchaserByMobileNo(SessionUtil.getMobileNo(request));
             temp = purchaser.getPrefer_type().split(",");
-            bean.setAddress(purchaser.getAddress());
         }
         else if(SessionUtil.getUserType(request) == 2){
             Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
             temp = provider.getProvide_type().split(",");
         }
+        bean.setAddress(address);
         ArrayList<OrderTypes> orderTypes = new ArrayList<OrderTypes>();
         for(String a : temp){
             orderTypes.add(orderTypeRepository.getTypeByNo(Integer.parseInt(a)));
@@ -88,7 +85,6 @@ public class AccountController {
         if(SessionUtil.getUserType(request) == 1){
             purchasersRepository.delete(purchaser);
             purchaser.setMobile_no(param.get("mobileNo"));
-            purchaser.setAddress(param.get("address"));
             purchasersRepository.save(purchaser);
         }
         else if(SessionUtil.getUserType(request) == 2){
@@ -99,6 +95,15 @@ public class AccountController {
         userRepository.save(user);
         SessionUtil.setUserPwd(request, param.get("password"));
         SessionUtil.setMobileNo(request, param.get("mobileNo"));
+
+        UserAddress address = new UserAddress();
+        address.setUser_type(user.getUserType());
+        address.setMobile_no(user.getMobileNo());
+        address.setProvince(param.get("province"));
+        address.setCity(param.get("city"));
+        address.setDist(param.get("dist"));
+        address.setDetail_address(param.get("detail_address"));
+        addressRepository.save(address);
         return "success";
     }
 }

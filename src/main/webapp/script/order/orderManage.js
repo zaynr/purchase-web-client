@@ -44,6 +44,7 @@ $(document).ready(function () {
                 var files = [];
                 putAddOn.fileinput({
                     uploadUrl: "http://up-z2.qiniu.com",
+                    browseClass: "btn btn-primary btn-block",
                     theme: "fa",
                     uploadExtraData: {"token" : data},
                     language: "zh",
@@ -84,11 +85,11 @@ $(document).ready(function () {
                             param["expect"] = $("#expect").val();
                             param["type_no"] = suggestion.data;
                             param["more_detail"] = $("#moreDetail").val();
-                            var data = {"data" : JSON.stringify(param)}
+                            param["hash"] = JSON.stringify(param["hash"]);
                             $.ajax({
                                 type: "POST",
                                 url: "/order/placeOrder.do",
-                                data: data,
+                                data: param,
                                 success: function (data) {
                                     if(data === "success") {
                                         successMessage("发布成功");

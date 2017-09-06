@@ -44,6 +44,8 @@ public class OrderController {
     SerialNoGenRepository genRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UserAddressRepository addressRepository;
 
     @RequestMapping("/sendSample")
     public String getSendSampleView(){
@@ -63,6 +65,11 @@ public class OrderController {
     @RequestMapping("/confirmSample")
     public String getConfirmSampleView(){
         return "order/confirmSample";
+    }
+
+    @RequestMapping("/showAddOn")
+    public String getShowAddOnView(){
+        return "order/showAddOn";
     }
 
     @RequestMapping("/recOrder")
@@ -95,6 +102,12 @@ public class OrderController {
     @ResponseBody
     public void confirmSample(@RequestParam() Map<String, String> orderInfo){
         ChangeBothOrderStatus(orderInfo, Status.Order.CONFIRM_SAMPLE);
+    }
+
+    @RequestMapping("showAddOn.do")
+    @ResponseBody
+    public ArrayList<AllAddons> showAddOn(@RequestParam() Map<String, String> orderInfo){
+        return addonsRepository.queryByOrderSerialNo(Integer.parseInt(orderInfo.get("serialNo")));
     }
 
     @RequestMapping("sendSample.do")
@@ -274,27 +287,27 @@ public class OrderController {
     @RequestMapping("/placeOrder.do")
     @ResponseBody
     public String placeOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
+        PurOrders order = new PurOrders();
+        AllOrders allOrder = new AllOrders();
+        SerialNoGen gen = getSerialNo();
+        allOrder.setSerial_no(gen.getSerial_no());
+        allOrder.setMobile_no(SessionUtil.getMobileNo(request));
+        allOrder.setOrder_status(Status.Order.UN_REC);
+        allOrder.setOrder_cat(Type.Order.PURCHASE_ORDER);
+        ordersRepository.save(allOrder);
+        order.setPurSerialNo(gen.getSerial_no());
+        order.setOrderStatus(Status.Order.UN_REC);
+        order.setPurchaserName(SessionUtil.getMobileNo(request));
+
+        order.setTypeNo(Integer.parseInt(param.get("type_no")));
+        order.setOrder_amount(Double.parseDouble(param.get("orderAmount")));
+        if (!param.get("expect").trim().equals("")) {
+            order.setExpect_price(Double.parseDouble(param.get("expect")));
+        } else {
+            order.setExpect_price(-1);
+        }
         try {
-            JSONObject object = new JSONObject(param.get("data"));
-            PurOrders order = new PurOrders();
-            AllOrders allOrder = new AllOrders();
-            SerialNoGen gen = getSerialNo();
-            allOrder.setSerial_no(gen.getSerial_no());
-            allOrder.setMobile_no(SessionUtil.getMobileNo(request));
-            allOrder.setOrder_status(Status.Order.UN_REC);
-            allOrder.setOrder_cat(Type.Order.PURCHASE_ORDER);
-            ordersRepository.save(allOrder);
-            order.setPurSerialNo(gen.getSerial_no());
-            order.setOrderStatus(Status.Order.UN_REC);
-            order.setPurchaserName(SessionUtil.getMobileNo(request));
-            order.setTypeNo(object.getInt("type_no"));
-            order.setOrder_amount(object.getDouble("orderAmount"));
-            if (!object.getString("expect").trim().equals("")) {
-                order.setExpect_price(object.getDouble("expect"));
-            } else {
-                order.setExpect_price(-1);
-            }
-            JSONArray array = object.getJSONArray("hash");
+            JSONArray array = new JSONArray(param.get("hash"));
             double usedSpaceMb = 0;
             for (int i = 0; i < array.length(); i++) {
                 String fileHash = array.getJSONObject(i).getString("hash");
@@ -303,26 +316,25 @@ public class OrderController {
                 double fileSizeMb = array.getJSONObject(i).getDouble("size");
                 usedSpaceMb += fileSizeMb;
                 AllAddons addon = new AllAddons();
+                addon.setOrder_serial_no(gen.getSerial_no());
                 addon.setFile_key(fileHash);
                 addon.setFile_name(fileName);
                 addon.setFile_size(fileSizeMb);
-                addon.setOrder_serial_no(gen.getSerial_no());
                 addon.setAddon_url(ApiKey.Qiniu.baseUrl + fileHash + "?attname=" + fileHash + "." + extension);
                 addonsRepository.save(addon);
             }
             userRepository.updateUsedSpace(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request), usedSpaceMb);
-            if (!("more_detail").trim().equals("")) {
-                order.setMore_detail(object.getString("more_detail"));
-            } else {
-                order.setMore_detail("未添加详细需求");
-            }
-
-            purOrderRepository.save(order);
-            return "success";
         } catch (Exception e){
             e.printStackTrace();
-            return "fail";
         }
+        if (!("more_detail").trim().equals("")) {
+            order.setMore_detail(param.get("more_detail"));
+        } else {
+            order.setMore_detail("未添加详细需求");
+        }
+
+        purOrderRepository.save(order);
+        return "success";
     }
 
     private ArrayList<ProOrderBean> packProOrderBean(ArrayList<ProOrders> proOrders){
@@ -346,9 +358,9 @@ public class OrderController {
                 bean.setExpressNo("对方未寄送");
             }
             bean.setPurchaserMobileNo(purOrder.getPurchaserName());
-            String address = purchasersRepository.getPurchaserByMobileNo(purOrder.getPurchaserName()).getAddress();
+            UserAddress address = addressRepository.queryByPrimaryKey(purOrder.getPurchaserName(), Type.User.PROVIDER);
             if(address != null){
-                bean.setPurAddress(address);
+                bean.setPurAddress(address.getProvince() + address.getCity() + address.getDist() + address.getDetail_address());
             }
             else{
                 bean.setPurAddress("未提供，请联系采购商！");

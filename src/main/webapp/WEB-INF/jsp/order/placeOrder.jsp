@@ -47,11 +47,13 @@
         添加附件（可选）<input id="putAddOn" not-nec="true" name="file" type="file" multiple class="file-loading">
         <br>
     </form>
+    <br>
+    <div id="message"></div>
+    <br>
     <div align="center">
         <button id="placeOrder" class="btn btn-primary">发布需求</button>
     </div>
     <br>
-    <div id="message"></div>
 </div>
 
 </body>

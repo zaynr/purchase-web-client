@@ -24,6 +24,11 @@ $(document).ready(function () {
         queryOfferOrder(map);
     }
 
+    if(window.location.pathname === "/order/showAddOn"){
+        map["serialNo"] = getUrlParam('serialNo');
+        queryPurOrderAddOn(map);
+    }
+
     if(window.location.pathname === "/order/confirmSample"){
         querySentSample();
     }
@@ -128,11 +133,21 @@ function queryUnOfferOrder(map) {
         data: map,
         success: function (data) {
             $.each(data, function (i, item) {
+                if(item.moreDetail !== null) {
+                    if (item.moreDetail.length > 10) {
+                        item.moreDetail =
+                            "<button detail='" +
+                            item.moreDetail +
+                            "' class='btn btn-info showMore'>查看详情</button>";
+                    }
+                }
                 $("#orderTableContent").append(
                     "<tr>" +
                     tableItemWrap(item.purSerialNo) +
                     tableItemWrap(item.expectPrice) +
                     tableItemWrap(item.orderAmount) +
+                    tableItemWrap(item.moreDetail) +
+                    tableItemWrap("<a class='btn btn-info' href='showAddOn?serialNo=" + item.purSerialNo + "'>" + item.addonNum + "</a>") +
                     tableItemWrap(item.offeredPrice) +
                     tableItemWrap(item.providerName) +
                     tableItemWrap(item.typeContent) +
@@ -140,6 +155,12 @@ function queryUnOfferOrder(map) {
                     tableItemWrap("<button type=\"button\" class=\"btn btn-success\">提供报价</button>") +
                     "</tr>"
                 );
+            });
+            $("button.showMore").each(function (i, item) {
+                $(item).click(function () {
+                    $("#details").modal();
+                    $("#detailContent").html($(this).attr("detail"));
+                });
             });
             $("button.btn-success").each(function (i, item) {
                 if($(item).parent().prevAll().first().html() === "已报价"){
@@ -375,6 +396,25 @@ function queryProOrder(){
                     $(item).addClass("btn-success");
                     $(item).text("查看详情");
                 }
+            });
+        }
+    });
+}
+function queryPurOrderAddOn(){
+    $.ajax({
+        type: "POST",
+        url: "/order/showAddOn.do",
+        data: map,
+        success: function (data) {
+            $.each(data, function (i, item) {
+                $("#orderTableContent").append(
+                    "<tr>" +
+                    tableItemWrap(item.order_serial_no) +
+                    tableItemWrap(item.file_name) +
+                    tableItemWrap(item.file_size + " MB") +
+                    tableItemWrap("<a class='btn btn-info' target='_blank' href='" + item.addon_url + "'>点击下载</a>") +
+                    "</tr>"
+                );
             });
         }
     });

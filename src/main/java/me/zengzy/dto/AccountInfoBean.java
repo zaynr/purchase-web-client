@@ -1,18 +1,20 @@
 package me.zengzy.dto;
 
 import me.zengzy.entity.OrderTypes;
+import me.zengzy.entity.UserAddress;
 
 import java.util.ArrayList;
 
 public class AccountInfoBean {
-    private String userName, mobileNo, pwd, userType, address;
+    private String userName, mobileNo, pwd, userType;
     private ArrayList<OrderTypes> provideType;
+    private UserAddress address;
 
-    public String getAddress() {
+    public UserAddress getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(UserAddress address) {
         this.address = address;
     }
 

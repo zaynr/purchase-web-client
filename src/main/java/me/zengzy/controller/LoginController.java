@@ -1,13 +1,7 @@
 package me.zengzy.controller;
 
-import me.zengzy.entity.OrderTypes;
-import me.zengzy.entity.Providers;
-import me.zengzy.entity.Purchasers;
-import me.zengzy.entity.Users;
-import me.zengzy.repo.OrderTypeRepository;
-import me.zengzy.repo.ProviderRepository;
-import me.zengzy.repo.PurchasersRepository;
-import me.zengzy.repo.UserRepository;
+import me.zengzy.entity.*;
+import me.zengzy.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,15 +18,14 @@ import java.util.Map;
 public class LoginController {
     @Autowired
     UserRepository repository;
-
     @Autowired
     ProviderRepository providerRepository;
-
     @Autowired
     PurchasersRepository purchasersRepository;
-
     @Autowired
     OrderTypeRepository typeRepository;
+    @Autowired
+    UserAddressRepository addressRepository;
 
     @RequestMapping("/register")
     public String getRegisterView(){
@@ -58,7 +51,11 @@ public class LoginController {
     @ResponseBody
     public String userLogin(@RequestParam Map<String, String> userInfo, HttpServletRequest request){
         String status;
-        Users user = repository.queryUserByPriKey(userInfo.get("mobile_no"), Integer.parseInt(userInfo.get("user_type")));
+        if(userInfo.get("user_type") == null){
+            return "ERROR";
+        }
+        int userType = Integer.parseInt(userInfo.get("user_type"));
+        Users user = repository.queryUserByPriKey(userInfo.get("mobile_no"), userType);
         if(user != null){
             if(user.getPwd().equals(userInfo.get("password"))){
                 status = "log_success";
@@ -67,7 +64,7 @@ public class LoginController {
 //                session.setMaxInactiveInterval(10);
                 session.setAttribute("mobileNo", userInfo.get("mobile_no"));
                 session.setAttribute("userPwd", userInfo.get("password"));
-                session.setAttribute("userType", userInfo.get("user_type"));
+                session.setAttribute("userType", userType);
             }
             else{
                 status = "pwd_wrong";
@@ -83,23 +80,38 @@ public class LoginController {
     @ResponseBody
     public String userRegister(@RequestParam() Map<String, String> userInfo){
         String status;
-        if(repository.queryUserByPriKey(userInfo.get("mobile_no"), Integer.parseInt(userInfo.get("user_type"))) != null){
+        int userType = 1;
+        if(userInfo.get("user_type") != null) {
+            userType = Integer.parseInt(userInfo.get("user_type"));
+        }
+        else{
+            return "ERROR";
+        }
+        if(repository.queryUserByPriKey(userInfo.get("mobile_no"), userType) != null){
             status = "already_exist";
         }
         else{
             Users user = new Users();
             user.setUserName(userInfo.get("user_name"));
             user.setMobileNo(userInfo.get("mobile_no"));
-            user.setUserType(Integer.parseInt(userInfo.get("user_type")));
+            user.setUserType(userType);
             user.setPwd(userInfo.get("password"));
             repository.save(user);
-            if(userInfo.get("user_type").equals("1")){
+            UserAddress address = new UserAddress();
+            address.setUser_type(user.getUserType());
+            address.setMobile_no(user.getMobileNo());
+            address.setProvince(userInfo.get("province"));
+            address.setCity(userInfo.get("city"));
+            address.setDist(userInfo.get("dist"));
+            address.setDetail_address(userInfo.get("detail_address"));
+            addressRepository.save(address);
+            if(userType == 1){
                 Purchasers purchaser = new Purchasers();
                 purchaser.setMobile_no(userInfo.get("mobile_no"));
                 purchaser.setPrefer_type(userInfo.get("provide_type"));
                 purchasersRepository.save(purchaser);
             }
-            else if(userInfo.get("user_type").equals("2")){
+            else if(userType == 2){
                 Providers provider = new Providers();
                 provider.setMobile_no(userInfo.get("mobile_no"));
                 provider.setProvide_type(userInfo.get("provide_type"));
