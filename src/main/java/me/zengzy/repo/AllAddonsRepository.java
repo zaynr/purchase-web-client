@@ -14,4 +14,7 @@ import java.util.ArrayList;
 public interface AllAddonsRepository extends CrudRepository<AllAddons, Long> {
     @Query(value = "SELECT * FROM all_addons WHERE order_serial_no = :order_serial_no", nativeQuery = true)
     ArrayList<AllAddons> queryByOrderSerialNo(@Param("order_serial_no") int orderSerialNo);
+
+    @Query(value = "SELECT * FROM all_addons WHERE addon_serial_no = :serial_no", nativeQuery = true)
+    AllAddons queryByPrimaryKey(@Param("serial_no") int serial_no);
 }

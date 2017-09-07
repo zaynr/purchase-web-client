@@ -21,6 +21,15 @@ public class PurOrders {
     private double order_amount;
     private String more_detail;
     private String filter_dict;
+    private int expect_status;
+
+    public int getExpect_status() {
+        return expect_status;
+    }
+
+    public void setExpect_status(int expect_status) {
+        this.expect_status = expect_status;
+    }
 
     public String getFilter_dict() {
         return filter_dict;

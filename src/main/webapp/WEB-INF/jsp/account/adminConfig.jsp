@@ -1,16 +1,15 @@
 <%--
   Created by IntelliJ IDEA.
-  User: zaynr
-  Date: 2017/9/3
-  Time: 20:05
+  User: zengzy19585
+  Date: 2017/9/7
+  Time: 21:45
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
 <html>
 <head>
-    <jsp:include page="../script-sources.jsp"/>
-    <title>所有订单</title>
+    <title>Title</title>
 </head>
 <body>
 

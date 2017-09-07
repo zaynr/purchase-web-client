@@ -43,6 +43,13 @@
         </tbody>
     </table>
     </div>
+    <div align="center">
+        <ul class="pagination" style="max-width: 300px; margin: auto;">
+            <li class="previous"><a id="prev">&larr; 上一页</a></li>
+            <li class="current"><a id="cur">1</a></li>
+            <li class="next"><a id="next">下一页 &rarr;</a></li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>

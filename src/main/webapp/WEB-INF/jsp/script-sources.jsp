@@ -9,24 +9,20 @@
 <%@ page isELIgnored="false" %>
 <html>
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <%--icon--%>
+    <link rel="icon" type="image/png" sizes="300*300" href="../../img/icon.png">
 
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../css/fileinput.min.css" rel="stylesheet">
     <link href="../../css/jumbotron.css" rel="stylesheet">
 
     <script type="text/javascript" src="../../script/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="../../script/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../script/auth.js"></script>
-    <script type="text/javascript" src="../../script/jquery.autocomplete.min.js"></script>
-    <script type="text/javascript" src="../../script/plugins/sortable.min.js"></script>
-    <script type="text/javascript" src="../../script/fileinput.min.js"></script>
-    <script type="text/javascript" src="../../script/locales/zh.js"></script>
-    <script type="text/javascript" src="../../script/themes/fa/theme.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">

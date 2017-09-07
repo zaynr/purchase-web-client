@@ -12,6 +12,23 @@ public class ProOrderBean {
     private int orderTypeNo;
     private String orderStatus;
     private String expressNo;
+    private int pageSize, pageIndex;
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
+    }
 
     public String getPurchaserMobileNo() {
         return purchaserMobileNo;
