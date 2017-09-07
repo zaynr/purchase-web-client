@@ -47,4 +47,22 @@ public class Status {
         }
         return res;
     }
+
+    public static class Expect{
+        final public static int SHOW = 0;
+        final public static int HIDE = 1;
+    }
+
+    public static String expectTranslate(int status){
+        String res = "undefined";
+        switch (status){
+            case Expect.SHOW:
+                res = "显示期望报价";
+                break;
+            case Expect.HIDE:
+                res = "隐藏期望报价";
+                break;
+        }
+        return res;
+    }
 }

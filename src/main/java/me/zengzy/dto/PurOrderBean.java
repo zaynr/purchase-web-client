@@ -21,6 +21,32 @@ public class PurOrderBean {
     private String moreDetail, addonNum;
     private ArrayList<FilterDict> filters;
     private ArrayList<AllAddons> addons;
+    private int showExpectPrice;
+    private int pageSize, pageIndex;
+
+    public int getShowExpectPrice() {
+        return showExpectPrice;
+    }
+
+    public void setShowExpectPrice(int showExpectPrice) {
+        this.showExpectPrice = showExpectPrice;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
+    }
 
     public int getTypeNo() {
         return typeNo;

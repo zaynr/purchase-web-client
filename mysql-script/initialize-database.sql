@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS all_orders;
 DROP TABLE IF EXISTS all_addons;
 DROP TABLE IF EXISTS user_address;
 DROP TABLE IF EXISTS filter_dict;
+DROP TABLE IF EXISTS admin_option;
 
 #用户主表
 CREATE TABLE users(
@@ -25,6 +26,12 @@ CREATE TABLE users(
   user_name nvarchar(63),
   space_used double,
   PRIMARY KEY(mobile_no, user_type)
+);
+#管理员选项
+CREATE TABLE admin_option(
+  option_no int NOT NULL PRIMARY KEY,
+  option_describe nvarchar(255),
+  option_content nvarchar(255)
 );
 #供应商
 CREATE TABLE providers(
@@ -77,6 +84,7 @@ CREATE TABLE pur_orders(
   pur_serial_no int NOT NULL PRIMARY KEY,
   purchaser_name nvarchar(63),
   order_status int,
+  expect_status int,
   order_amount double,
   expect_price double,
   more_detail nvarchar(1023),

@@ -11,10 +11,19 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>需求下单</title>
+    <%--city-pick--%>
     <link href="../../../css/city-picker.css" rel="stylesheet">
     <script type="text/javascript" src="../../../script/citypick/city-picker.data.min.js"></script>
     <script type="text/javascript" src="../../../script/citypick/city-picker.min.js"></script>
-
+    <%--auto-complete--%>
+    <script type="text/javascript" src="../../../script/jquery.autocomplete.min.js"></script>
+    <%--file-upload--%>
+    <link href="../../../css/fileinput.min.css" rel="stylesheet">
+    <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
+    <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
+    <script type="text/javascript" src="../../../script/locales/zh.js"></script>
+    <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
+    <%--my-custom--%>
     <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>
@@ -27,9 +36,11 @@
             <input id="typeSelectText" class="form-control">
         </div>
         <br>
+        <div id="selectedType" type-no align="center"></div>
+        <br>
         <div class="input-group">
             <span class="input-group-addon">订购数量</span>
-            <input type="number" id="orderAmount" class="form-control" placeholder="需求数量">
+            <input type="number" id="orderAmount" class="form-control" onkeyup="num(this)" placeholder="需求数量">
             <span id="typeUnit" class="input-group-addon">单位</span>
         </div>
         <br>
@@ -40,7 +51,7 @@
         </div>
         <div class="input-group">
             <span class="input-group-addon">期望报价</span>
-            <input id="expect" class="form-control" onkeyup="num(this)" placeholder="供应商将会看到">
+            <input id="expect" not-nec="true" class="form-control" onkeyup="num(this)" placeholder="供应商将会看到">
             <span class="input-group-addon">元</span>
         </div>
         <br>

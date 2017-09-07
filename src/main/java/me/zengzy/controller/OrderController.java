@@ -9,6 +9,7 @@ import me.zengzy.dto.PurOrderBean;
 import me.zengzy.dict.Status;
 import me.zengzy.entity.*;
 import me.zengzy.repo.*;
+import me.zengzy.util.AdminOptUtil;
 import me.zengzy.util.SessionUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,6 +51,8 @@ public class OrderController {
     UserAddressRepository addressRepository;
     @Autowired
     FilterDictRepository filterDictRepository;
+    @Autowired
+    AdminOptionRepository adminOptionRepository;
 
     @RequestMapping("/sendSample")
     public String getSendSampleView(){
@@ -133,7 +136,7 @@ public class OrderController {
     @ResponseBody
     public ArrayList<ProOrderBean> queryRequiredSample(HttpServletRequest request){
         ArrayList<ProOrders> orders = proOrderRepository.getProOrderByNameAndStatus(SessionUtil.getMobileNo(request), Status.Order.REQUIRE_SAMPLE);
-        return packProOrderBean(orders);
+        return packProOrderBeans(orders);
     }
 
     @RequestMapping("querySentSample.do")
@@ -142,7 +145,7 @@ public class OrderController {
         ArrayList<PurOrders> orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), Status.Order.OFFERED_SAMPLE);
         ArrayList<ProOrderBean> beans = new ArrayList<ProOrderBean>();
         for(PurOrders a : orders){
-            beans.addAll(packProOrderBean(proOrderRepository.getByPurSerialNo(a.getPurSerialNo())));
+            beans.addAll(packProOrderBeans(proOrderRepository.getByPurSerialNo(a.getPurSerialNo())));
         }
         return beans;
     }
@@ -151,38 +154,56 @@ public class OrderController {
     @ResponseBody
     public ArrayList<ProOrderBean> getAllOffer(@RequestParam Map<String, String> param){
         int purSerialNo = Integer.parseInt(param.get("serialNo"));
-        ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(purSerialNo);
-        return packProOrderBean(proOrders);
+        int pageIndex = getPageIndex(param);
+        int pageSize = AdminOptUtil.getDftPageSize();
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(purSerialNo);
+        ArrayList<ProOrders> proOrders;
+        if(purOrder.getExpect_price() == -1){
+            proOrders = proOrderRepository.getByPurOrdSnIncre(purSerialNo, (pageIndex - 1)*pageSize, pageSize);
+        }
+        else{
+            proOrders = proOrderRepository.getByPurOrdSerWithExp(purSerialNo, purOrder.getExpect_price(), (pageIndex - 1)*pageSize, pageSize);
+        }
+        ArrayList<ProOrderBean> beans = packProOrderBeans(proOrders);
+        for(ProOrderBean a : beans){
+            a.setPageIndex(pageIndex);
+            a.setPageSize(AdminOptUtil.getOfferPageSize());
+        }
+        return beans;
     }
 
     @RequestMapping("viewProOrder.do")
     @ResponseBody
     public ArrayList<ProOrderBean> viewProOrder(HttpServletRequest request){
         ArrayList<ProOrders> proOrders = proOrderRepository.getByProviderName(SessionUtil.getMobileNo(request));
-        return packProOrderBean(proOrders);
+        return packProOrderBeans(proOrders);
     }
 
     @RequestMapping("/showPurOrders.do")
     @ResponseBody
     public ArrayList<PurOrderBean> getPurOrders(@RequestParam Map<String, String> param, HttpServletRequest request){
-        ArrayList<PurOrders> orders = purOrderRepository.getOrderByName(SessionUtil.getMobileNo(request));
+        ArrayList<PurOrders> orders;
+        int pageIndex = getPageIndex(param);
+        int pageSize = AdminOptUtil.getDftPageSize();
         if(param.get("queryType").equals("his")){
-            for(int i = 0; i < orders.size(); i++){
-                if(orders.get(i).getOrderStatus() != Status.Order.DONE && orders.get(i).getOrderStatus() != Status.Order.CANCEL){
-                    orders.remove(i);
-                    i--;
-                }
-            }
+            String statusSet = String.valueOf(Status.Order.DONE) + "," + String.valueOf(Status.Order.CANCEL);
+            orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), statusSet, (pageIndex - 1)*pageSize, pageSize);
         }
         else{
-            for(int i = 0; i < orders.size(); i++){
-                if(orders.get(i).getOrderStatus() == Status.Order.DONE || orders.get(i).getOrderStatus() == Status.Order.CANCEL){
-                    orders.remove(i);
-                    i--;
-                }
-            }
+            String statusSet = String.valueOf(Status.Order.UN_REC) + "," +
+                    String.valueOf(Status.Order.OFFERED_PRICE) + "," +
+                    String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
+                    String.valueOf(Status.Order.OFFERED_SAMPLE) + "," +
+                    String.valueOf(Status.Order.CONFIRM_SAMPLE) + "," +
+                    String.valueOf(Status.Order.SIGNED);
+            orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), statusSet, (pageIndex - 1)*pageSize, pageSize);
         }
-        return packPurOrderBeans(orders, request);
+        ArrayList<PurOrderBean> beans = packPurOrderBeans(orders, request);
+        for(PurOrderBean a : beans){
+            a.setPageIndex(pageIndex);
+            a.setPageSize(AdminOptUtil.getOfferPageSize());
+        }
+        return beans;
     }
 
     @RequestMapping("/addOrderType.do")
@@ -200,7 +221,7 @@ public class OrderController {
     public ArrayList<OrderTypes> showOrderTypes(@RequestParam Map<String, String> param){
         String pattern = param.get("typeContent");
         if(pattern == null || pattern.trim().equals("")) {
-            return typeRepository.getAllTypes();
+            return typeRepository.getLimitedTypes();
         }
         else{
             return typeRepository.patternMatch(pattern);
@@ -234,7 +255,7 @@ public class OrderController {
         if(param.get("queryType").equals("unOffer")) {
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC);
         }
-        else if(param.get("queryType").equals("sendSample")){
+        else if(param.get("queryType").equals("sendSample")){//requireSample
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.REQUIRE_SAMPLE);
         }
         else if(param.get("queryType").equals("offered")){
@@ -337,10 +358,25 @@ public class OrderController {
         return "success";
     }
 
+    @RequestMapping("/updateAdminOption.do")
+    @ResponseBody
+    public String updateAdminOption(@RequestParam Map<String, String> param){
+        if(param.get("offerPageSize") != null){
+            AdminOption option = adminOptionRepository.queryByPrimaryKey(1);
+            option.setOption_content(param.get("offerPageSize"));
+            adminOptionRepository.save(option);
+        }
+        return "SUCCESS";
+    }
+
     @RequestMapping("/modifyPurOrder.do")
     @ResponseBody
-    public String modifyPurOrder(){
-        return "success";
+    public String modifyPurOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
+        SerialNoGen gen = new SerialNoGen();
+        gen.setSerial_no(Integer.parseInt(param.get("pur_serial_no")));
+        PurOrders order = purOrderRepository.getPurOrderBySerialNo(gen.getSerial_no());
+        filterDictRepository.delete(filterDictRepository.getByOrderSerialNo(gen.getSerial_no()));
+        return updatePurOrderAndRelated(param, request, gen, order);
     }
 
     @RequestMapping("/placeOrder.do")
@@ -355,6 +391,16 @@ public class OrderController {
         allOrder.setOrder_status(Status.Order.UN_REC);
         allOrder.setOrder_cat(Type.Order.PURCHASE_ORDER);
         ordersRepository.save(allOrder);
+        return updatePurOrderAndRelated(param, request, gen, order);
+    }
+
+    /*
+    * 更新需求表（pur_orders） 及其关联表
+    * 关联表
+    *       地址过滤表（filter_dict）
+    *       附件表（all_addons）
+    * */
+    private String updatePurOrderAndRelated(@RequestParam Map<String, String> param, HttpServletRequest request, SerialNoGen gen, PurOrders order){
         //向需求表添加数据
         order.setPurSerialNo(gen.getSerial_no());
         order.setOrderStatus(Status.Order.UN_REC);
@@ -364,6 +410,12 @@ public class OrderController {
         }
         order.setTypeNo(Integer.parseInt(param.get("type_no")));
         order.setOrder_amount(Double.parseDouble(param.get("orderAmount")));
+        if(param.get("showExpect").equals("true")){
+            order.setExpect_status(Status.Expect.HIDE);
+        }
+        else{
+            order.setExpect_status(Status.Expect.SHOW);
+        }
         if (!param.get("expect").trim().equals("")) {
             order.setExpect_price(Double.parseDouble(param.get("expect")));
         } else {
@@ -427,7 +479,7 @@ public class OrderController {
         return "success";
     }
 
-    private ArrayList<ProOrderBean> packProOrderBean(ArrayList<ProOrders> proOrders){
+    private ArrayList<ProOrderBean> packProOrderBeans(ArrayList<ProOrders> proOrders){
         ArrayList<ProOrderBean> beans = new ArrayList<ProOrderBean>();
         for(ProOrders order : proOrders){
             PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(order.getPur_serial_no());
@@ -468,6 +520,7 @@ public class OrderController {
         ArrayList<AllAddons> addons = addonsRepository.queryByOrderSerialNo(a.getPurSerialNo());
 
         bean.setTypeContent(type.getType_content());
+        bean.setShowExpectPrice(a.getExpect_status());
         //todo：添加字典表
         bean.setOrderStatus(Status.orderTranslate(a.getOrderStatus()));
         bean.setPurchaserName(a.getPurchaserName());
@@ -518,6 +571,15 @@ public class OrderController {
         gen.setSerial_no(gen.getSerial_no() + 1);
         genRepository.save(gen);
         return gen;
+    }
+
+    private int getPageIndex(Map<String, String> param){
+        int pageIndex = 1;
+        String foo = param.get("pageIndex");
+        if(foo != null){
+            pageIndex = Integer.parseInt(foo);
+        }
+        return pageIndex;
     }
 
 }

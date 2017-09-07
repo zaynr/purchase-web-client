@@ -10,18 +10,18 @@
 <html>
 <head>
     <jsp:include page="../script-sources.jsp"/>
-    <title>添加订单类型</title>
+    <title>设置中心</title>
     <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>
-<div class="container"style="padding: 1% 10%;">
+<div class="jumbotron" style="padding: 1% 10%;">
+    <br>
+    <div id="message"></div>
     <form class="form-horizontal" role="form">
         <br>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">添加类型</label>
-            <div class="col-sm-10">
-                <input id="orderType" class="form-control" type="text">
-            </div>
+        <div class="input-group">
+            <span class="input-group-addon">添加类型</span>
+            <input id="orderType" class="form-control" type="text">
         </div>
         <br>
         <div class="input-group">
@@ -31,11 +31,31 @@
         <br>
     </form>
     <div align="center">
-    <button id="addNew" class="btn btn-primary">添加</button>
-    <br>
-    <div id="message"></div>
+        <button id="addNew" class="btn btn-primary">添加</button>
+        <br>
     </div>
     <br>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <br>
+            <div class="input-group" align="center">
+                <span class="input-group-addon">修改每页报价数</span>
+                <input id="offerPageSize" class="form-control" type="num">
+            </div>
+            <br>
+            <div align="center">
+                <button id="update" class="btn btn-primary">更新</button>
+                <br>
+            </div>
+            <br>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
 </div>
 </body>
 </html>

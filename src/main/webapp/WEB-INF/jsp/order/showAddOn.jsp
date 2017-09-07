@@ -15,6 +15,9 @@
 </head>
 <body>
 <div class="container">
+    <br>
+    <div id="message"></div>
+    <br>
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-responsive" >
             <thead>

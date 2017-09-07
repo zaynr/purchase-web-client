@@ -2,12 +2,18 @@
  * Created by zengzy19585 on 2017/9/1.
  */
 var map = {};
+var cur, prev, next;
 
 $(document).ready(function () {
     $("th").addClass("NoNewline");
+    cur = $("#cur");
+    prev = $("#prev");
+    next = $("#next");
 
-    $("li").each(function (i, item) {
+    $("li[role='presentation']").each(function (i, item) {
         $(item).click(function () {
+            cur.html("1");
+            map['pageIndex'] = cur.html();
             $("li").each(function (i, item) {
                 $(item).removeClass("active");
             });
@@ -21,6 +27,7 @@ $(document).ready(function () {
 
     if(window.location.pathname === "/order/viewAllOffer"){
         map["serialNo"] = getUrlParam('serialNo');
+        pager(queryOfferOrder);
         queryOfferOrder(map);
     }
 
@@ -41,7 +48,7 @@ $(document).ready(function () {
         queryProOrder();
     }
 });
-
+//template
 function tableItemWrap(content){
     var item = "<td class='NoNewline'>" + content + "</td>";
     return item;
@@ -55,11 +62,17 @@ function queryPurOrder(map) {
         data: map,
         success: function (data) {
             $.each(data, function (i, item) {
+                if(item.expectPrice === -1){
+                    item.expectPrice = "用户未设置";
+                }
+                else{
+                    item.expectPrice = item.expectPrice + "元";
+                }
                 $("#orderTableContent").append(
                     "<tr>" +
                     tableItemWrap(item.purSerialNo) +
                     tableItemWrap(item.expectPrice) +
-                    tableItemWrap(item.orderAmount) +
+                    tableItemWrap(item.orderAmount + item.typeUnit) +
                     tableItemWrap(item.purchaserName) +
                     tableItemWrap(item.providerName) +
                     tableItemWrap(item.typeContent) +
@@ -68,6 +81,18 @@ function queryPurOrder(map) {
                     "</tr>"
                 );
             });
+            if(cur.html() === '1'){
+                $("li.previous").addClass("disabled");
+            }
+            else{
+                $("li.previous").removeClass("disabled");
+            }
+            if(data[0].pageSize >= data.length){
+                $("li.next").addClass("disabled");
+            }
+            else{
+                $("li.next").removeClass("disabled");
+            }
             $("button.btn").each(function (i, item) {
                 if($(item).parent().prevAll().first().html() === "撤销" || $(item).parent().prevAll().first().html() === "已完成"){
                     rmModify(item);
@@ -142,11 +167,25 @@ function queryUnOfferOrder(map) {
                             "' class='btn btn-info showMore'>查看详情</button>";
                     }
                 }
+                else{
+                    item.moreDetail = "";
+                }
+                if(item.showExpectPrice === 1){
+                    item.expectPrice = "采购方未展示";
+                }
+                else{
+                    if(item.expectPrice === -1){
+                        item.expectPrice = "用户未设置";
+                    }
+                    else{
+                        item.expectPrice = item.expectPrice + "元";
+                    }
+                }
                 $("#orderTableContent").append(
                     "<tr>" +
                     tableItemWrap(item.purSerialNo) +
                     tableItemWrap(item.expectPrice) +
-                    tableItemWrap(item.orderAmount) +
+                    tableItemWrap(item.orderAmount + item.typeUnit) +
                     tableItemWrap(item.moreDetail) +
                     tableItemWrap("<a class='btn btn-info' href='showAddOn?serialNo=" + item.purSerialNo + "'>" + item.addonNum + "</a>") +
                     tableItemWrap(item.offeredPrice) +
@@ -230,6 +269,18 @@ function queryOfferOrder(map){
                     "</tr>"
                 );
             });
+            if(cur.html() === '1'){
+                $("li.previous").addClass("disabled");
+            }
+            else{
+                $("li.previous").removeClass("disabled");
+            }
+            if(data[0].pageSize >= data.length){
+                $("li.next").addClass("disabled");
+            }
+            else{
+                $("li.next").removeClass("disabled");
+            }
             $("button.btn").each(function (i, item) {
                 if($(item).parent().prevAll().first().html() === "已寄送样品" && $(item).text() === "索取样品"){
                     $(item).removeClass("btn-info");
@@ -240,6 +291,7 @@ function queryOfferOrder(map){
                     $(item).remove();
                 }
                 $(item).on("click", function () {
+                    map['cur'] = cur.html();
                     map["proSerialNo"] = $(item).parent().prevAll().last().html();
                     map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
                     if($(item).text() === "索取样品"){
@@ -426,9 +478,11 @@ function queryByType(item){
     map["queryType"] = $(item).children().attr("id");
     $("#orderTableContent").html("");
     if(window.location.pathname === "/order/showPurOrders") {
+        pager(queryPurOrder);
         queryPurOrder(map);
     }
     else if(window.location.pathname === "/order/recOrder"){
+        pager(queryUnOfferOrder);
         queryUnOfferOrder(map);
     }
 }
@@ -436,4 +490,29 @@ function rmModify(item) {
     if($(item).html() === "修改需求"){
         $(item).remove();
     }
+}
+function pager(func){
+    $("li.previous").click(function () {
+        if($(this).hasClass("disabled")){
+            return;
+        }
+        $("#orderTableContent").html("");
+        map['pageIndex'] = parseInt(cur.html(), 10) - 1;
+        cur.html(map['pageIndex']);
+        func(map);
+    });
+    $("li.current").click(function () {
+        $("#orderTableContent").html("");
+        map['pageIndex'] = cur.html();
+        func(map);
+    });
+    $("li.next").click(function () {
+        if($(this).hasClass("disabled")){
+            return;
+        }
+        $("#orderTableContent").html("");
+        map['pageIndex'] = parseInt(cur.html(), 10) + 1;
+        cur.html(map['pageIndex']);
+        func(map);
+    });
 }

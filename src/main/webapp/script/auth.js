@@ -19,7 +19,7 @@ $(document).ready(function () {
                     + "</button>"
                 );
                 if(data === "0"){
-                    addTab("/order/addOrderType", "添加订单类型");
+                    addTab("/order/addOrderType", "配置中心");
                     addTab("/order/allOrder", "订单管理");
                     addTab("/order/allContract", "合同管理");
                     addTab("/account/purchaser", "采购商管理");

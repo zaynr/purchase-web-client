@@ -22,4 +22,7 @@ public interface OrderTypeRepository extends CrudRepository<OrderTypes, Long> {
 
     @Query(value = "SELECT * FROM order_types WHERE type_content LIKE %:content%", nativeQuery = true)
     ArrayList<OrderTypes> patternMatch(@Param("content") String content);
+
+    @Query(value = "SELECT * FROM order_types ORDER BY type_no LIMIT 0, 3", nativeQuery = true)
+    ArrayList<OrderTypes> getLimitedTypes();
 }
