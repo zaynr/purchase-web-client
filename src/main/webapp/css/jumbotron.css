@@ -11,6 +11,11 @@ input {
   margin: auto;
   max-width: 400px;
 }
+p {
+  margin: auto;
+  word-break: break-all;
+  word-wrap: break-word;
+}
 button {
   margin: auto;
   max-width: 400px;

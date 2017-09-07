@@ -10,15 +10,6 @@ public class Purchasers {
     @Id
     private String mobile_no;
     private String prefer_type;
-    private String address;
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public String getPrefer_type() {
         return prefer_type;

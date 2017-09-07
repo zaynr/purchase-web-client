@@ -10,6 +10,10 @@
 <html>
 <head>
     <jsp:include page="../script-sources.jsp"/>
+    <link href="../../../css/city-picker.css" rel="stylesheet">
+    <script type="text/javascript" src="../../../script/citypick/city-picker.data.min.js"></script>
+    <script type="text/javascript" src="../../../script/citypick/city-picker.min.js"></script>
+
     <script src="../../../script/login/register.js"></script>
     <script src="../../../script/login/login.js"></script>
     <script src="../../../script/login/jQuery-MD5.js"></script>
@@ -38,6 +42,24 @@
             <option value="1">采购商</option>
             <option value="2">供应商</option>
         </select>
+        <br>
+        <div class="docs-methods">
+            <form class="form-inline">
+                <div>
+                    <div class="form-group">
+                        <div style="position: relative;">
+                            <input id="distpicker" class="form-control" readonly type="text" value="浙江省/杭州市/滨江区" data-toggle="city-picker">
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon">详细地址</span>
+                            <input type="text" id="detailAddress" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <br>
     </form>
     <div align="center">

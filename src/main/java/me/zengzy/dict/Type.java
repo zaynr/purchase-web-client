@@ -21,4 +21,22 @@ public class Type {
         }
         return res;
     }
+
+    public static class Order{
+        public final static int PURCHASE_ORDER = 0;
+        public final static int PROVIDE_ORDER = 1;
+    }
+
+    public static String OrderTranslate(int type){
+        String res = "undefined";
+        switch (type){
+            case Order.PURCHASE_ORDER:
+                res = "采购需求";
+                break;
+            case Order.PROVIDE_ORDER:
+                res = "供应报价";
+                break;
+        }
+        return res;
+    }
 }

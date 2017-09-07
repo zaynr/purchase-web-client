@@ -11,13 +11,10 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>需求下单</title>
+    <link href="../../../css/city-picker.css" rel="stylesheet">
+    <script type="text/javascript" src="../../../script/citypick/city-picker.data.min.js"></script>
+    <script type="text/javascript" src="../../../script/citypick/city-picker.min.js"></script>
 
-    <link href="../../../css/fileinput.min.css" rel="stylesheet">
-
-    <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
-    <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
-    <script type="text/javascript" src="../../../script/locales/zh.js"></script>
-    <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
     <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>
@@ -47,18 +44,46 @@
             <span class="input-group-addon">元</span>
         </div>
         <br>
-        <div class="input-group" style="width:100%;max-width:400px; margin:auto">
-            <textarea id="moreDetail" class="form-control" placeholder="详细需求(可选，不超过500字)"></textarea>
+        <div class="docs-methods" align="center">
+            <form class="form-inline">
+                <div>
+                    <div class="form-group">
+                        <div style="position: relative;">
+                            <input id="distpicker" not-nec="true" class="form-control" readonly type="text">
+                        </div>
+                        <br>
+                        <p><strong>注意，若添加了特定区域，将只会向处在该地区的供应商推送需求！</strong></p>
+                    </div>
+                </div>
+            </form>
         </div>
         <br>
-        添加附件（可选）<input id="putAddOn" not-nec="true" name="file" type="file" multiple class="file-loading">
+        <div id="regionFilter">
+
+        </div>
         <br>
+        <div align="center">
+            <button class="btn btn-danger" id="addFilter">添加特定地区</button>
+        </div>
+        <br>
+        <div class="input-group" style="width:100%;max-width:400px; margin:auto">
+            <textarea id="moreDetail" class="form-control" placeholder="详细需求(可选，不超过500字)"></textarea>
+            <br>
+            <br>
+            <br>
+            <br>
+            添加附件（可选）<input id="putAddOn" not-nec="true" name="file" type="file" multiple class="file-loading">
+            <br>
+        </div>
     </form>
+    <br>
+    <div id="modify" align="center"></div>
+    <div id="message"></div>
+    <br>
     <div align="center">
         <button id="placeOrder" class="btn btn-primary">发布需求</button>
     </div>
     <br>
-    <div id="message"></div>
 </div>
 
 </body>

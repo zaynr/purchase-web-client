@@ -10,6 +10,14 @@ $(document).ready(function () {
             $("#userType").text(data.userType);
             $("#mobileNo").val(data.mobileNo);
             $("#userName").val(data.userName);
+            $("#distpicker").citypicker({
+                simple: true,
+                province: data.address.province,
+                city: data.address.city,
+                district: data.address.dist
+            });
+            $("#detailAddress").val(data.address.detail_address);
+
             oldPwd = data.pwd;
             if(data.userType === "供应商"){
                 $("#provideType").html("<h1>供应类型</h1><br>");
@@ -24,8 +32,6 @@ $(document).ready(function () {
                         addType(item);
                     }
                 });
-                $("#address").html("<h1>地址</h1><br><div class=\"input-group\"><span class=\"input-group\">样品寄送地址：</span><input id=\"sendAddress\" class=\"form-control\"></div>");
-                $("#sendAddress").val(data.address);
             }
             else{
                 $("#provideType").html("<h1>管理账号</h1>");
@@ -60,7 +66,11 @@ $(document).ready(function () {
         }
         map["userName"] = $("#userName").val();
         map["mobileNo"] = $("#mobileNo").val();
-        map["address"] = $("#sendAddress").val();
+        var dist = $("#distpicker").val().split("/");
+        map["province"] = dist[0];
+        map["city"] = dist[1];
+        map["dist"] = dist[2];
+        map["detail_address"] = $("#detailAddress").val();
         $.ajax({
             type: "POST",
             url: "/account/updateInfo.do",

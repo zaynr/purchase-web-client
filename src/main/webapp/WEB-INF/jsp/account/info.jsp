@@ -10,9 +10,15 @@
 <html>
 <head>
     <jsp:include page="../script-sources.jsp"/>
-    <title>账户信息</title>
+    <link href="../../../css/city-picker.css" rel="stylesheet">
+    <script src="../../../script/login/login.js"></script>
+    <script src="../../../script/login/jQuery-MD5.js"></script>
+    <script type="text/javascript" src="../../../script/citypick/city-picker.data.min.js"></script>
+    <script type="text/javascript" src="../../../script/citypick/city-picker.min.js"></script>
+
     <script src="../../../script/account/info.js"></script>
     <script src="../../../script/login/jQuery-MD5.js"></script>
+    <title>账户信息</title>
 </head>
 <body>
     <div class="jumbotron" style="padding: 1% 10%;" align="center">
@@ -20,46 +26,63 @@
         <p id="userType"></p>
         <br>
         <div class="input-group">
-            <span class="input-group">用户名：</span>
+            <span class="input-group">用户名</span>
             <input id="userName" class="form-control">
         </div>
         <br>
         <div class="input-group">
-            <span class="input-group">绑定手机：</span>
+            <span class="input-group">绑定手机</span>
             <input id="mobileNo" class="form-control">
         </div>
         <br>
     </div>
 
-    <div class="container" style="padding: 1% 10%;">
+    <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                <h1>密码</h1>
+            <div class="col-md-5">
+                <h1>地址</h1>
                 <br>
-                <div class="input-group">
-                    <span class="input-group">旧密码：</span>
-                    <input type="password" id="oldPwd" class="form-control">
-                </div>
+                <form class="form">
+                    <div style="position:relative;">
+                        <div class="form-group">
+                            <div style="position: relative;">
+                                <input id="distpicker" class="form-control" readonly type="text">
+                            </div>
+                            <br>
+                            <div class="input-group">
+                                <span class="input-group">详细地址</span>
+                                <input type="text" id="detailAddress" class="form-control" style="width: 400px;">
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <br>
-                <div class="input-group">
-                    <span class="input-group">新密码：</span>
-                    <input type="password" id="newPwd" class="form-control">
-                </div>
-                <br>
-                <div class="input-group">
-                    <span class="input-group">重复新密码：</span>
-                    <input type="password" id="rptPwd" class="form-control">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div id="address">
-
-                </div>
-            </div>
-            <div class="col-md-4">
                 <div id="provideType">
 
                 </div>
+                <br>
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-4">
+                <h1>密码</h1>
+                <br>
+                <form class="form">
+                    <div class="input-group">
+                        <span class="input-group">旧密码：</span>
+                        <input type="password" id="oldPwd" class="form-control">
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <span class="input-group">新密码：</span>
+                        <input type="password" id="newPwd" class="form-control">
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <span class="input-group">重复新密码：</span>
+                        <input type="password" id="rptPwd" class="form-control">
+                    </div>
+                </form>
             </div>
         </div>
         <br>

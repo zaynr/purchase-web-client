@@ -14,31 +14,16 @@ $(document).ready(function () {
         map["user_name"] = $("#user_name").val();
         map["mobile_no"] = $("#mobile_no").val();
         map["user_type"] = $("#user_type").val();
-        if(map["mobile_no"] === "" || map["password"] === ""){
-            $("#message").html(
-                "<div class=\"alert alert-info alert-dismissable\">\n" +
-                "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
-                "aria-hidden=\"true\">\n" +
-                "    &times;\n" +
-                "   </button>\n" +
-                "请输入手机号及密码" +
-                "</div>"
-            );
-            return;
-        }
+        var dist = $("#distpicker").val().split("/");
+        map["province"] = dist[0];
+        map["city"] = dist[1];
+        map["dist"] = dist[2];
+        map["detail_address"] = $("#detailAddress").val();
         $("div.alert-content").each(function (i, item) {
             provide_type += $(item).attr("my-attr") + ",";
         });
         if(provide_type === ""){
-            $("#message").html(
-                "<div class=\"alert alert-info alert-dismissable\">\n" +
-                "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
-                "aria-hidden=\"true\">\n" +
-                "    &times;\n" +
-                "   </button>\n" +
-                "请选择类型" +
-                "</div>"
-            );
+            errorMessage("请选择类型");
             return;
         }
         map["provide_type"] = provide_type;
@@ -49,15 +34,7 @@ $(document).ready(function () {
             data: map,
             success: function (data) {
                 if(data === "reg_success"){
-                    $("#message").html(
-                        "<div class=\"alert alert-success alert-dismissable\">\n" +
-                        "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
-                        "aria-hidden=\"true\">\n" +
-                        "    &times;\n" +
-                        "   </button>\n" +
-                        "注册成功" +
-                        "</div>"
-                    );
+                    successMessage("注册成功！");
                     $.ajax({
                         type: "POST",
                         url: "/login/login.do",
@@ -68,15 +45,7 @@ $(document).ready(function () {
                     });
                 }
                 else if(data === "already_exist"){
-                    $("#message").html(
-                        "<div class=\"alert alert-info alert-dismissable\">\n" +
-                        "   <button type=\"button\" class=\"close\" data-dismiss=\"alert\"\n" +
-                        "aria-hidden=\"true\">\n" +
-                        "    &times;\n" +
-                        "   </button>\n" +
-                        "该手机号已被注册" +
-                        "</div>"
-                    );
+                    errorMessage("该手机号已被注册！");
                 }
             }
         });
