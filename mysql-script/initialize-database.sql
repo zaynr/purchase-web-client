@@ -53,7 +53,7 @@ CREATE TABLE user_address(
   detail_address nvarchar(255),
   PRIMARY KEY(mobile_no, user_type)
 );
-#订单类型
+#订单可选择货物类型
 CREATE TABLE order_types(
   type_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   type_unit nvarchar(10),

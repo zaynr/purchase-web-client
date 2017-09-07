@@ -1,11 +1,37 @@
 use purchase;
 
-INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('0', '0', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('1', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('2', '123', '1', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('3', '123', '2', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('4', '123', '3', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('5', '123', '4', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('6', '123', '5', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('7', '123', '7', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('8', '123', '8', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('9', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('10', '321', '1', '1');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('11', '321', '2', '1');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('12', '321', '3', '1');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('13', '321', '4', '1');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('14', '12321', '4', '1');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('15', '321', '6', '1');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('20', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('21', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('22', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('23', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('24', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('25', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('26', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('27', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('28', '123', '0', '0');
+INSERT INTO `purchase`.`all_orders` (`serial_no`, `mobile_no`, `order_status`, `order_cat`) VALUES ('29', '123', '0', '0');
+
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('1', '123', '0', '0', '12', '321', NULL, '1,2,3,', '6');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('2', '123', '1', '0', '123', '321', NULL, NULL, '5');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('3', '123', '2', '0', '123', '321', NULL, NULL, '4');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('4', '123', '3', '0', '123', '321', NULL, NULL, '3');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('5', '123', '4', '0', '123', '321', NULL, NULL, '2');
+INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('6', '123', '5', '0', '123', '321', NULL, NULL, '2');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('7', '123', '7', '0', '123', '321', NULL, NULL, '4');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('8', '123', '8', '0', '12', '321', NULL, NULL, '3');
 INSERT INTO `purchase`.`pur_orders` (`pur_serial_no`, `purchaser_name`, `order_status`, `expect_status`, `order_amount`, `expect_price`, `more_detail`, `filter_dict`, `type_no`) VALUES ('9', '123', '0', '0', '12', '321', NULL, NULL, '3');
