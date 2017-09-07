@@ -33,9 +33,9 @@ INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, 
 INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, provider_name, express_no) VALUES('14', '5', '4', '312', '12321', 'C3E4A1B2');
 INSERT INTO pro_orders(pro_serial_no, pur_serial_no, order_status, offer_price, provider_name, express_no) VALUES('15', '6', '6', '321', '321', 'A1B2C3E4');
 
-INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`, `dict`) VALUES ('1', '浙江省', '杭州市', '滨江区', NULL);
-INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`, `dict`) VALUES ('1', '福建省', '泉州市', 'null', NULL);
-INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`, `dict`) VALUES ('1', '重庆市', 'null', 'null', NULL);
+INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`) VALUES ('1', '浙江省', '杭州市', '滨江区');
+INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`) VALUES ('1', '福建省', '泉州市', 'null');
+INSERT INTO `purchase`.`filter_dict` (`order_serial_no`, `province`, `city`, `dist`) VALUES ('1', '重庆市', 'null', 'null');
 
 INSERT INTO order_types(type_content, type_unit) VALUES("原油", "桶");
 INSERT INTO order_types(type_content, type_unit) VALUES("糖果", "吨");
