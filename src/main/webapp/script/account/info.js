@@ -1,11 +1,60 @@
 /**
  * Created by zengzy19585 on 2017/9/2.
  */
+var param = {};
+var oldPwd;
+
 $(document).ready(function () {
-    var oldPwd;
+
+    if(window.location.pathname === "/account/info") {
+        getAccountInfo(param);
+    }
+
+    if(window.location.pathname === "/account/adminModify") {
+        debugger;
+        param["uType"] = getUrlParam("userType");
+        param["mno"] = getUrlParam("mobileNo");
+        param["pwd"] = getUrlParam("pwd");
+        getAccountInfo(param);
+    }
+
+    $("#commitChange").click(function () {
+        var encrypt = $.md5($("#oldPwd").val());
+        if($("#oldPwd").val() !== "") {
+            if (encrypt !== oldPwd) {
+                errorMessage("密码不正确");
+                return;
+            }
+            if ($("#newPwd").val() === "") {
+                errorMessage("请输入新密码");
+                return;
+            }
+            if ($("#newPwd").val() !== $("#rptPwd").val()) {
+                errorMessage("两次输入密码不同");
+                return;
+            }
+            param["password"] = $.md5($("#newPwd").val());
+        }
+        else{
+            param["password"] = oldPwd;
+        }
+        param["userName"] = $("#userName").val();
+        param["mobileNo"] = $("#mobileNo").val();
+        var dist = $("#distpicker").val().split("/");
+        param["province"] = dist[0];
+        param["city"] = dist[1];
+        param["dist"] = dist[2];
+        param["detail_address"] = $("#detailAddress").val();
+        updateAccountInfo(param);
+    });
+});
+
+//ajax
+function getAccountInfo(param){
     $.ajax({
         type: "POST",
         url: "/account/getInfo.do",
+        data: param,
         success: function (data) {
             $("#userType").text(data.userType);
             $("#mobileNo").val(data.mobileNo);
@@ -19,13 +68,13 @@ $(document).ready(function () {
             $("#detailAddress").val(data.address.detail_address);
 
             oldPwd = data.pwd;
-            if(data.userType === "供应商"){
+            if(data.userType === "供应商" || data.userType === "管理员编辑：供应商"){
                 $("#provideType").html("<h1>供应类型</h1><br>");
                 $.each(data.provideType, function (i, item) {
                     addType(item);
                 });
             }
-            else if(data.userType === "采购商"){
+            else if(data.userType === "采购商" || data.userType === "管理员编辑：采购商"){
                 $("#provideType").html("<h1>偏好类型</h1><br>");
                 $.each(data.provideType, function (i, item) {
                     if(i < 5) {
@@ -43,61 +92,87 @@ $(document).ready(function () {
         }
     });
 
-    $("#commitChange").click(function () {
-        var map = {};
-        var encrypt = $.md5($("#oldPwd").val());
-        if($("#oldPwd").val() !== "") {
-            if (encrypt !== oldPwd) {
-                errorMessage("密码不正确");
-                return;
-            }
-            if ($("#newPwd").val() === "") {
-                errorMessage("请输入新密码");
-                return;
-            }
-            if ($("#newPwd").val() !== $("#rptPwd").val()) {
-                errorMessage("两次输入密码不同");
-                return;
-            }
-            map["password"] = $.md5($("#newPwd").val());
-        }
-        else{
-            map["password"] = oldPwd;
-        }
-        map["userName"] = $("#userName").val();
-        map["mobileNo"] = $("#mobileNo").val();
-        var dist = $("#distpicker").val().split("/");
-        map["province"] = dist[0];
-        map["city"] = dist[1];
-        map["dist"] = dist[2];
-        map["detail_address"] = $("#detailAddress").val();
-        $.ajax({
-            type: "POST",
-            url: "/account/updateInfo.do",
-            data: map,
-            success: function (data) {
-                if(data === "success") {
-                    normalMessage("更新成功");
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 1000);
-                }
-                else{
-                    errorMessage("手机号已被注册");
-                }
-            },
-            error: function () {
-                errorMessage("更新失败");
-            }
-        });
+    $("#addMoreType").on("click", function () {
+        $("#type_detail").modal();
     });
 
-    function addType(item){
-        $("#provideType").append(
-            "<div class='alert alert-success' my-attr='" +
-            item.type_no + "'>\n" +
-            item.type_content +
-            "</div>"
-        );
+    $("#confirm").click(function () {
+        $("#provideType").append($("#provide_type_dialog").html());
+        $("#provide_type_dialog").html("");
+    });
+
+    $("#add").click(function () {
+        var flag = true;
+        $("div.alert-content").each(function (i, item) {
+            if($(item).text() === $("#typeSelect").find("option:selected").text()){
+                flag = false;
+            }
+        });
+        if(flag) {
+            $("#provide_type_dialog").append(
+                "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><div class='alert-content' my-attr=\"" +
+                $("#typeSelect").val() +
+                "\">" +
+                $("#typeSelect").find("option:selected").text() +
+                "</div></div>"
+            );
+        }
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/login/showOrderType.do",
+        success: function (data) {
+            $.each(data, function (i, item) {
+                $("#typeSelect").append(
+                    "<option value = \""
+                    + item.type_no
+                    + "\">"
+                    + item.type_content
+                    + "</option>"
+                );
+            });
+        }
+    });
+}
+function updateAccountInfo(param){
+    var foo = "";
+    $("div.alert-content").each(function (i, item) {
+        foo += $(item).attr("my-attr") + ",";
+    });
+    if(foo === ""){
+        errorMessage("请选择类型");
+        return;
     }
-});
+    param["provide_type"] = foo;
+    $.ajax({
+        type: "POST",
+        url: "/account/updateInfo.do",
+        data: param,
+        success: function (data) {
+            if(data === "success") {
+                normalMessage("更新成功");
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
+            }
+            else{
+                errorMessage("手机号已被注册");
+            }
+        },
+        error: function () {
+            errorMessage("更新失败");
+        }
+    });
+}
+
+//template
+function addType(item){
+    $("#provideType").append(
+        "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><div class='alert-content' my-attr=\"" +
+        item.type_no +
+        "\">" +
+        item.type_content +
+        "</div></div>"
+    );
+}

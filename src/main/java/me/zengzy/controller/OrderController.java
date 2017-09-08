@@ -60,8 +60,16 @@ public class OrderController {
     ///////////////
     //管理员页面组
     ///////////////
+    @RequestMapping("/modifyProOrder")
+    public String getModifyProOrderView(HttpServletRequest request){
+        if(SessionUtil.getUserType(request) != Type.User.ADMINISTRATOR){
+            return "error";
+        }
+        return "order/adminConfProOrd";
+    }
+
     @RequestMapping("/adminGetAll")
-    public String getAdminGetAll(HttpServletRequest request){
+    public String getAdminGetAllView(HttpServletRequest request){
         if(SessionUtil.getUserType(request) != Type.User.ADMINISTRATOR){
             return "error";
         }
@@ -71,11 +79,9 @@ public class OrderController {
     @RequestMapping("/addOrderType")
     public String getAddOrderTypeView(HttpServletRequest request){
         if(SessionUtil.getUserType(request) != Type.User.ADMINISTRATOR){
-            return "order/addOrderType";
-        }
-        else{
             return "error";
         }
+        return "order/addOrderType";
     }
 
     ///////////////
@@ -168,7 +174,7 @@ public class OrderController {
         int pageIndex = getPageIndex(param) - 1;
         int pageSize = AdminOptUtil.getDftPageSize();
         if(param.get("userType").equals("-1")){
-            if(param.get("userType").equals("-1")){
+            if(param.get("serialNo").equals("-1")){
                 orders = ordersRepository.getAll(pageIndex*pageSize, pageSize);
             }
             else{
@@ -481,14 +487,76 @@ public class OrderController {
         return "SUCCESS";
     }
 
+    @RequestMapping("/adminDeleteOrder.do")
+    @ResponseBody
+    public String adminDeleteOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
+        if(SessionUtil.getUserType(request) != Type.User.ADMINISTRATOR){
+            return "ERROR";
+        }
+        int sn = Integer.parseInt(param.get("serialNo"));
+        ordersRepository.delete(ordersRepository.getBySerialNo(sn));
+        if(param.get("orderType").equals("采购需求")){
+            filterDictRepository.delete(filterDictRepository.getByOrderSerialNo(sn));
+            addonsRepository.delete(addonsRepository.queryByOrderSerialNo(sn));
+            purOrderRepository.delete(purOrderRepository.getPurOrderBySerialNo(sn));
+        }
+        else if(param.get("orderType").equals("供应报价")){
+            proOrderRepository.delete(proOrderRepository.getByProSerialNo(sn));
+        }
+        return "success";
+    }
+
+    @RequestMapping("/adminMdyProOrder.do")
+    @ResponseBody
+    public void adminMdyProOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
+        if(SessionUtil.getUserType(request) != Type.User.ADMINISTRATOR){
+            return;
+        }
+        ProOrders order = proOrderRepository.getByProSerialNo(Integer.parseInt(param.get("proSerialNo")));
+        if(!param.get("pro_mobile_no").equals("-1")){
+            order.setProvider_name(param.get("pro_mobile_no"));
+        }
+        if(!param.get("express_no").equals("-1")){
+            order.setExpress_no(param.get("express_no"));
+        }
+        if(!param.get("pur_serial_no").equals("-1")){
+            order.setPur_serial_no(Integer.parseInt(param.get("pur_serial_no")));
+        }
+        if(!param.get("offer_price").equals("-1")){
+            order.setOffer_price(Double.parseDouble(param.get("offer_price")));
+        }
+        proOrderRepository.save(order);
+    }
+
+    @RequestMapping("/getProOrder.do")
+    @ResponseBody
+    public ProOrders getProOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
+        if(SessionUtil.getUserType(request) != Type.User.ADMINISTRATOR){
+            return null;
+        }
+        if(param.get("serialNo") != null) {
+            int sn = Integer.parseInt(param.get("serialNo"));
+            return proOrderRepository.getByProSerialNo(sn);
+        }
+        else{
+            return null;
+        }
+    }
+
     @RequestMapping("/modifyPurOrder.do")
     @ResponseBody
     public String modifyPurOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
         SerialNoGen gen = new SerialNoGen();
         gen.setSerial_no(Integer.parseInt(param.get("pur_serial_no")));
         PurOrders order = purOrderRepository.getPurOrderBySerialNo(gen.getSerial_no());
+        String mobileNo = SessionUtil.getMobileNo(request);
+        int userType = SessionUtil.getUserType(request);
+        if(SessionUtil.getUserType(request) == 0){
+            mobileNo = order.getPurchaserName();
+            userType = 1;
+        }
         filterDictRepository.delete(filterDictRepository.getByOrderSerialNo(gen.getSerial_no()));
-        return updatePurOrderAndRelated(param, request, gen, order);
+        return updatePurOrderAndRelated(param, mobileNo, userType, gen, order);
     }
 
     @RequestMapping("/placeOrder.do")
@@ -503,7 +571,9 @@ public class OrderController {
         allOrder.setOrder_status(Status.Order.UN_REC);
         allOrder.setOrder_cat(Type.Order.PURCHASE_ORDER);
         ordersRepository.save(allOrder);
-        return updatePurOrderAndRelated(param, request, gen, order);
+        String mobileNo = SessionUtil.getMobileNo(request);
+        int userType = SessionUtil.getUserType(request);
+        return updatePurOrderAndRelated(param, mobileNo, userType, gen, order);
     }
 
     /*
@@ -512,11 +582,11 @@ public class OrderController {
     *       地址过滤表（filter_dict）
     *       附件表（all_addons）
     * */
-    private String updatePurOrderAndRelated(@RequestParam Map<String, String> param, HttpServletRequest request, SerialNoGen gen, PurOrders order){
+    private String updatePurOrderAndRelated(@RequestParam Map<String, String> param, String mobileNo, int userType, SerialNoGen gen, PurOrders order){
         //向需求表添加数据
         order.setPurSerialNo(gen.getSerial_no());
         order.setOrderStatus(Status.Order.UN_REC);
-        order.setPurchaserName(SessionUtil.getMobileNo(request));
+        order.setPurchaserName(mobileNo);
         if(param.get("type_no") == null){
             return "no_such_type";
         }
@@ -559,7 +629,7 @@ public class OrderController {
                     addonsRepository.save(addon);
                 }
                 //记录用户上传空间用量
-                userRepository.updateUsedSpace(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request), usedSpaceMb);
+                userRepository.updateUsedSpace(mobileNo, userType, usedSpaceMb);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -693,5 +763,4 @@ public class OrderController {
         }
         return pageIndex;
     }
-
 }

@@ -13,6 +13,7 @@ INSERT INTO `purchase`.`users` (`mobile_no`, `user_type`, `pwd`, `user_name`, `s
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('123', '1', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('321', '2', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('12321', '2', '浙江省', '杭州市', '西湖区', '啊啊啊啊');
+INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('99980001', '0', '浙江省', '杭州市', '西湖区', '啊啊啊啊');
 
 INSERT INTO `purchase`.`admin_option` (`option_no`, `option_describe`, `option_content`) VALUES ('1', '报价每页条数', '10');
 INSERT INTO `purchase`.`admin_option` (`option_no`, `option_describe`, `option_content`) VALUES ('2', '需求每页条数', '10');

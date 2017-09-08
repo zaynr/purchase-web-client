@@ -22,8 +22,7 @@ $(document).ready(function () {
                     addTab("/order/addOrderType", "配置中心");
                     addTab("/order/adminGetAll", "订单管理");
                     // addTab("/order/allContract", "合同管理");
-                    addTab("/account/purchaser", "采购商管理");
-                    addTab("/account/provider", "供应商管理");
+                    addTab("/account/userManage", "用户管理");
                 }
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
