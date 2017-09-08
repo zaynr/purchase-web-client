@@ -101,7 +101,7 @@ $(document).ready(function () {
                             if(data === "success") {
                                 successMessage("更新成功");
                                 setTimeout(function () {
-                                    window.location.href = "/order/showPurOrders";
+                                    window.location.reload();
                                 }, 1000);
                             }
                             else if(data === "no_such_type"){
