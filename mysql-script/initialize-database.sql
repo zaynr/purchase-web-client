@@ -57,6 +57,7 @@ CREATE TABLE user_address(
 CREATE TABLE order_types(
   type_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   type_unit nvarchar(10),
+  type_category nvarchar(255),
   type_content nvarchar(255)
 );
 #序列号生成表
@@ -116,7 +117,7 @@ CREATE TABLE contacts(
 );
 #合同表
 CREATE TABLE contracts(
-  contract_serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  contract_serial_no int NOT NULL PRIMARY KEY,
   pro_serial_no int,
 	pur_serial_no int,
   contract_status int,	# 0:正在进行;1:已完成

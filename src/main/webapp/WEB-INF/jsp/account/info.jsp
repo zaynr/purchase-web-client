@@ -13,6 +13,7 @@
     <link href="../../../css/city-picker.css" rel="stylesheet">
     <script type="text/javascript" src="../../../script/citypick/city-picker.data.min.js"></script>
     <script type="text/javascript" src="../../../script/citypick/city-picker.min.js"></script>
+    <script src="../../../script/citypick/jquery.cxselect.min.js"></script>
 
     <script src="../../../script/account/info.js"></script>
     <script src="../../../script/login/jQuery-MD5.js"></script>
@@ -106,17 +107,12 @@
                 </div>
                 <br>
                 <form class="bs-example bs-example-form" role="form">
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">类型: </label>
-                        <div class="col-sm-10">
-                            <select id="typeSelect" class="form-control">
-
-                            </select>
-                        </div>
+                    <div id="type_picker">
+                        <select class="type_category form-control"></select>
+                        <select class="type_content form-control"></select>
                     </div>
                 </form>
                 <div align="center">
-                    <br>
                     <br>
                     <button type="button" id="add" class="btn btn-primary">添加</button>
                     <br>

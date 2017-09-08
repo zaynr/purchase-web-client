@@ -14,7 +14,6 @@
     <script src="../../../script/order/orderDisplay.js"></script>
 </head>
 <body>
-
 <div class="container">
     <div align="center">
         <br>

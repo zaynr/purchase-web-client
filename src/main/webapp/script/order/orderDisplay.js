@@ -25,6 +25,7 @@ $(document).ready(function () {
     });
 
     if(window.location.pathname === "/order/viewAllOffer"){
+        fileUpload(map);
         map["serialNo"] = getUrlParam('serialNo');
         pager(queryOfferOrder);
         queryOfferOrder(map);
@@ -92,13 +93,13 @@ $(document).ready(function () {
                         $(item).removeClass("btn-danger");
                         $(item).text("查看详情");
                     }
-                    else if($(item).parent().prevAll().first().html() === "已报价" || $(item).parent().prevAll().first().html() === "待提供样品" || $(item).parent().prevAll().first().html() === "已寄送样品" || $(item).parent().prevAll().first().html() === "已确认样品"){
+                    else if($(item).parent().prevAll().first().html() === "已报价" || $(item).parent().prevAll().first().html() === "待寄送样品" || $(item).parent().prevAll().first().html() === "已寄送样品" || $(item).parent().prevAll().first().html() === "已确认样品"){
                         rmModify(item);
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-info");
                         $(item).text("查看报价");
                     }
-                    else if($(item).parent().prevAll().first().html() === "已签合同"){
+                    else if($(item).parent().prevAll().first().html() === "已签合同" || $(item).parent().prevAll().first().html() === "已发送合同"){
                         rmModify(item);
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-success");
@@ -122,6 +123,10 @@ $(document).ready(function () {
                             window.location.href="/order/modifyPurOrder?serialNo=" + param["pur_serial_no"];
                             return;
                         }
+                        else if($(item).text() === "查看合同"){
+                            showContract(param);
+                            return;
+                        }
                         else{
                             return;
                         }
@@ -142,6 +147,16 @@ $(document).ready(function () {
                         }
                     });
                 });
+            }
+        });
+    }
+    function showContract(param) {
+        $.ajax({
+            type: "POST",
+            url: "/order/getContractSn.do",
+            data: param,
+            success: function (data) {
+                window.location.href = "/order/showAddOn?serialNo=" + data;
             }
         });
     }
@@ -280,7 +295,10 @@ $(document).ready(function () {
                         $(item).addClass("btn-primary");
                         $(item).text("确认样品");
                     }
-                    else if($(item).parent().prevAll().first().html() === "待提供样品" && $(item).text() === "索取样品"){
+                    else if($(item).parent().prevAll().first().html() === "已发送合同" && $(item).text() === "索取样品"){
+                        $(item).remove();
+                    }
+                    else if($(item).parent().prevAll().first().html() === "待寄送样品" && $(item).text() === "索取样品"){
                         $(item).remove();
                     }
                     else if($(item).parent().prevAll().first().html() === "已确认样品" && $(item).text() === "索取样品"){
@@ -288,9 +306,9 @@ $(document).ready(function () {
                     }
                     $(item).on("click", function () {
                         map['cur'] = $("#cur").html();
-                        map["proSerialNo"] = $(item).parent().prevAll().last().html();
-                        map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
                         if($(item).text() === "索取样品"){
+                            map["proSerialNo"] = $(item).parent().prevAll().last().html();
+                            map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
                             $.ajax({
                                 type: "POST",
                                 url: "/order/requestSample.do",
@@ -310,20 +328,24 @@ $(document).ready(function () {
                             window.location.href = "/order/confirmSample"
                         }
                         else if($(item).text() === "签订合同"){
+                            map["proSerialNo"] = $(item).parent().prevAll().last().html();
+                            map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
                             $("#confirmContract").modal();
-                            $("#confirmDate").click(function () {
-                                if(!checkInputNull()){
-                                    return;
-                                }
+                            $("#confirm").click(function () {
                                 $.ajax({
                                     type: "POST",
                                     url: "/order/genContract.do",
                                     data: map,
-                                    success: function () {
-                                        normalMessage("生成合同成功");
-                                        setTimeout(function () {
-                                            window.location.reload();
-                                        }, 1000);
+                                    success: function (data) {
+                                        if(data === "success") {
+                                            successMessage("生成合同成功");
+                                            setTimeout(function () {
+                                                window.location.href = "/order/showPurOrders";
+                                            }, 1000);
+                                        }
+                                        else{
+                                            alert("生成合同失败");
+                                        }
                                     },
                                     error: function () {
                                         alert("生成合同失败");
@@ -510,6 +532,77 @@ $(document).ready(function () {
             }
         });
     }
+    function fileUpload(map){
+        //获取上传 token，记录上传数据
+        $.ajax({
+            type: "POST",
+            url: "/order/getUploadToken.do",
+            success: function (data) {
+                var putAddOn = $("#putAddOn");
+                var files = [];
+                putAddOn.fileinput({
+                    uploadUrl: "http://up-z2.qiniu.com",
+                    browseClass: "btn btn-primary btn-block",
+                    uploadExtraData: {"token" : data},
+                    language: "zh",
+                    showCaption: false,
+                    allowedFileExtensions: ["jpg", "png", "jpeg", "gif", "txt", "doc", "docx", "xls", "xlsx", "pdf"],
+                    hideThumbnailContent: true,
+                    maxFileCount: 4,
+                    maxFileSize: 20480
+                }).on("fileuploaded", function(event, data, previewId, index) {
+                    var item = {};
+                    var temp = data.filenames[index].split(".");
+                    item["name"] = data.filenames[index];
+                    item["size"] = (data.files[index].size / Math.pow(1024, 2)).toFixed(2);
+                    item["extension"] = temp[temp.length - 1];
+                    item["hash"] = data.response.hash;
+                    files.push(item);
+                    map['hash'] = JSON.stringify(files);
+                });
+            }
+        });
+    }
+    function queryAllContract(map) {
+        $.ajax({
+            type: "POST",
+            url: "/order/getAllContract.do",
+            data: map,
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    var url = "<a class='btn btn-info' target='_blank' href='" + item.addonUrl + "'>下载合同</a>";
+                    var btn;
+                    if(item.userType === 1) {
+                        btn = "<button class='btn btn-info'>更改合同</button>";
+                    }
+                    else{
+                        btn = "<button class='btn btn-success'>接受合同</button>";
+                    }
+                    $("#orderTableContent").append(
+                        "<tr>" +
+                        tableItemWrap(item.contractSn) +
+                        tableItemWrap(item.purOrdSn) +
+                        tableItemWrap(item.proOrdSn) +
+                        tableItemWrap(url) +
+                        tableItemWrap(btn) +
+                        "</tr>"
+                    );
+                    if($("#cur").html() === '1'){
+                        $("li.previous").addClass("disabled");
+                    }
+                    else{
+                        $("li.previous").removeClass("disabled");
+                    }
+                    if(data[0].pageSize > data.length){
+                        $("li.next").addClass("disabled");
+                    }
+                    else{
+                        $("li.next").removeClass("disabled");
+                    }
+                });
+            }
+        });
+    }
 
 //simple logic
     function queryByType(item){
@@ -522,6 +615,10 @@ $(document).ready(function () {
         else if(window.location.pathname === "/order/recOrder"){
             pager(queryUnOfferOrder);
             queryUnOfferOrder(map);
+        }
+        else if(window.location.pathname === "/order/allContract"){
+            pager(queryAllContract);
+            queryAllContract(map);
         }
     }
     function rmModify(item) {

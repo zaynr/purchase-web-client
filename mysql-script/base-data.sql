@@ -21,9 +21,9 @@ INSERT INTO `purchase`.`admin_option` (`option_no`, `option_describe`, `option_c
 
 INSERT INTO serial_no_gen(serial_no) VALUES('100');
 
-INSERT INTO order_types(type_content, type_unit) VALUES("原油", "桶");
-INSERT INTO order_types(type_content, type_unit) VALUES("糖果", "吨");
-INSERT INTO order_types(type_content, type_unit) VALUES("饮料", "箱");
-INSERT INTO order_types(type_content, type_unit) VALUES("台灯", "部");
-INSERT INTO order_types(type_content, type_unit) VALUES("电视", "台");
-INSERT INTO order_types(type_content, type_unit) VALUES("化妆品", "箱");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("糖果", "吨", "食品");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("饮料", "箱", "食品");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("台灯", "部", "家电");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("电视", "台", "家电");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("洗发露", "箱", "日用品");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("化妆品", "箱", "日用品");

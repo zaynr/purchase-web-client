@@ -11,6 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <title>设置中心</title>
+    <script src="../../../script/citypick/jquery.cxselect.min.js"></script>
     <script src="../../../script/order/orderManage.js"></script>
 </head>
 <body>
@@ -18,9 +19,20 @@
     <br>
     <div id="message"></div>
     <form class="form-horizontal" role="form">
+        <h3>类型管理</h3>
+        <br>
+        <div id="type_picker">
+            <select class="type_category form-control"></select>
+            <select class="type_content form-control"></select>
+        </div>
         <br>
         <div class="input-group">
-            <span class="input-group-addon">添加类型</span>
+            <span class="input-group-addon">类型所属大类</span>
+            <input id="typeCategory" class="form-control" type="text">
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon">类型</span>
             <input id="orderType" class="form-control" type="text">
         </div>
         <br>
@@ -31,31 +43,27 @@
         <br>
     </form>
     <div align="center">
-        <button id="addNew" class="btn btn-primary">添加</button>
-        <br>
+        <div class="btn-group">
+            <button id="addNew" class="btn btn-primary">更新</button>
+            <button id="delete" class="btn btn-danger">删除</button>
+        </div>
     </div>
     <br>
 </div>
 <div class="container">
-    <div class="row">
-        <div class="col-md-4">
+    <form class="form-horizontal" role="form">
+        <br>
+        <div class="input-group" align="center">
+            <span class="input-group-addon">修改每页报价数</span>
+            <input id="offerPageSize" class="form-control" type="number">
         </div>
-        <div class="col-md-4">
-            <br>
-            <div class="input-group" align="center">
-                <span class="input-group-addon">修改每页报价数</span>
-                <input id="offerPageSize" class="form-control" type="num">
-            </div>
-            <br>
-            <div align="center">
-                <button id="update" class="btn btn-primary">更新</button>
-                <br>
-            </div>
+        <br>
+        <div align="center">
+            <button id="update" class="btn btn-primary">更新</button>
             <br>
         </div>
-        <div class="col-md-4">
-        </div>
-    </div>
+        <br>
+    </form>
 </div>
 </body>
 </html>

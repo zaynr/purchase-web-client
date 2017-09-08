@@ -88,7 +88,7 @@ public class AccountController {
         int userType = SessionUtil.getUserType(request);
         String mobileNo = SessionUtil.getMobileNo(request);
         String pwd = SessionUtil.getUserPwd(request);
-        if(userType == Type.User.ADMINISTRATOR){
+        if(userType == Type.User.ADMINISTRATOR && param.get("uType")!=null){
             userType = Integer.parseInt(param.get("uType"));
             mobileNo = param.get("mno");
             pwd = param.get("pwd");
@@ -97,7 +97,7 @@ public class AccountController {
         UserAddress address = addressRepository.queryByPrimaryKey(mobileNo, userType);
         bean.setMobileNo(mobileNo);
         bean.setPwd(pwd);
-        if(SessionUtil.getUserType(request) == Type.User.ADMINISTRATOR) {
+        if(SessionUtil.getUserType(request) == Type.User.ADMINISTRATOR && param.get("uType")!=null) {
             bean.setUserType("管理员编辑：" + Type.UserTranslate(userType));
         }
         else{

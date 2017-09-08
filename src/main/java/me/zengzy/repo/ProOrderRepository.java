@@ -32,6 +32,9 @@ public interface ProOrderRepository extends CrudRepository<ProOrders, Long> {
     @Query(value = "SELECT * FROM pro_orders WHERE provider_name = :provider_name AND order_status = :status", nativeQuery = true)
     ArrayList<ProOrders> getProOrderByNameAndStatus(@Param("provider_name") String name, @Param("status") int status);
 
+    @Query(value = "SELECT * FROM pro_orders WHERE provider_name = :provider_name AND order_status = :status ORDER BY pro_serial_no DESC LIMIT :cur, :pgSize", nativeQuery = true)
+    ArrayList<ProOrders> getProOrderByNameAndStatus(@Param("provider_name") String name, @Param("status") int status, @Param("cur") int cur, @Param("pgSize") int pgSize);
+
     @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :sn ORDER BY offer_price LIMIT :cur, :pgSize", nativeQuery = true)
     ArrayList<ProOrders> getByPurOrdSnIncre(@Param("sn") int sn, @Param("cur") int cur, @Param("pgSize") int pgSize);
 

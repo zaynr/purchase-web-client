@@ -5,6 +5,15 @@ var param = {};
 var oldPwd;
 
 $(document).ready(function () {
+    var type_picker = $("#type_picker");
+    type_picker.cxSelect({
+        url: "/order/showOrdTypeGrpByCat.do",
+        selects: ['type_category', 'type_content'],
+        required: true,
+        jsonName: 'name',
+        jsonValue: 'typeUnit',
+        jsonSub: 'types'
+    });
 
     if(window.location.pathname === "/account/info") {
         getAccountInfo(param);
@@ -104,34 +113,18 @@ function getAccountInfo(param){
     $("#add").click(function () {
         var flag = true;
         $("div.alert-content").each(function (i, item) {
-            if($(item).text() === $("#typeSelect").find("option:selected").text()){
+            if($(item).text() === $("select.type_content").find("option:selected").text()){
                 flag = false;
             }
         });
         if(flag) {
             $("#provide_type_dialog").append(
                 "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button><div class='alert-content' my-attr=\"" +
-                $("#typeSelect").val() +
+                $("select.type_content").find("option:selected").attr("value") +
                 "\">" +
-                $("#typeSelect").find("option:selected").text() +
+                $("select.type_content").find("option:selected").text() +
                 "</div></div>"
             );
-        }
-    });
-
-    $.ajax({
-        type: "POST",
-        url: "/login/showOrderType.do",
-        success: function (data) {
-            $.each(data, function (i, item) {
-                $("#typeSelect").append(
-                    "<option value = \""
-                    + item.type_no
-                    + "\">"
-                    + item.type_content
-                    + "</option>"
-                );
-            });
         }
     });
 }
