@@ -69,7 +69,7 @@
             </div>
             <div class="col-md-2">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" id="3rdRow">
                 <h1>密码</h1>
                 <br>
                 <form class="form">

@@ -4,7 +4,7 @@ public class AllUserBean {
     private String mobileNo;
     private int userType;
     private String userName;
-    private double spaceUsed;
+    private String spaceUsed;
     private int pageSize;
     private String pwd;
 
@@ -40,11 +40,11 @@ public class AllUserBean {
         this.userName = userName;
     }
 
-    public double getSpaceUsed() {
+    public String getSpaceUsed() {
         return spaceUsed;
     }
 
-    public void setSpaceUsed(double spaceUsed) {
+    public void setSpaceUsed(String spaceUsed) {
         this.spaceUsed = spaceUsed;
     }
 

@@ -17,4 +17,7 @@ public interface AllAddonsRepository extends CrudRepository<AllAddons, Long> {
 
     @Query(value = "SELECT * FROM all_addons WHERE addon_serial_no = :serial_no", nativeQuery = true)
     AllAddons queryByPrimaryKey(@Param("serial_no") int serial_no);
+
+    @Query(value = "SELECT * FROM all_addons WHERE uploader_moble_no = :mobile_no", nativeQuery = true)
+    ArrayList<AllAddons> queryByUploader(@Param("mobile_no") String mobile_no);
 }

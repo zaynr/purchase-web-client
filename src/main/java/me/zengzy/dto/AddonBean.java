@@ -5,7 +5,7 @@ public class AddonBean{
     private int addonSerialNo;
     private int orderSerialNo;
     private String addonUrl;
-    private double fileSize;
+    private String fileSize;
     private String fileKey;
     private String fileName;
 
@@ -41,11 +41,11 @@ public class AddonBean{
         this.addonUrl = addonUrl;
     }
 
-    public double getFileSize() {
+    public String getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(double fileSize) {
+    public void setFileSize(String fileSize) {
         this.fileSize = fileSize;
     }
 

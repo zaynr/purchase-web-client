@@ -14,6 +14,15 @@ public class AllAddons {
     private double file_size;
     private String file_key;
     private String file_name;
+    private String uploader_moble_no;
+
+    public String getUploader_moble_no() {
+        return uploader_moble_no;
+    }
+
+    public void setUploader_moble_no(String uploader_moble_no) {
+        this.uploader_moble_no = uploader_moble_no;
+    }
 
     public String getFile_key() {
         return file_key;

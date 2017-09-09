@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -401,22 +402,43 @@ public class OrderController {
         fileUtil.deleteFile();
         AllAddons addon = addonsRepository.queryByPrimaryKey(Integer.parseInt(param.get("addonSerial")));
         addonsRepository.delete(addon);
+        int userType = Type.User.PURCHASER;
+        String mobileNo = addon.getUploader_moble_no();
+        Users user = userRepository.queryUserByPriKey(mobileNo, userType);
+        user.setSpace_used(user.getSpace_used() - addon.getFile_size());
+        userRepository.save(user);
         return "success";
     }
 
     @RequestMapping("showAddOn.do")
     @ResponseBody
     public ArrayList<AddonBean> showAddOn(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
-        ArrayList<AllAddons> allAddons = addonsRepository.queryByOrderSerialNo(Integer.parseInt(orderInfo.get("serialNo")));
+        ArrayList<AllAddons> allAddons;
+        int userType = SessionUtil.getUserType(request);
+        if(orderInfo.get("serialNo") == null || orderInfo.get("serialNo").equals("")){
+            userType = Type.Order.PROVIDE_ORDER;
+            allAddons = addonsRepository.queryByUploader(SessionUtil.getMobileNo(request));
+        }
+        else {
+            allAddons = addonsRepository.queryByOrderSerialNo(Integer.parseInt(orderInfo.get("serialNo")));
+        }
         ArrayList<AddonBean> addonBeans = new ArrayList<AddonBean>();
         for(AllAddons a : allAddons){
             AddonBean bean = new AddonBean();
             bean.setAddonSerialNo(a.getAddon_serial_no());
             bean.setAddonUrl(a.getAddon_url());
+            DecimalFormat df = new DecimalFormat("#.00");
+            double usedSpace = a.getFile_size();
+            if(usedSpace / Math.pow(1024, 2) > 1) {
+                bean.setFileSize(df.format(usedSpace / Math.pow(1024, 2)) + " MB");
+            }
+            else{
+                bean.setFileSize(df.format(usedSpace / Math.pow(1024, 1)) + " KB");
+            }
             bean.setFileKey(a.getFile_key());
             bean.setFileName(a.getFile_name());
             bean.setOrderSerialNo(a.getOrder_serial_no());
-            bean.setUserType(SessionUtil.getUserType(request));
+            bean.setUserType(userType);
             addonBeans.add(bean);
         }
         return addonBeans;
@@ -1115,24 +1137,24 @@ public class OrderController {
     private void fileUpload(Map<String, String> param, SerialNoGen gen, String mobileNo, int userType){
         try {
             JSONArray array = new JSONArray(param.get("hash"));
-            double usedSpaceMb = 0;
+            double usedSpaceB = 0;
             for (int i = 0; i < array.length(); i++) {
                 String fileHash = array.getJSONObject(i).getString("hash");
                 String fileName = array.getJSONObject(i).getString("name");
-                String extension = array.getJSONObject(i).getString("extension");
-                double fileSizeMb = array.getJSONObject(i).getDouble("size");
-                usedSpaceMb += fileSizeMb;
+                double fileSizeB = array.getJSONObject(i).getDouble("size");
+                usedSpaceB += fileSizeB;
                 //记录附件上传数据
                 AllAddons addon = new AllAddons();
                 addon.setOrder_serial_no(gen.getSerial_no());
                 addon.setFile_key(fileHash);
                 addon.setFile_name(fileName);
-                addon.setFile_size(fileSizeMb);
+                addon.setFile_size(fileSizeB);
+                addon.setUploader_moble_no(mobileNo);
                 addon.setAddon_url(ApiKey.Qiniu.baseUrl + fileHash + "?attname=" + fileName);
                 addonsRepository.save(addon);
             }
             //记录用户上传空间用量
-            userRepository.updateUsedSpace(mobileNo, userType, usedSpaceMb);
+            userRepository.updateUsedSpace(mobileNo, userType, usedSpaceB);
         } catch (Exception e) {
             e.printStackTrace();
         }

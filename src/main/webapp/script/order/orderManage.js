@@ -286,10 +286,8 @@ function pageInit() {
                 maxFileSize: 20480
             }).on("fileuploaded", function(event, data, previewId, index) {
                 var item = {};
-                var temp = data.filenames[index].split(".");
                 item["name"] = data.filenames[index];
-                item["size"] = (data.files[index].size / Math.pow(1024, 2)).toFixed(2);
-                item["extension"] = temp[temp.length - 1];
+                item["size"] = (data.files[index].size);
                 item["hash"] = data.response.hash;
                 files.push(item);
                 param['hash'] = JSON.stringify(files);

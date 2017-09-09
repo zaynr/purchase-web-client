@@ -47,7 +47,6 @@ function queryAllUser(param) {
                 else if(item.userType === 2){
                     item.userType = "供应商";
                 }
-                item.spaceUsed += " Mb";
                 $("#orderTableContent").append(
                     "<tr>" +
                     tableItemWrap(item.mobileNo) +

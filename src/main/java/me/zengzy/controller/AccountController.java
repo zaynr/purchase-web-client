@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -74,7 +75,14 @@ public class AccountController {
             AllUserBean bean = new AllUserBean();
             bean.setMobileNo(a.getMobileNo());
             bean.setPageSize(pageSize);
-            bean.setSpaceUsed(a.getSpace_used());
+            DecimalFormat df = new DecimalFormat("#.00");
+            double usedSpace = a.getSpace_used();
+            if(usedSpace / Math.pow(1024, 2) > 1) {
+                bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 2)) + " MB");
+            }
+            else{
+                bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 1)) + " KB");
+            }
             bean.setUserType(a.getUserType());
             bean.setPwd(a.getPwd());
             beans.add(bean);
@@ -124,6 +132,14 @@ public class AccountController {
         }
         else{
             bean.setUserName("");
+        }
+        DecimalFormat df = new DecimalFormat("#.00");
+        double usedSpace = userRepository.queryUserByPriKey(mobileNo, userType).getSpace_used();
+        if(usedSpace / Math.pow(1024, 2) > 1) {
+            bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 2)) + " MB");
+        }
+        else{
+            bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 1)) + " KB");
         }
         return bean;
     }

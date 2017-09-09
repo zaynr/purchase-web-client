@@ -9,6 +9,15 @@ public class AccountInfoBean {
     private String userName, mobileNo, pwd, userType;
     private ArrayList<OrderTypes> provideType;
     private UserAddress address;
+    private String spaceUsed;
+
+    public String getSpaceUsed() {
+        return spaceUsed;
+    }
+
+    public void setSpaceUsed(String spaceUsed) {
+        this.spaceUsed = spaceUsed;
+    }
 
     public UserAddress getAddress() {
         return address;

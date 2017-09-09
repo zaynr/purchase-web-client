@@ -80,6 +80,7 @@ CREATE TABLE all_addons(
   file_name nvarchar(1023),
   file_key nvarchar(255),
   file_size double,
+  uploader_moble_no NVARCHAR(20),
   addon_url nvarchar(1023)
 );
 #采购订单表

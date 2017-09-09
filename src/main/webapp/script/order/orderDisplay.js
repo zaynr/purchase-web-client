@@ -53,10 +53,8 @@ $(document).ready(function () {
                     maxFileSize: 20480
                 }).on("fileuploaded", function(event, data, previewId, index) {
                     var item = {};
-                    var temp = data.filenames[index].split(".");
                     item["name"] = data.filenames[index];
-                    item["size"] = (data.files[index].size / Math.pow(1024, 2)).toFixed(2);
-                    item["extension"] = temp[temp.length - 1];
+                    item["size"] = (data.files[index].size);
                     item["hash"] = data.response.hash;
                     files.push(item);
                     map['hash'] = JSON.stringify(files);
@@ -561,7 +559,7 @@ $(document).ready(function () {
                             "<tr>" +
                             tableItemWrap(item.orderSerialNo) +
                             tableItemWrap(item.fileName) +
-                            tableItemWrap(item.fileSize + " MB") +
+                            tableItemWrap(item.fileSize) +
                             tableItemWrap("<a class='btn btn-info' target='_blank' href='" + item.addonUrl + "'>点击下载</a>") +
                             tableItemWrap("<button class='btn btn-danger' file-key='" + item.fileKey + "' addon-sn='" + item.addonSerialNo + "'>删除此附件</button>") +
                             "</tr>"
@@ -629,10 +627,8 @@ $(document).ready(function () {
                     maxFileSize: 20480
                 }).on("fileuploaded", function(event, data, previewId, index) {
                     var item = {};
-                    var temp = data.filenames[index].split(".");
                     item["name"] = data.filenames[index];
-                    item["size"] = (data.files[index].size / Math.pow(1024, 2)).toFixed(2);
-                    item["extension"] = temp[temp.length - 1];
+                    item["size"] = (data.files[index].size);
                     item["hash"] = data.response.hash;
                     files.push(item);
                     map['hash'] = JSON.stringify(files);

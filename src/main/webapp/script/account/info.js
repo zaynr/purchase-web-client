@@ -95,13 +95,14 @@ function getAccountInfo(param){
                         addType(item);
                     }
                 });
+                $("#3rdRow").append("<br><h1>已用空间：" +
+                    data.spaceUsed + "</h1><button id='addon-config' class='btn btn-warning'>附件管理</button></div>");
+                $("#addon-config").on("click",function () {
+                    window.location.href = "/order/showAddOn";
+                });
             }
             else{
-                $("#provideType").html("<h1>管理账号</h1>");
-                $("#provideType").append(
-                    "<h3><a href='/account/purchaser'>采购商管理</a></h3>" +
-                    "<h3><a href='/account/provider'>供应商管理</a></h3>"
-                );
+
             }
         }
     });
