@@ -54,7 +54,7 @@ $(document).ready(function () {
                 }).on("fileuploaded", function(event, data, previewId, index) {
                     var item = {};
                     item["name"] = data.filenames[index];
-                    item["size"] = (data.files[index].size);
+                    item["size"] = (data.files[index].size / 1024).toFixed(4);
                     item["hash"] = data.response.hash;
                     files.push(item);
                     map['hash'] = JSON.stringify(files);
@@ -554,6 +554,9 @@ $(document).ready(function () {
                 }
                 if(data[0].userType === 1 || data[0].userType === 0) {
                     $("#tableHead").append("<th>操作</th>");
+                    if(data[0].privilege === 0){
+                        $("#addonAttch").remove();
+                    }
                     $.each(data, function (i, item) {
                         $("#orderTableContent").append(
                             "<tr>" +
@@ -628,7 +631,7 @@ $(document).ready(function () {
                 }).on("fileuploaded", function(event, data, previewId, index) {
                     var item = {};
                     item["name"] = data.filenames[index];
-                    item["size"] = (data.files[index].size);
+                    item["size"] = (data.files[index].size / 1024).toFixed(4);
                     item["hash"] = data.response.hash;
                     files.push(item);
                     map['hash'] = JSON.stringify(files);

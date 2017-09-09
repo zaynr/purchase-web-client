@@ -415,8 +415,9 @@ public class OrderController {
     public ArrayList<AddonBean> showAddOn(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
         ArrayList<AllAddons> allAddons;
         int userType = SessionUtil.getUserType(request);
+        int privilege = 1;
         if(orderInfo.get("serialNo") == null || orderInfo.get("serialNo").equals("")){
-            userType = Type.Order.PROVIDE_ORDER;
+            privilege = 0;
             allAddons = addonsRepository.queryByUploader(SessionUtil.getMobileNo(request));
         }
         else {
@@ -427,18 +428,19 @@ public class OrderController {
             AddonBean bean = new AddonBean();
             bean.setAddonSerialNo(a.getAddon_serial_no());
             bean.setAddonUrl(a.getAddon_url());
-            DecimalFormat df = new DecimalFormat("#.00");
+            DecimalFormat df = new DecimalFormat("#0.00");
             double usedSpace = a.getFile_size();
-            if(usedSpace / Math.pow(1024, 2) > 1) {
-                bean.setFileSize(df.format(usedSpace / Math.pow(1024, 2)) + " MB");
+            if(usedSpace / 1024 > 1) {
+                bean.setFileSize(df.format(usedSpace / 1024) + " MB");
             }
             else{
-                bean.setFileSize(df.format(usedSpace / Math.pow(1024, 1)) + " KB");
+                bean.setFileSize(df.format(usedSpace) + " KB");
             }
             bean.setFileKey(a.getFile_key());
             bean.setFileName(a.getFile_name());
             bean.setOrderSerialNo(a.getOrder_serial_no());
             bean.setUserType(userType);
+            bean.setPrivilege(privilege);
             addonBeans.add(bean);
         }
         return addonBeans;
@@ -1137,24 +1139,24 @@ public class OrderController {
     private void fileUpload(Map<String, String> param, SerialNoGen gen, String mobileNo, int userType){
         try {
             JSONArray array = new JSONArray(param.get("hash"));
-            double usedSpaceB = 0;
+            double usedSpaceKB = 0;
             for (int i = 0; i < array.length(); i++) {
                 String fileHash = array.getJSONObject(i).getString("hash");
                 String fileName = array.getJSONObject(i).getString("name");
-                double fileSizeB = array.getJSONObject(i).getDouble("size");
-                usedSpaceB += fileSizeB;
+                double fileSizeKB = array.getJSONObject(i).getDouble("size");
+                usedSpaceKB += fileSizeKB;
                 //记录附件上传数据
                 AllAddons addon = new AllAddons();
                 addon.setOrder_serial_no(gen.getSerial_no());
                 addon.setFile_key(fileHash);
                 addon.setFile_name(fileName);
-                addon.setFile_size(fileSizeB);
+                addon.setFile_size(fileSizeKB);
                 addon.setUploader_moble_no(mobileNo);
                 addon.setAddon_url(ApiKey.Qiniu.baseUrl + fileHash + "?attname=" + fileName);
                 addonsRepository.save(addon);
             }
             //记录用户上传空间用量
-            userRepository.updateUsedSpace(mobileNo, userType, usedSpaceB);
+            userRepository.updateUsedSpace(mobileNo, userType, usedSpaceKB);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -8,6 +8,15 @@ public class AddonBean{
     private String fileSize;
     private String fileKey;
     private String fileName;
+    private int privilege;
+
+    public int getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(int privilege) {
+        this.privilege = privilege;
+    }
 
     public int getUserType() {
         return userType;

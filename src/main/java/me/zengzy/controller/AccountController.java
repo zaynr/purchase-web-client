@@ -75,13 +75,13 @@ public class AccountController {
             AllUserBean bean = new AllUserBean();
             bean.setMobileNo(a.getMobileNo());
             bean.setPageSize(pageSize);
-            DecimalFormat df = new DecimalFormat("#.00");
+            DecimalFormat df = new DecimalFormat("#0.00");
             double usedSpace = a.getSpace_used();
-            if(usedSpace / Math.pow(1024, 2) > 1) {
-                bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 2)) + " MB");
+            if(usedSpace / 1024 > 1) {
+                bean.setSpaceUsed(df.format(usedSpace / 1024) + " MB");
             }
             else{
-                bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 1)) + " KB");
+                bean.setSpaceUsed(df.format(usedSpace) + " KB");
             }
             bean.setUserType(a.getUserType());
             bean.setPwd(a.getPwd());
@@ -133,13 +133,13 @@ public class AccountController {
         else{
             bean.setUserName("");
         }
-        DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormat df = new DecimalFormat("#0.00");
         double usedSpace = userRepository.queryUserByPriKey(mobileNo, userType).getSpace_used();
-        if(usedSpace / Math.pow(1024, 2) > 1) {
-            bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 2)) + " MB");
+        if(usedSpace / 1024 > 1) {
+            bean.setSpaceUsed(df.format(usedSpace / 1024) + " MB");
         }
         else{
-            bean.setSpaceUsed(df.format(usedSpace / Math.pow(1024, 1)) + " KB");
+            bean.setSpaceUsed(df.format(usedSpace) + " KB");
         }
         return bean;
     }

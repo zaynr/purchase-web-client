@@ -287,7 +287,7 @@ function pageInit() {
             }).on("fileuploaded", function(event, data, previewId, index) {
                 var item = {};
                 item["name"] = data.filenames[index];
-                item["size"] = (data.files[index].size);
+                item["size"] = (data.files[index].size / 1024).toFixed(4);
                 item["hash"] = data.response.hash;
                 files.push(item);
                 param['hash'] = JSON.stringify(files);
