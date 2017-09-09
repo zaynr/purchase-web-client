@@ -29,17 +29,17 @@ $(document).ready(function () {
                     addTab("/order/showPurOrders", "查看订单");
                     addTabWithBadge("/order/confirmSample", "接收样品", "confirmSample");
                     addTabWithBadge("/order/allContract", "查看合同", "allContract");
-                    addTab("/order/addOrderType", "查看联系人");
+                    addTab("/order/allContacts", "查看联系人");
 
                     $.ajax({
                         type: "POST",
                         url: "/order/getNewSignCnt.do",
                         success: function (data) {
                             if(data !== 0){
-                                $("#offeredContract").text(data);
+                                $("#allContract").text(data);
                             }
                             else{
-                                $("#offeredContract").text("");
+                                $("#allContract").text("");
                             }
                         }
                     });
@@ -64,7 +64,7 @@ $(document).ready(function () {
                     addTabWithBadge("/order/sendSample", "寄送样品", "sendSample");
                     addTab("/order/viewProOrder", "查看订单");
                     addTabWithBadge("/order/allContract", "查看合同", "allContract");
-                    addTab("/order/addOrderType", "查看联系人");
+                    addTab("/order/allContacts", "查看联系人");
 
                     $.ajax({
                         type: "POST",
@@ -209,4 +209,10 @@ function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
     var r = window.location.search.substr(1).match(reg); //匹配目标参数
     if (r !== null) return unescape(r[2]); return null; //返回参数值
+}
+
+// 验证手机号
+function isPhoneNo(phone) {
+    var pattern = /^1[0-9]{10}$/;
+    return pattern.test(phone);
 }

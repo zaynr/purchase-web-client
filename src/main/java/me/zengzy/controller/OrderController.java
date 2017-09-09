@@ -56,6 +56,8 @@ public class OrderController {
     AdminOptionRepository adminOptionRepository;
     @Autowired
     ContractRepository contractRepository;
+    @Autowired
+    ContactRepository contactRepository;
 
     ///////////////
     //管理员页面组
@@ -158,10 +160,14 @@ public class OrderController {
     ///////////////////////////////////
     //公共页面
     ///////////////////////////////////
-
     @RequestMapping("/showAddOn")
     public String getShowAddOnView(){
         return "order/showAddOn";
+    }
+
+    @RequestMapping("/allContacts")
+    public String getAllContactsView(){
+        return "order/allContacts";
     }
 
     @RequestMapping("/allContract")
@@ -183,9 +189,16 @@ public class OrderController {
         ArrayList<AllOrders> orders = new ArrayList<AllOrders>();
         int pageIndex = getPageIndex(param) - 1;
         int pageSize = AdminOptUtil.getDftPageSize();
+        String queryType;
+        if(param.get("queryType").equals("current")){
+            queryType = appendCurrentType();
+        }
+        else{
+            queryType = appendHisType();
+        }
         if(param.get("userType").equals("-1")){
             if(param.get("serialNo").equals("-1")){
-                orders = ordersRepository.getAll(pageIndex*pageSize, pageSize);
+                orders = ordersRepository.getByStatusSet(queryType, pageIndex*pageSize, pageSize);
             }
             else{
                 int sn = Integer.parseInt(param.get("serialNo"));
@@ -196,10 +209,10 @@ public class OrderController {
             int userType = Integer.parseInt(param.get("userType"));
             switch (userType){
                 case Type.User.PURCHASER:
-                    orders = ordersRepository.getByPurName(param.get("mobileNo"), pageIndex*pageSize, pageSize);
+                    orders = ordersRepository.getByCatAndNameAndStatusSet(queryType, param.get("mobileNo"), 0, pageIndex*pageSize, pageSize);
                     break;
                 case Type.User.PROVIDER:
-                    orders = ordersRepository.getByProName(param.get("mobileNo"), pageIndex*pageSize, pageSize);
+                    orders = ordersRepository.getByCatAndNameAndStatusSet(queryType, param.get("mobileNo"), 1, pageIndex*pageSize, pageSize);
                     break;
             }
         }
@@ -212,6 +225,116 @@ public class OrderController {
             beans.add(bean);
         }
         return beans;
+    }
+
+    @RequestMapping("getContact.do")
+    @ResponseBody
+    public ArrayList<ContactsBean> getContact(@RequestParam() Map<String, String> param, HttpServletRequest request){
+        ArrayList<Contacts> contacts;
+        ArrayList<ContactsBean> beans = new ArrayList<ContactsBean>();
+        int userType = SessionUtil.getUserType(request);
+        String mobileNo = SessionUtil.getMobileNo(request);
+        int pageIndex = getPageIndex(param) - 1;
+        int pageSize = AdminOptUtil.getDftPageSize();
+        if(userType == Type.User.PURCHASER){
+            contacts = contactRepository.queryByPurMobNo(mobileNo, pageIndex*pageSize, pageSize);
+        }
+        else if(userType == Type.User.PROVIDER){
+            contacts = contactRepository.queryByProMobNo(mobileNo, pageIndex*pageSize, pageSize);
+        }
+        else{
+            contacts = contactRepository.queryAll(pageIndex*pageSize, pageSize);
+        }
+        for(Contacts a : contacts){
+            ContactsBean bean = new ContactsBean();
+            bean.setPageSize(pageSize);
+            bean.setCoop_count(a.getCoop_count());
+            bean.setProvider_mobile_no(a.getProvider_mobile_no());
+            bean.setPurchaser_mobile_no(a.getPurchaser_mobile_no());
+            bean.setSerial_no(a.getSerial_no());
+
+            beans.add(bean);
+        }
+        return beans;
+    }
+
+    @RequestMapping("acceptContract.do")
+    @ResponseBody
+    public String acceptContract(@RequestParam() Map<String, String> param, HttpServletRequest request){
+        if(param.get("contractSn") == null || SessionUtil.getUserType(request) != Type.User.PROVIDER){
+            return "ERROR";
+        }
+        int contractSn = Integer.parseInt(param.get("contractSn"));
+        String proMobileNo, purMobileNo;
+        Contract contract = contractRepository.getByPrimaryKey(contractSn);
+        ProOrders proOrder = proOrderRepository.getByProSerialNo(contract.getPro_serial_no());
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(contract.getPur_serial_no());
+        proOrder.setOrder_status(Status.Order.SIGNED);
+        purOrder.setOrderStatus(Status.Order.SIGNED);
+        proMobileNo = proOrder.getProvider_name();
+        purMobileNo = purOrder.getPurchaserName();
+        proOrderRepository.save(proOrder);
+        purOrderRepository.save(purOrder);
+        AllOrders foo = ordersRepository.getBySerialNo(proOrder.getPro_serial_no());
+        foo.setOrder_status(Status.Order.SIGNED);
+        ordersRepository.save(foo);
+        foo = ordersRepository.getBySerialNo(purOrder.getPurSerialNo());
+        foo.setOrder_status(Status.Order.SIGNED);
+        ordersRepository.save(foo);
+        //add contact
+        Contacts contact = contactRepository.queryByBothMobNo(purMobileNo, proMobileNo);
+        if(contact != null){
+            contact.setCoop_count(contact.getCoop_count() + 1);
+            contactRepository.save(contact);
+        }
+        else{
+            contact = new Contacts();
+            contact.setCoop_count(1);
+            contact.setProvider_mobile_no(proMobileNo);
+            contact.setPurchaser_mobile_no(purMobileNo);
+            contactRepository.save(contact);
+        }
+        return "success";
+    }
+
+    @RequestMapping("getTypeUnit.do")
+    @ResponseBody
+    public OrderTypes getTypeUnit(@RequestParam() Map<String, String> param){
+        OrderTypes type = typeRepository.getTypeByNo(Integer.parseInt(param.get("type_no")));
+        return type;
+    }
+
+    @RequestMapping("newAddon.do")
+    @ResponseBody
+    public String newAddon(@RequestParam() Map<String, String> param, HttpServletRequest request){
+        SerialNoGen gen = new SerialNoGen();
+        gen.setSerial_no(Integer.parseInt(param.get("serialNo")));
+        fileUpload(param, gen, SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
+        return "success";
+    }
+
+    @RequestMapping("declineContract.do")
+    @ResponseBody
+    public String declineContract(@RequestParam() Map<String, String> param, HttpServletRequest request){
+        if(param.get("contractSn") == null || SessionUtil.getUserType(request) != Type.User.PROVIDER){
+            return "ERROR";
+        }
+        int contractSn = Integer.parseInt(param.get("contractSn"));
+        Contract contract = contractRepository.getByPrimaryKey(contractSn);
+        ProOrders proOrder = proOrderRepository.getByProSerialNo(contract.getPro_serial_no());
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(contract.getPur_serial_no());
+        contractRepository.delete(contract);
+        proOrder.setOrder_status(Status.Order.UN_SIGNED);
+        purOrder.setOrderStatus(Status.Order.OFFERED_PRICE);
+        proOrderRepository.save(proOrder);
+        purOrderRepository.save(purOrder);
+        AllOrders foo = ordersRepository.getBySerialNo(proOrder.getPro_serial_no());
+        foo.setOrder_status(Status.Order.UN_SIGNED);
+        ordersRepository.save(foo);
+        foo = ordersRepository.getBySerialNo(purOrder.getPurSerialNo());
+        foo.setOrder_status(Status.Order.OFFERED_PRICE);
+        ordersRepository.save(foo);
+        return "success";
     }
 
     @RequestMapping("getAllContract.do")
@@ -239,7 +362,7 @@ public class OrderController {
                 bean.setPageSize(pageSize);
                 bean.setUserType(userType);
                 bean.setContractSn(contract.getContract_serial_no());
-                bean.setPurOrdSn(a.getPurSerialNo());
+                bean.setPurOrdSn(contract.getPur_serial_no());
                 bean.setProOrdSn(contract.getPro_serial_no());
                 bean.setAddonUrl(addonsRepository.queryByOrderSerialNo(contract.getContract_serial_no()).get(0).getAddon_url());
                 beans.add(bean);
@@ -253,7 +376,7 @@ public class OrderController {
                 bean.setPageSize(pageSize);
                 bean.setUserType(userType);
                 bean.setContractSn(contract.getContract_serial_no());
-                bean.setPurOrdSn(a.getPro_serial_no());
+                bean.setPurOrdSn(contract.getPur_serial_no());
                 bean.setProOrdSn(contract.getPro_serial_no());
                 bean.setAddonUrl(addonsRepository.queryByOrderSerialNo(contract.getContract_serial_no()).get(0).getAddon_url());
                 beans.add(bean);
@@ -362,16 +485,11 @@ public class OrderController {
         int pageIndex = getPageIndex(param) - 1;
         int pageSize = AdminOptUtil.getDftPageSize();
         if(param.get("queryType").equals("his")){
-            String statusSet = String.valueOf(Status.Order.DONE) + "," + String.valueOf(Status.Order.CANCEL);
+            String statusSet = appendHisType();
             orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), statusSet, pageIndex*pageSize, pageSize);
         }
         else{
-            String statusSet = String.valueOf(Status.Order.UN_REC) + "," +
-                    String.valueOf(Status.Order.OFFERED_PRICE) + "," +
-                    String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
-                    String.valueOf(Status.Order.OFFERED_SAMPLE) + "," +
-                    String.valueOf(Status.Order.CONFIRM_SAMPLE) + "," +
-                    String.valueOf(Status.Order.SIGNED);
+            String statusSet = appendCurrentType();
             orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), statusSet, pageIndex*pageSize, pageSize);
         }
         ArrayList<PurOrderBean> beans = packPurOrderBeans(orders, request);
@@ -643,6 +761,13 @@ public class OrderController {
         return cnt;
     }
 
+    @RequestMapping("/getNewSignCnt.do")
+    @ResponseBody
+    public int getNewSignCnt(HttpServletRequest request){
+        ArrayList<PurOrders> orders = purOrderRepository.getPurOrderByNameAndStatus(SessionUtil.getMobileNo(request), Status.Order.SIGNED);
+        return orders.size();
+    }
+
     @RequestMapping("/getContractSn.do")
     @ResponseBody
     public int getContractSn(@RequestParam Map<String, String> param){
@@ -836,7 +961,7 @@ public class OrderController {
                 bean.setExpressNo("对方未寄送");
             }
             bean.setPurchaserMobileNo(purOrder.getPurchaserName());
-            UserAddress address = addressRepository.queryByPrimaryKey(purOrder.getPurchaserName(), Type.User.PROVIDER);
+            UserAddress address = addressRepository.queryByPrimaryKey(purOrder.getPurchaserName(), Type.User.PURCHASER);
             if(address != null){
                 bean.setPurAddress(address.getProvince() + address.getCity() + address.getDist() + address.getDetail_address());
             }
@@ -916,6 +1041,22 @@ public class OrderController {
             pageIndex = Integer.parseInt(foo);
         }
         return pageIndex;
+    }
+
+    private String appendHisType(){
+        return String.valueOf(Status.Order.DONE) + "," +
+                String.valueOf(Status.Order.CANCEL) +  "," +
+                String.valueOf(Status.Order.UN_SIGNED) +  "," +
+                String.valueOf(Status.Order.SIGNED);
+    }
+
+    private String appendCurrentType(){
+        return String.valueOf(Status.Order.UN_REC) + "," +
+                String.valueOf(Status.Order.OFFERED_PRICE) + "," +
+                String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
+                String.valueOf(Status.Order.OFFERED_SAMPLE) + "," +
+                String.valueOf(Status.Order.CONFIRM_SAMPLE) + "," +
+                String.valueOf(Status.Order.OFFERED_CONTRACT);
     }
 
     private void fileUpload(Map<String, String> param, SerialNoGen gen, String mobileNo, int userType){

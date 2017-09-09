@@ -11,6 +11,11 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <script src="../../../script/order/orderDisplay.js"></script>
+    <%--file-upload--%>
+    <link href="../../../css/fileinput.min.css" rel="stylesheet">
+    <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
+    <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
+    <script type="text/javascript" src="../../../script/locales/zh.js"></script>
     <title>查看附件</title>
 </head>
 <body>
@@ -32,6 +37,17 @@
 
             </tbody>
         </table>
+    </div>
+    <br>
+    <div id="addonAttch">
+    <form class="form-horizontal" role="form">
+        <br>
+        <input id="putAddOn" name="file" type="file" multiple class="file-loading">
+    </form>
+    <br>
+    <div align="center">
+        <button id="addNew" class="btn btn-primary">添加新附件</button>
+    </div>
     </div>
 </div>
 </body>

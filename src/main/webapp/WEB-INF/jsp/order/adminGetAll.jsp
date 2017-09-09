@@ -43,6 +43,14 @@
     <br>
 </div>
 <div class="container">
+    <div align="center" style="margin: auto;">
+        <br>
+        <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a id="current">查看进行需求</a></li>
+            <li role="presentation"><a id="his">查看完成需求</a></li>
+        </ul>
+        <br>
+    </div>
     <div class="table-responsive" style="margin: auto; max-width: 800px;">
         <table class="table table-bordered table-hover" >
             <thead>
@@ -58,6 +66,7 @@
             </tbody>
         </table>
     </div>
+    <br>
     <div align="center">
         <ul class="pagination" style="max-width: 300px; margin: auto;">
             <li class="previous"><a id="prev">&larr; 上一页</a></li>
@@ -65,6 +74,7 @@
             <li class="next"><a id="next">下一页 &rarr;</a></li>
         </ul>
     </div>
+    <br>
 </div>
 </body>
 </html>

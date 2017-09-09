@@ -11,7 +11,7 @@ $(document).ready(function () {
         selects: ['type_category', 'type_content'],
         required: true,
         jsonName: 'name',
-        jsonValue: 'typeUnit',
+        jsonValue: 'typeNo',
         jsonSub: 'types'
     });
 
@@ -28,6 +28,11 @@ $(document).ready(function () {
     }
 
     $("#commitChange").click(function () {
+        if(isPhoneNo($.trim($('#mobileNo').val())) === false && $("#userType").text().indexOf("管理员") >= 0) {
+            errorMessage("手机号非法！");
+            $('#mobileNo').focus();
+            return;
+        }
         var encrypt = $.md5($("#oldPwd").val());
         if($("#oldPwd").val() !== "") {
             if (encrypt !== oldPwd) {

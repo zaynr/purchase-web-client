@@ -4,6 +4,7 @@
 var param = {};
 
 $(document).ready(function () {
+
     if(window.location.pathname === "/order/adminGetAll") {
         var pur_mobile_no = $("#pur_mobile_no");
         var pro_mobile_no = $("#pro_mobile_no");
@@ -28,15 +29,41 @@ $(document).ready(function () {
                 else if (serial_no.val() !== "") {
                     param["serialNo"] = serial_no.val();
                 }
-                queryAllOrder(param);
+                $("li[role='presentation']").each(function (i, item) {
+                    if($(item).attr("class") === "active"){
+                        param["queryType"] = $(item).children().attr("id");
+                        queryAllOrder(param);
+                    }
+                });
             }
         );
-        param['pageIndex'] = 1;
-        param["userType"] = "-1";
-        param["mobileNo"] = "-1";
-        param["serialNo"] = "-1";
-        queryAllOrder(param);
-        pager(queryAllOrder);
+        $("th").addClass("NoNewline");
+        $("li[role='presentation']").each(function (i, item) {
+            $(item).click(function () {
+                $("#cur").html("1");
+                param['pageIndex'] = 1;
+                $("li").each(function (i, item) {
+                    $(item).removeClass("active");
+                });
+                $(item).addClass("active");
+                queryByType(item);
+            });
+            if($(item).attr("class") === "active"){
+                queryByType(item);
+            }
+        });
+
+        //simple logic
+        function queryByType(item){
+            param["queryType"] = $(item).children().attr("id");
+            $("#orderTableContent").html("");
+            param['pageIndex'] = 1;
+            param["userType"] = "-1";
+            param["mobileNo"] = "-1";
+            param["serialNo"] = "-1";
+            pager(queryAllOrder);
+            queryAllOrder(param);
+        }
     }
 
     if(window.location.pathname === "/order/modifyProOrder") {
@@ -74,7 +101,7 @@ function queryAllOrder(param) {
                 }
             });
             $("button.btn").each(function (i, item) {
-                $(item).off("click").on("click", function () {
+                $(item).on("click", function () {
                     if($(item).text() === "查看详情"){
                         if($(item).parent().prevAll().eq(1).html() === "采购需求") {
                             window.location.href = "/order/modifyPurOrder?serialNo=" + $(item).parent().prevAll().last().html();

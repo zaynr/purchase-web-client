@@ -61,6 +61,7 @@ $(document).ready(function () {
                 success: function (data) {
                     if(data === "success") {
                         successMessage("删除成功");
+                        window.location.reload();
                     }
                     else{
                         errorMessage("删除失败");
@@ -141,7 +142,6 @@ $(document).ready(function () {
                     }
 
                     //init param
-                    param["type_no"] = data.typeNo;
                     param["pur_serial_no"] = data.purSerialNo;
                     param["orderAmount"] = orderAmount.val();
                     param["expect"] = expect.val();
@@ -220,7 +220,7 @@ function pageInit() {
         selects: ['type_category', 'type_content'],
         required: true,
         jsonName: 'name',
-        jsonValue: 'typeUnit',
+        jsonValue: 'typeNo',
         jsonSub: 'types'
     });
     selectedType = $("#selectedType");
@@ -233,6 +233,15 @@ function pageInit() {
     type_picker.change(function () {
         var selected = $("select.type_content").find("option:selected");
         typeSelectText.val(selected.text());
+        param['type_no'] = selected.attr("value");
+        $.ajax({
+            type: "POST",
+            url: "/order/getTypeUnit.do",
+            data: param,
+            success: function (data) {
+                $("#typeUnit").text(data.type_unit);
+            }
+        });
         selectedType.html(successAlert(typeSelectText.val()));
         selectedType.children("div").attr("type-no", selected.attr("value"));
     });

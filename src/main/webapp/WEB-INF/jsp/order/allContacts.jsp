@@ -1,37 +1,29 @@
 <%--
   Created by IntelliJ IDEA.
   User: zaynr
-  Date: 2017/9/3
-  Time: 20:06
+  Date: 2017/9/9
+  Time: 14:04
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>所有合同</title>
+    <title>查看联系人</title>
     <jsp:include page="../script-sources.jsp"/>
     <script src="../../../script/order/orderDisplay.js"></script>
 </head>
 <body>
 <div class="container">
-    <div align="center">
-        <br>
-        <ul class="nav nav-pills" role="tablist">
-            <li role="presentation" class="active"><a id="current">查看未签合同</a></li>
-            <li role="presentation"><a id="his">查看已签合同</a></li>
-        </ul>
-        <br>
-    </div>
+    <br>
+    <br>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>
             <tr>
-                <th>合同序号</th>
-                <th>需求序号</th>
-                <th>报价序号</th>
-                <th>合同下载</th>
-                <th>操作</th>
+                <th>采购商联系方式</th>
+                <th>供应商联系方式</th>
+                <th>合作次数</th>
             </tr>
             </thead>
             <tbody id="orderTableContent">

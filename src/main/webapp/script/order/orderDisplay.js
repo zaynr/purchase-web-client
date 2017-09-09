@@ -5,10 +5,9 @@ var map = {};
 var prev, next;
 
 $(document).ready(function () {
-    $("th").addClass("NoNewline");
     prev = $("#prev");
     next = $("#next");
-
+    $("th").addClass("NoNewline");
     $("li[role='presentation']").each(function (i, item) {
         $(item).click(function () {
             $("#cur").html("1");
@@ -34,6 +33,54 @@ $(document).ready(function () {
     if(window.location.pathname === "/order/showAddOn"){
         map["serialNo"] = getUrlParam('serialNo');
         queryPurOrderAddOn(map);
+        //获取上传 token，记录上传数据
+        $.ajax({
+            type: "POST",
+            url: "/order/getUploadToken.do",
+            success: function (data) {
+                var putAddOn = $("#putAddOn");
+                var files = [];
+                putAddOn.fileinput({
+                    uploadUrl: "http://up-z2.qiniu.com",
+                    browseClass: "btn btn-primary btn-block",
+                    dropZoneEnabled: true,
+                    uploadExtraData: {"token" : data},
+                    language: "zh",
+                    showCaption: false,
+                    allowedFileExtensions: ["jpg", "png", "jpeg", "gif", "txt", "doc", "docx", "xls", "xlsx", "pdf"],
+                    hideThumbnailContent: true,
+                    maxFileCount: 4,
+                    maxFileSize: 20480
+                }).on("fileuploaded", function(event, data, previewId, index) {
+                    var item = {};
+                    var temp = data.filenames[index].split(".");
+                    item["name"] = data.filenames[index];
+                    item["size"] = (data.files[index].size / Math.pow(1024, 2)).toFixed(2);
+                    item["extension"] = temp[temp.length - 1];
+                    item["hash"] = data.response.hash;
+                    files.push(item);
+                    map['hash'] = JSON.stringify(files);
+                    $("#addNew").off("click").on("click", function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/newAddon.do",
+                            data: map,
+                            success: function (data) {
+                                if(data === "success"){
+                                    successMessage("更新附件成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                }
+                                else{
+                                    errorMessage("更新附件失败");
+                                }
+                            }
+                        });
+                    });
+                });
+            }
+        });
     }
 
     if(window.location.pathname === "/order/confirmSample"){
@@ -46,6 +93,12 @@ $(document).ready(function () {
 
     if(window.location.pathname === "/order/viewProOrder"){
         queryProOrder();
+    }
+
+    if(window.location.pathname === "/order/allContacts"){
+        map['pageIndex'] = 1;
+        pager(queryAllContacts);
+        queryAllContacts(map);
     }
 
 //ajax
@@ -188,6 +241,9 @@ $(document).ready(function () {
                         else{
                             item.expectPrice = item.expectPrice + "元";
                         }
+                    }
+                    if(item.offeredPrice === -1){
+                        item.offeredPrice = "未报价";
                     }
                     $("#orderTableContent").append(
                         "<tr>" +
@@ -417,7 +473,8 @@ $(document).ready(function () {
                 });
                 $("button.btn-primary").each(function (i, item) {
                     $(item).on("click", function () {
-                        if(!checkInputNull()){
+                        if($.trim($(item).parent().prevAll().first().children().val()).length === 0){
+                            errorMessage("请输入订单号！");
                             return;
                         }
                         map["proSerialNo"] = $(item).parent().prevAll().eq(3).html();
@@ -477,6 +534,10 @@ $(document).ready(function () {
             url: "/order/showAddOn.do",
             data: map,
             success: function (data) {
+                if(data.length === 0){
+                    $("#addonAttch").remove();
+                    return;
+                }
                 if(data[0].userType === 1 || data[0].userType === 0) {
                     $("#tableHead").append("<th>操作</th>");
                     $.each(data, function (i, item) {
@@ -518,13 +579,14 @@ $(document).ready(function () {
                     });
                 }
                 else if(data[0].userType === 2) {
+                    $("#addonAttch").remove();
                     $.each(data, function (i, item) {
                         $("#orderTableContent").append(
                             "<tr>" +
-                            tableItemWrap(item.order_serial_no) +
-                            tableItemWrap(item.file_name) +
-                            tableItemWrap(item.file_size + " MB") +
-                            tableItemWrap("<a class='btn btn-info' target='_blank' href='" + item.addon_url + "'>点击下载</a>") +
+                            tableItemWrap(item.addonSerialNo) +
+                            tableItemWrap(item.fileName) +
+                            tableItemWrap(item.fileSize + " MB") +
+                            tableItemWrap("<a class='btn btn-info' target='_blank' href='" + item.addonUrl + "'>点击下载</a>") +
                             "</tr>"
                         );
                     });
@@ -547,7 +609,6 @@ $(document).ready(function () {
                     language: "zh",
                     showCaption: false,
                     allowedFileExtensions: ["jpg", "png", "jpeg", "gif", "txt", "doc", "docx", "xls", "xlsx", "pdf"],
-                    hideThumbnailContent: true,
                     maxFileCount: 4,
                     maxFileSize: 20480
                 }).on("fileuploaded", function(event, data, previewId, index) {
@@ -571,12 +632,14 @@ $(document).ready(function () {
             success: function (data) {
                 $.each(data, function (i, item) {
                     var url = "<a class='btn btn-info' target='_blank' href='" + item.addonUrl + "'>下载合同</a>";
-                    var btn;
-                    if(item.userType === 1) {
-                        btn = "<button class='btn btn-info'>更改合同</button>";
-                    }
-                    else{
-                        btn = "<button class='btn btn-success'>接受合同</button>";
+                    var btn = '';
+                    if(map['queryType'] !== 'his'){
+                        if (item.userType === 1) {
+                            btn = "<button class='btn btn-info'>更改合同</button>";
+                        }
+                        else {
+                            btn = "<button class='btn btn-success'>接受合同</button><button class='btn btn-danger'>拒绝合同</button>";
+                        }
                     }
                     $("#orderTableContent").append(
                         "<tr>" +
@@ -585,6 +648,92 @@ $(document).ready(function () {
                         tableItemWrap(item.proOrdSn) +
                         tableItemWrap(url) +
                         tableItemWrap(btn) +
+                        "</tr>"
+                    );
+                    if($("#cur").html() === '1'){
+                        $("li.previous").addClass("disabled");
+                    }
+                    else{
+                        $("li.previous").removeClass("disabled");
+                    }
+                    if(data[0].pageSize > data.length){
+                        $("li.next").addClass("disabled");
+                    }
+                    else{
+                        $("li.next").removeClass("disabled");
+                    }
+                });
+                $("button.btn").each(function (i, item) {
+                    $(item).on("click", function () {
+                        if($(item).text() === "接受合同") {
+                            map["contractSn"] = $(item).parent().prevAll().last().html();
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/acceptContract.do",
+                                data: map,
+                                success: function (data) {
+                                    if(data === "success") {
+                                        successMessage("接受成功");
+                                        setTimeout(function () {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                    else{
+                                        errorMessage("接受失败");
+                                    }
+                                },
+                                error: function () {
+                                    errorMessage("接受失败");
+                                }
+                            });
+                        }
+                        else if($(item).text() === "拒绝合同") {
+                            map["contractSn"] = $(item).parent().prevAll().last().html();
+                            var res = confirm("注意，若拒绝合同，本次报价即结束，建议与采购商重新协商并修改合同！");
+                            if(!res){
+                                return;
+                            }
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/declineContract.do",
+                                data: map,
+                                success: function (data) {
+                                    if(data === "success") {
+                                        successMessage("拒绝成功");
+                                        setTimeout(function () {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                    else{
+                                        errorMessage("拒绝失败");
+                                    }
+                                },
+                                error: function () {
+                                    errorMessage("拒绝失败");
+                                }
+                            });
+                        }
+                        else if($(item).text() === "更改合同") {
+                            map["pur_serial_no"] = $(item).parent().prevAll().eq(2).html();
+                            showContract(map);
+                        }
+                    });
+                });
+            }
+        });
+    }
+    function queryAllContacts(map){
+        $.ajax({
+            type: "POST",
+            url: "/order/getContact.do",
+            data: map,
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    $("#orderTableContent").append(
+                        "<tr>" +
+                        tableItemWrap(item.purchaser_mobile_no) +
+                        tableItemWrap(item.provider_mobile_no) +
+                        tableItemWrap(item.coop_count + " 次") +
                         "</tr>"
                     );
                     if($("#cur").html() === '1'){

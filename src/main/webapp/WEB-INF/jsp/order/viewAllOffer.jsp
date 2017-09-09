@@ -15,7 +15,6 @@
     <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
     <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
     <script type="text/javascript" src="../../../script/locales/zh.js"></script>
-    <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
     <%--user-custom--%>
     <script src="../../../script/order/orderDisplay.js"></script>
     <title>查看报价</title>

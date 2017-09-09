@@ -6,6 +6,13 @@ $(document).ready(function () {
         if(!checkInputNull()){
             return;
         }
+        // if(window.location.pathname === "/login/user-login") {
+        //     if (isPhoneNo($.trim($('#mobile_no').val())) === false) {
+        //         errorMessage("手机号非法！");
+        //         $('#mobile_no').focus();
+        //         return;
+        //     }
+        // }
         var encrypt = $.md5($("#password").val());
         var map = {};
         map["password"] = encrypt;

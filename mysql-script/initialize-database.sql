@@ -112,8 +112,9 @@ CREATE TABLE pro_orders(
 #联系人
 CREATE TABLE contacts(
   serial_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  purchaser_name nvarchar(63),
-  provider_name nvarchar(63)
+  purchaser_mobile_no nvarchar(63),
+  provider_mobile_no nvarchar(63),
+  coop_count int
 );
 #合同表
 CREATE TABLE contracts(
