@@ -276,7 +276,7 @@ function pageInit() {
             putAddOn.fileinput({
                 uploadUrl: "http://up-z2.qiniu.com",
                 browseClass: "btn btn-primary btn-block",
-                theme: "fa",
+                dropZoneEnabled: true,
                 uploadExtraData: {"token" : data},
                 language: "zh",
                 showCaption: false,

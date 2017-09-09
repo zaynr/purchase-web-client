@@ -14,30 +14,14 @@
         </div>
 
         <div class="container">
-            <!-- Example row of columns -->
             <div class="row">
                 <div class="col-md-4">
-                    <h2>可提供报价</h2>
-                    <p>订单详情：</p>
                 </div>
                 <div class="col-md-4">
-                    <h2>未提供样品</h2>
-                    <p>订单详情：</p>
                 </div>
                 <div class="col-md-4">
-                    <h2>已签订的合同</h2>
-                    <p>合同</p>
-                    <div>
-                        <a class="btn btn-default" href="#" role="button">查看详情 &raquo;</a>
-                    </div>
                 </div>
             </div>
-
-            <hr>
-
-            <footer>
-                <p>&copy; 2017 Company, Inc.</p>
-            </footer>
         </div> <!-- /container -->
     </body>
 </html>

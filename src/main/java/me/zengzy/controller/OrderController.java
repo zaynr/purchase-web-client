@@ -473,8 +473,17 @@ public class OrderController {
 
     @RequestMapping("viewProOrder.do")
     @ResponseBody
-    public ArrayList<ProOrderBean> viewProOrder(HttpServletRequest request){
-        ArrayList<ProOrders> proOrders = proOrderRepository.getByProviderName(SessionUtil.getMobileNo(request));
+    public ArrayList<ProOrderBean> viewProOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
+        int pageIndex = getPageIndex(param) - 1;
+        int pageSize = AdminOptUtil.getDftPageSize();
+        String statusSet;
+        if(param.get("queryType").equals("current")){
+            statusSet = appendCurrentType();
+        }
+        else{
+            statusSet = appendHisType();
+        }
+        ArrayList<ProOrders> proOrders = proOrderRepository.getByProviderNameAndStatus(SessionUtil.getMobileNo(request), statusSet, pageIndex*pageSize, pageSize);
         return packProOrderBeans(proOrders);
     }
 
@@ -599,6 +608,9 @@ public class OrderController {
         else if(param.get("queryType").equals("offered")){
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
         }
+        else if(param.get("queryType").equals("confirmedSample")){
+            orders = purOrderRepository.getPurOrderByStatus(Status.Order.CONFIRM_SAMPLE);
+        }
         if(orders != null) {
             for (int i = 0; i < orders.size(); i++) {
                 ArrayList<FilterDict> filters = filterDictRepository.getByOrderSerialNo(orders.get(i).getPurSerialNo());
@@ -637,6 +649,35 @@ public class OrderController {
         return packPurOrderBeans(orders, request);
     }
 
+    @RequestMapping("/messageCenter.do")
+    @ResponseBody
+    public int messageCenter(@RequestParam Map<String, String> param, HttpServletRequest request){
+        String queryType = param.get("queryType");
+        String mobileNo = SessionUtil.getMobileNo(request);
+        String statusSet;
+        if(queryType.equals("unsignedContract")){
+            statusSet = String.valueOf(Status.Order.OFFERED_CONTRACT);
+            return ordersRepository.getByStatusSetAndNameAndType(statusSet, mobileNo, 1).size();
+        }
+        else if(queryType.equals("confirmedSample")){
+            statusSet = String.valueOf(Status.Order.CONFIRM_SAMPLE);
+            return ordersRepository.getByStatusSetAndNameAndType(statusSet, mobileNo, 1).size();
+        }
+        else if(queryType.equals("unOffered")){
+            statusSet = String.valueOf(Status.Order.UN_REC);
+            return ordersRepository.getByStatusSetAndNameAndType(statusSet, mobileNo, 0).size();
+        }
+        else if(queryType.equals("requiredSample")){
+            statusSet = String.valueOf(Status.Order.REQUIRE_SAMPLE);
+            return ordersRepository.getByStatusSetAndNameAndType(statusSet, mobileNo, 0).size();
+        }
+        else if(queryType.equals("signedContract")){
+            statusSet = String.valueOf(Status.Order.SIGNED);
+            return ordersRepository.getByStatusSetAndNameAndType(statusSet, mobileNo, 0).size();
+        }
+        return 0;
+    }
+
     @RequestMapping("/updatePurOrderStatus.do")
     @ResponseBody
     public String updatePurOrderStatus(@RequestParam Map<String, String> orderInfo){
@@ -651,6 +692,7 @@ public class OrderController {
         AllOrders order = ordersRepository.getBySerialNo(serialNo);
         PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(serialNo);
         order.setOrder_status(Status.Order.OFFERED_PRICE);
+        order.setOrder_cat(Type.Order.PROVIDE_ORDER);
         purOrder.setOrderStatus(Status.Order.OFFERED_PRICE);
         ordersRepository.save(order);
         purOrderRepository.save(purOrder);
@@ -666,6 +708,9 @@ public class OrderController {
         allOrder.setSerial_no(gen.getSerial_no());
         allOrder.setMobile_no(SessionUtil.getMobileNo(request));
         allOrder.setOrder_status(Status.Order.OFFERED_PRICE);
+        Date date = new Date();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        allOrder.setGen_date(sdf.format(date));
         ordersRepository.save(allOrder);
         allOrder.setOrder_cat(Type.Order.PROVIDE_ORDER);
         order.setPro_serial_no(gen.getSerial_no());
@@ -871,6 +916,9 @@ public class OrderController {
         allOrder.setMobile_no(SessionUtil.getMobileNo(request));
         allOrder.setOrder_status(Status.Order.UN_REC);
         allOrder.setOrder_cat(Type.Order.PURCHASE_ORDER);
+        Date date = new Date();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        allOrder.setGen_date(sdf.format(date));
         ordersRepository.save(allOrder);
         String mobileNo = SessionUtil.getMobileNo(request);
         int userType = SessionUtil.getUserType(request);
@@ -945,6 +993,7 @@ public class OrderController {
         for(ProOrders order : proOrders){
             PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(order.getPur_serial_no());
             OrderTypes type = typeRepository.getTypeByNo(purOrder.getTypeNo());
+            AllOrders allOrders = ordersRepository.getBySerialNo(order.getPro_serial_no());
             ProOrderBean bean = new ProOrderBean();
             bean.setProSerialNo(order.getPro_serial_no());
             bean.setOfferPrice("￥" + order.getOffer_price() + "元");
@@ -954,6 +1003,7 @@ public class OrderController {
             bean.setOrderType(type.getType_content());
             bean.setOrderTypeNo(type.getType_no());
             bean.setOrderStatus(Status.orderTranslate(order.getOrder_status()));
+            bean.setDatetime(allOrders.getGen_date());
             if(order.getExpress_no() != null){
                 bean.setExpressNo(order.getExpress_no());
             }
@@ -968,6 +1018,7 @@ public class OrderController {
             else{
                 bean.setPurAddress("未提供，请联系采购商！");
             }
+            bean.setPageSize(AdminOptUtil.getDftPageSize());
 
             beans.add(bean);
         }
@@ -977,6 +1028,7 @@ public class OrderController {
     private PurOrderBean packPurOrderBean(PurOrders a, HttpServletRequest request){
         OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
         ProOrders order = proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), SessionUtil.getMobileNo(request));
+        AllOrders allOrders = ordersRepository.getBySerialNo(a.getPurSerialNo());
         PurOrderBean bean = new PurOrderBean();
         ArrayList<AllAddons> addons = addonsRepository.queryByOrderSerialNo(a.getPurSerialNo());
 
@@ -990,6 +1042,7 @@ public class OrderController {
         ArrayList<ProOrders> proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
         bean.setProviderName(proOrders.size() + "人次");
         bean.setMoreDetail(a.getMore_detail());
+        bean.setDatetime(allOrders.getGen_date());
         bean.setFilters(filterDictRepository.getByOrderSerialNo(a.getPurSerialNo()));
         if(order != null) {
             bean.setOfferedPrice(order.getOffer_price());

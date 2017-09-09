@@ -18,11 +18,10 @@
     <%--auto-complete--%>
     <script type="text/javascript" src="../../../script/jquery.autocomplete.min.js"></script>
     <%--file-upload--%>
-    <link href="../../../css/fileinput.min.css" rel="stylesheet">
+    <link href="../../../css/fileinput.css" rel="stylesheet">
     <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
     <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
     <script type="text/javascript" src="../../../script/locales/zh.js"></script>
-    <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
     <%--my-custom--%>
     <script src="../../../script/order/orderManage.js"></script>
     <script src="../../../script/citypick/jquery.cxselect.min.js"></script>

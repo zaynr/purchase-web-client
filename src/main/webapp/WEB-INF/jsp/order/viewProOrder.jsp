@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <script src="../../../script/order/orderDisplay.js"></script>
-    <title>查看已报价订单</title>
+    <title>查看报价订单</title>
 </head>
 <body>
 
@@ -19,6 +19,14 @@
     <br>
     <div id="message"></div>
     <br>
+    <div align="center">
+        <br>
+        <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a id="current">查看当前需求</a></li>
+            <li role="presentation"><a id="his">查看历史需求</a></li>
+        </ul>
+        <br>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>
@@ -38,5 +46,50 @@
             </tbody>
         </table>
     </div>
+    <div align="center">
+        <ul class="pagination" style="max-width: 300px; margin: auto;">
+            <li class="previous"><a id="prev">&larr; 上一页</a></li>
+            <li class="current"><a id="cur">1</a></li>
+            <li class="next"><a id="next">下一页 &rarr;</a></li>
+        </ul>
+    </div>
 </div>
+<div class="modal fade" id="purOrderDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">查看需求详情</h4>
+            </div>
+            <form class="bs-example bs-example-form" role="form">
+                <br>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon">采购商手机号</span>
+                    <input type="text" class="form-control" id="purMobileNo" disabled>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon">采购类型</span>
+                    <input type="text" class="form-control" id="orderType" disabled>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon">采购数量</span>
+                    <input type="text" class="form-control" id="orderAmount" disabled>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon">采购时间</span>
+                    <input type="text" class="form-control" id="placeTime" disabled>
+                </div>
+                <br>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</body>
 </html>

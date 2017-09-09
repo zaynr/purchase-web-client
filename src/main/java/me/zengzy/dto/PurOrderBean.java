@@ -23,6 +23,15 @@ public class PurOrderBean {
     private ArrayList<AllAddons> addons;
     private int showExpectPrice;
     private int pageSize, pageIndex;
+    private String datetime;
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
+    }
 
     public int getShowExpectPrice() {
         return showExpectPrice;

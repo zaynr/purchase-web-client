@@ -69,6 +69,8 @@ CREATE TABLE all_orders(
   serial_no int NOT NULL PRIMARY KEY,
   mobile_no nvarchar(63),
   order_status int,
+  read_flag int,
+  gen_date datetime,
   order_cat int
 );
 #附件表
@@ -88,6 +90,7 @@ CREATE TABLE pur_orders(
   expect_status int,
   order_amount double,
   expect_price double,
+  read_flag int,
   more_detail nvarchar(1023),
   filter_dict nvarchar(255),
   type_no int
@@ -104,6 +107,7 @@ CREATE TABLE filter_dict(
 CREATE TABLE pro_orders(
   pro_serial_no int NOT NULL PRIMARY KEY,
 	pur_serial_no int,
+  read_flag int,
   order_status int,
   offer_price double,
   express_no nvarchar(255),

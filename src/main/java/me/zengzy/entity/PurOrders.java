@@ -22,6 +22,15 @@ public class PurOrders {
     private String more_detail;
     private String filter_dict;
     private int expect_status;
+    private int read_flag;
+
+    public int getRead_flag() {
+        return read_flag;
+    }
+
+    public void setRead_flag(int read_flag) {
+        this.read_flag = read_flag;
+    }
 
     public int getExpect_status() {
         return expect_status;

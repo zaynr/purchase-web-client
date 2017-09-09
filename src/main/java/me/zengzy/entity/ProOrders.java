@@ -13,6 +13,15 @@ public class ProOrders {
     private int order_status, pur_serial_no;
     private double offer_price;
     private String express_no;
+    private int read_flag;
+
+    public int getRead_flag() {
+        return read_flag;
+    }
+
+    public void setRead_flag(int read_flag) {
+        this.read_flag = read_flag;
+    }
 
     public String getExpress_no() {
         return express_no;

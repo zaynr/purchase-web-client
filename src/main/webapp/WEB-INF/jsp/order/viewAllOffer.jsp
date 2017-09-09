@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <%--file-upload--%>
-    <link href="../../../css/fileinput.min.css" rel="stylesheet">
+    <link href="../../../css/fileinput.css" rel="stylesheet">
     <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
     <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
     <script type="text/javascript" src="../../../script/locales/zh.js"></script>

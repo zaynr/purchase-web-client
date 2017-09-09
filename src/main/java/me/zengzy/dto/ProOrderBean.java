@@ -4,15 +4,24 @@ public class ProOrderBean {
     private int proSerialNo;
     private int purSerialNo;
     private String providerMobileNo;
-    private String purchaserMobileNo;
     private String purAddress;
     private String offerPrice;
-    private String orderAmount;
-    private String orderType;
     private int orderTypeNo;
     private String orderStatus;
     private String expressNo;
     private int pageSize, pageIndex;
+    private String datetime;
+    private String purchaserMobileNo;
+    private String orderAmount;
+    private String orderType;
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
+    }
 
     public int getPageSize() {
         return pageSize;

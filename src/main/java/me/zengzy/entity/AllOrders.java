@@ -12,6 +12,24 @@ public class AllOrders {
     private String mobile_no;
     private int order_status;
     private int order_cat;
+    private int read_flag;
+    private String gen_date;
+
+    public String getGen_date() {
+        return gen_date;
+    }
+
+    public void setGen_date(String gen_date) {
+        this.gen_date = gen_date;
+    }
+
+    public int getRead_flag() {
+        return read_flag;
+    }
+
+    public void setRead_flag(int read_flag) {
+        this.read_flag = read_flag;
+    }
 
     public int getOrder_cat() {
         return order_cat;

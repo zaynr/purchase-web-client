@@ -91,10 +91,6 @@ $(document).ready(function () {
         queryRequiredSample();
     }
 
-    if(window.location.pathname === "/order/viewProOrder"){
-        queryProOrder();
-    }
-
     if(window.location.pathname === "/order/allContacts"){
         map['pageIndex'] = 1;
         pager(queryAllContacts);
@@ -460,11 +456,14 @@ $(document).ready(function () {
             url: "/order/queryRequiredSample.do",
             success: function (data) {
                 $.each(data, function (i, item) {
+                    item.datetime = item.datetime.split(" ")[0];
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(item.purSerialNo) +
                         tableItemWrap(item.proSerialNo) +
                         tableItemWrap(item.purchaserMobileNo) +
+                        tableItemWrap(item.orderType) +
+                        tableItemWrap(item.datetime) +
                         tableItemWrap(item.purAddress) +
                         "<td><input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\"></td>" +
                         tableItemWrap("<button type=\"button\" class=\"btn btn-primary\">确认寄送</button>") +
@@ -477,7 +476,7 @@ $(document).ready(function () {
                             errorMessage("请输入订单号！");
                             return;
                         }
-                        map["proSerialNo"] = $(item).parent().prevAll().eq(3).html();
+                        map["proSerialNo"] = $(item).parent().prevAll().eq(5).html();
                         map["purSerialNo"] = $(item).parent().prevAll().last().html();
                         map["expressNo"] = $(item).parent().prevAll().first().children().val();
                         $.ajax({
@@ -499,10 +498,11 @@ $(document).ready(function () {
             }
         });
     }
-    function queryProOrder(){
+    function queryProOrder(map){
         $.ajax({
             type: "POST",
             url: "/order/viewProOrder.do",
+            data: map,
             success: function (data) {
                 $.each(data, function (i, item) {
                     $("#orderTableContent").append(
@@ -517,13 +517,29 @@ $(document).ready(function () {
                         tableItemWrap("<button type=\"button\" class=\"btn btn-info\">查看详情</button>") +
                         "</tr>"
                     );
-                });
-                $("button.btn-info").each(function (i, item) {
-                    if($(item).parent().prevAll().last().html() === "查看详情"){
-                        $(item).removeClass("btn-info");
-                        $(item).addClass("btn-success");
-                        $(item).text("查看详情");
+                    if($("#cur").html() === '1'){
+                        $("li.previous").addClass("disabled");
                     }
+                    else{
+                        $("li.previous").removeClass("disabled");
+                    }
+                    if(data[0].pageSize > data.length){
+                        $("li.next").addClass("disabled");
+                    }
+                    else{
+                        $("li.next").removeClass("disabled");
+                    }
+                });
+                $("td").find("button.btn-info").each(function (i, item) {
+                    $(item).on("click", function () {
+                        if($(item).text() === "查看详情"){
+                            $("#purOrderDetail").modal();
+                            $("#purMobileNo").val(data[i].purchaserMobileNo);
+                            $("#orderType").val(data[i].orderType);
+                            $("#orderAmount").val(data[i].orderAmount);
+                            $("#placeTime").val(data[i].datetime.split(" ")[0]);
+                        }
+                    });
                 });
             }
         });
@@ -768,6 +784,10 @@ $(document).ready(function () {
         else if(window.location.pathname === "/order/allContract"){
             pager(queryAllContract);
             queryAllContract(map);
+        }
+        else if(window.location.pathname === "/order/viewProOrder"){
+            pager(queryProOrder);
+            queryProOrder(map);
         }
     }
     function rmModify(item) {

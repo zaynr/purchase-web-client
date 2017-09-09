@@ -31,82 +31,121 @@ $(document).ready(function () {
                     addTabWithBadge("/order/allContract", "查看合同", "allContract");
                     addTab("/order/allContacts", "查看联系人");
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/order/getNewSignCnt.do",
-                        success: function (data) {
-                            if(data !== 0){
-                                $("#allContract").text(data);
+                    function queryPurInfo() {
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/getNewSignCnt.do",
+                            success: function (data) {
+                                if(data !== 0){
+                                    $("#allContract").text(data);
+                                }
+                                else{
+                                    $("#allContract").text("");
+                                }
                             }
-                            else{
-                                $("#allContract").text("");
-                            }
-                        }
-                    });
+                        });
 
-                    map["queryType"] = "confirmSample";
-                    $.ajax({
-                        type: "POST",
-                        url: "/order/querySentSample.do",
-                        data: map,
-                        success: function (data) {
-                            if(data.length === 0){
-                                $("#confirmSample").text("");
+                        map["queryType"] = "confirmSample";
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/querySentSample.do",
+                            data: map,
+                            success: function (data) {
+                                if (data.length === 0) {
+                                    $("#confirmSample").text("");
+                                }
+                                else {
+                                    $("#confirmSample").text(data.length);
+                                }
                             }
-                            else{
-                                $("#confirmSample").text(data.length);
-                            }
-                        }
-                    });
+                        });
+                    }
+
+                    queryPurInfo();
+                    setInterval(function () {
+                        queryPurInfo();
+                    }, 3000);
                 }
                 else if(data === "2"){
                     addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
                     addTabWithBadge("/order/sendSample", "寄送样品", "sendSample");
-                    addTab("/order/viewProOrder", "查看订单");
+                    addTabWithBadge("/order/viewProOrder", "查看订单", "viewProOrder");
                     addTabWithBadge("/order/allContract", "查看合同", "allContract");
                     addTab("/order/allContacts", "查看联系人");
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/order/getProNewCont.do",
-                        success: function (data) {
-                            if(data !== 0){
-                                $("#allContract").text(data);
+                    function queryProInfo() {
+                        map["queryType"] = "confirmedSample";
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/getProNewCont.do",
+                            success: function (data) {
+                                if (data !== 0) {
+                                    $("#allContract").text(data);
+                                }
+                                else {
+                                    $("#allContract").text("");
+                                }
                             }
-                            else{
-                                $("#allContract").text("");
-                            }
-                        }
-                    });
+                        });
 
-                    map["queryType"] = "unOffer";
-                    $.ajax({
-                        type: "POST",
-                        url: "/order/showSpicStatusPurOrder.do",
-                        data: map,
-                        success: function (data) {
-                            if(data.length === 0){
-                                $("#unOffer").text("");
+                        map["queryType"] = "confirmedSample";
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/showSpicStatusPurOrder.do",
+                            data: map,
+                            success: function (data) {
+                                if (data.length === 0) {
+                                    $("#viewProOrder").text("");
+                                }
+                                else {
+                                    $("#viewProOrder").text(data.length);
+                                }
                             }
-                            else{
-                                $("#unOffer").text(data.length);
-                            }
-                        }
-                    });
+                        });
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/order/queryRequiredSample.do",
-                        success: function (data) {
-                            if(data.length === 0){
-                                $("#sendSample").text("");
+                        map["queryType"] = "unOffer";
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/showSpicStatusPurOrder.do",
+                            data: map,
+                            success: function (data) {
+                                if (data.length === 0) {
+                                    $("#unOffer").text("");
+                                }
+                                else {
+                                    $("#unOffer").text(data.length);
+                                }
                             }
-                            else{
-                                $("#sendSample").text(data.length);
+                        });
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/queryRequiredSample.do",
+                            success: function (data) {
+                                if (data.length === 0) {
+                                    $("#sendSample").text("");
+                                }
+                                else {
+                                    $("#sendSample").text(data.length);
+                                }
                             }
-                        }
-                    });
+                        });
+
+                    }
+
+                    queryProInfo();
+                    setInterval(function () {
+                        queryProInfo();
+                    }, 3000);
                 }
+
+                setInterval(function () {
+                    $("#navTabs").find("li").each(function () {
+                        if($(this).find("a").attr("href") === window.location.pathname){
+                            $(this).addClass("active");
+                        }
+                    });
+                }, 100);
             }
 
             $("#logout").on("click", function () {
@@ -117,12 +156,6 @@ $(document).ready(function () {
                         window.location.href="/";
                     }
                 });
-            });
-
-            $("li").each(function () {
-                if($(this).find("a").attr("href") === window.location.pathname){
-                    $(this).addClass("active");
-                }
             });
 
         }
