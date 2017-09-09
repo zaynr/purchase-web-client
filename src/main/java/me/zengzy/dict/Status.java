@@ -8,6 +8,7 @@ public class Status {
         public static final int REQUIRE_SAMPLE = 2;//待提供样品
         public static final int OFFERED_SAMPLE = 3;//已寄送样品
         public static final int CONFIRM_SAMPLE = 4;//已确认样品
+        public static final int OFFERED_CONTRACT = 9;//已发送合同
         public static final int SIGNED = 5;//已签合同
         public static final int UN_SIGNED = 6;//未被采纳
         public static final int DONE = 7;//已完成
@@ -24,7 +25,7 @@ public class Status {
                 res = "已报价";
                 break;
             case Order.REQUIRE_SAMPLE:
-                res = "待提供样品";
+                res = "待寄送样品";
                 break;
             case Order.OFFERED_SAMPLE:
                 res = "已寄送样品";
@@ -43,6 +44,9 @@ public class Status {
                 break;
             case Order.UN_SIGNED:
                 res = "未被采纳";
+                break;
+            case Order.OFFERED_CONTRACT:
+                res = "已发送合同";
                 break;
         }
         return res;

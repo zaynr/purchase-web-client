@@ -14,4 +14,7 @@ import java.util.ArrayList;
 public interface FilterDictRepository extends CrudRepository<FilterDict, Long>{
     @Query(value = "SELECT * FROM filter_dict WHERE order_serial_no = :order_serial_no", nativeQuery = true)
     ArrayList<FilterDict> getByOrderSerialNo(@Param("order_serial_no") int order_serial_no);
+
+    @Query(value = "SELECT * FROM filter_dict WHERE serial_no = :serial_no", nativeQuery = true)
+    FilterDict getByPrimaryKey(@Param("serial_no") int serial_no);
 }

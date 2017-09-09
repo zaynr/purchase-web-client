@@ -9,8 +9,8 @@
 <%@ page isELIgnored="false" %>
 <html>
 <head>
-    <jsp:include page="../script-sources.jsp"/>
     <title>所有订单管理</title>
+    <jsp:include page="../script-sources.jsp"/>
     <script src="../../../script/order/adminConf.js"></script>
 </head>
 <body>
@@ -19,6 +19,7 @@
     <div id="message"></div>
     <br>
     <form class="bs-example bs-example-form" role="form">
+        <p><strong>按照从上到下，第一个非空的条件进行查询</strong></p>
         <br>
         <div class="input-group">
             <span class="input-group-addon">采购商手机号：</span>
@@ -31,7 +32,7 @@
         </div>
         <br>
         <div class="input-group">
-            <span class="input-group-addon">手机号码：</span>
+            <span class="input-group-addon">订单号：</span>
             <input type="text" class="form-control" id="serial_no" placeholder="订单号">
         </div>
     </form>

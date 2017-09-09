@@ -10,6 +10,13 @@
 <html>
 <head>
     <jsp:include page="../script-sources.jsp"/>
+    <%--file-upload--%>
+    <link href="../../../css/fileinput.min.css" rel="stylesheet">
+    <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
+    <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
+    <script type="text/javascript" src="../../../script/locales/zh.js"></script>
+    <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
+    <%--user-custom--%>
     <script src="../../../script/order/orderDisplay.js"></script>
     <title>查看报价</title>
 </head>
@@ -38,26 +45,6 @@
             </tbody>
         </table>
     </div>
-</div>
-<div class="modal fade" id="confirmContract" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">合同详情</h4>
-            </div>
-            <form class="bs-example bs-example-form" role="form">
-                <div class="input-group">
-                    <span class="input-group-addon">交货日期</span>
-                    <input type="date" class="form-control" id="offerPrice" placeholder="选择交货日期">
-                </div>
-            </form>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" id="confirmDate" class="btn btn-primary">确认日期</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
     <div align="center">
         <ul class="pagination" style="max-width: 300px; margin: auto;">
             <li class="previous"><a id="prev">&larr; 上一页</a></li>
@@ -65,6 +52,23 @@
             <li class="next"><a id="next">下一页 &rarr;</a></li>
         </ul>
     </div>
+</div>
+<div class="modal fade" id="confirmContract" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">上传合同</h4>
+            </div>
+            <form class="bs-example bs-example-form" role="form">
+                <input id="putAddOn" name="file" type="file" multiple class="file-loading">
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="confirm" class="btn btn-primary">确认</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
 </div>
 </body>
 </html>

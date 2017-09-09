@@ -10,7 +10,15 @@ import javax.persistence.Table;
 public class OrderTypes {
     @Id
     private int type_no;
-    private String type_content, type_unit;
+    private String type_content, type_unit, type_category;
+
+    public String getType_category() {
+        return type_category;
+    }
+
+    public void setType_category(String type_category) {
+        this.type_category = type_category;
+    }
 
     public String getType_unit() {
         return type_unit;

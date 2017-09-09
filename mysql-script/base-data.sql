@@ -13,6 +13,7 @@ INSERT INTO `purchase`.`users` (`mobile_no`, `user_type`, `pwd`, `user_name`, `s
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('123', '1', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('321', '2', '浙江省', '杭州市', '滨江区', '啊啊啊啊');
 INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('12321', '2', '浙江省', '杭州市', '西湖区', '啊啊啊啊');
+INSERT INTO `purchase`.`user_address` (`mobile_no`, `user_type`, `province`, `city`, `dist`, `detail_address`) VALUES ('99980001', '0', '浙江省', '杭州市', '西湖区', '啊啊啊啊');
 
 INSERT INTO `purchase`.`admin_option` (`option_no`, `option_describe`, `option_content`) VALUES ('1', '报价每页条数', '10');
 INSERT INTO `purchase`.`admin_option` (`option_no`, `option_describe`, `option_content`) VALUES ('2', '需求每页条数', '10');
@@ -20,9 +21,9 @@ INSERT INTO `purchase`.`admin_option` (`option_no`, `option_describe`, `option_c
 
 INSERT INTO serial_no_gen(serial_no) VALUES('100');
 
-INSERT INTO order_types(type_content, type_unit) VALUES("原油", "桶");
-INSERT INTO order_types(type_content, type_unit) VALUES("糖果", "吨");
-INSERT INTO order_types(type_content, type_unit) VALUES("饮料", "箱");
-INSERT INTO order_types(type_content, type_unit) VALUES("台灯", "部");
-INSERT INTO order_types(type_content, type_unit) VALUES("电视", "台");
-INSERT INTO order_types(type_content, type_unit) VALUES("化妆品", "箱");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("糖果", "吨", "食品");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("饮料", "箱", "食品");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("台灯", "部", "家电");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("电视", "台", "家电");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("洗发露", "箱", "日用品");
+INSERT INTO order_types(type_content, type_unit, type_category) VALUES("化妆品", "箱", "日用品");

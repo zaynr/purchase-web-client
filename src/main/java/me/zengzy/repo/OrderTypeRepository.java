@@ -20,9 +20,18 @@ public interface OrderTypeRepository extends CrudRepository<OrderTypes, Long> {
     @Query(value = "SELECT * FROM order_types", nativeQuery = true)
     ArrayList<OrderTypes> getAllTypes();
 
-    @Query(value = "SELECT * FROM order_types WHERE type_content LIKE %:content%", nativeQuery = true)
+    @Query(value = "SELECT * FROM order_types WHERE type_content = :content", nativeQuery = true)
+    OrderTypes getByContent(@Param("content") String content);
+
+    @Query(value = "SELECT * FROM order_types WHERE type_content LIKE :content", nativeQuery = true)
     ArrayList<OrderTypes> patternMatch(@Param("content") String content);
 
     @Query(value = "SELECT * FROM order_types ORDER BY type_no LIMIT 0, 3", nativeQuery = true)
     ArrayList<OrderTypes> getLimitedTypes();
+
+    @Query(value = "SELECT DISTINCT type_category FROM order_types", nativeQuery = true)
+    ArrayList<String> getAllCategory();
+
+    @Query(value = "SELECT * FROM order_types WHERE type_category = :category", nativeQuery = true)
+    ArrayList<OrderTypes> getByCategory(@Param("category") String category);
 }

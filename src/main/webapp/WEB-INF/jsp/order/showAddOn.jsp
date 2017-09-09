@@ -22,7 +22,7 @@
         <table class="table table-bordered table-hover table-responsive" >
             <thead>
             <tr id="tableHead">
-                <th>需求序列号</th>
+                <th>序列号</th>
                 <th>附件名</th>
                 <th>附件大小</th>
                 <th>附件链接</th>

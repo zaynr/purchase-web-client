@@ -1,19 +1,17 @@
 /**
- * Created by zengzy19585 on 2017/9/7.
+ * Created by zengzy19585 on 2017/9/8.
  */
 var param = {};
 
 $(document).ready(function () {
-    if(window.location.pathname === "/order/adminGetAll") {
+    if(window.location.pathname === "/account/userManage") {
         var pur_mobile_no = $("#pur_mobile_no");
         var pro_mobile_no = $("#pro_mobile_no");
-        var serial_no = $("#serial_no");
         var query = $("#query");
         query.off("click").on("click",
             function () {
                 $("#cur").html("1");
                 param['pageIndex'] = 1;
-                param["userType"] = "-1";
                 param["mobileNo"] = "-1";
                 param["serialNo"] = "-1";
                 $("#orderTableContent").html("");
@@ -25,39 +23,37 @@ $(document).ready(function () {
                     param["userType"] = 2;
                     param["mobileNo"] = pro_mobile_no.val();
                 }
-                else if (serial_no.val() !== "") {
-                    param["serialNo"] = serial_no.val();
-                }
-                queryAllOrder(param);
+                queryAllUser(param);
             }
         );
         param['pageIndex'] = 1;
         param["userType"] = "-1";
         param["mobileNo"] = "-1";
-        param["serialNo"] = "-1";
-        queryAllOrder(param);
-        pager(queryAllOrder);
-    }
-
-    if(window.location.pathname === "/order/modifyProOrder") {
-        param["serialNo"] = getUrlParam("serialNo");
-        queryProOrder(param);
+        queryAllUser(param);
+        pager(queryAllUser);
     }
 });
 //ajax
-function queryAllOrder(param) {
+function queryAllUser(param) {
     $.ajax({
         type: "POST",
-        url: "/order/getAllOrder.do",
+        url: "/account/queryAllUser.do",
         data: param,
         success: function (data) {
             $.each(data, function (i, item) {
+                if(item.userType === 1){
+                    item.userType = "采购商";
+                }
+                else if(item.userType === 2){
+                    item.userType = "供应商";
+                }
+                item.spaceUsed += " Mb";
                 $("#orderTableContent").append(
                     "<tr>" +
-                    tableItemWrap(item.serialNo) +
-                    tableItemWrap(item.orderType) +
-                    tableItemWrap(item.orderStatus) +
-                    tableItemWrap("<button type=\"button\" class=\"btn btn-info\">查看详情</button><button type=\"button\" class=\"btn btn-danger\">删除订单</button>") +
+                    tableItemWrap(item.mobileNo) +
+                    tableItemWrap(item.userType) +
+                    tableItemWrap(item.spaceUsed) +
+                    tableItemWrap("<button type=\"button\" class=\"btn btn-info\">修改用户</button><button type=\"button\" class=\"btn btn-danger\">删除用户</button>") +
                     "</tr>"
                 );
                 if($("#cur").html() === '1'){
@@ -73,26 +69,30 @@ function queryAllOrder(param) {
                     $("li.next").removeClass("disabled");
                 }
             });
-            $("button.btn").each(function (i, item) {
+            $("td").find("button.btn-info").each(function (i, item) {
                 $(item).off("click").on("click", function () {
-                    if($(item).text() === "查看详情"){
-                        if($(item).parent().prevAll().eq(1).html() === "采购需求") {
-                            window.location.href = "/order/modifyPurOrder?serialNo=" + $(item).parent().prevAll().last().html();
+                    if($(item).text() === "修改用户"){
+                        if(data[i].userType === "采购商") {
+                            window.location.href = "/account/adminModify?userType=1&mobileNo="+data[i].mobileNo+"&pwd="+data[i].pwd;
                         }
-                        else{
-                            window.location.href = "/order/modifyProOrder?serialNo=" + $(item).parent().prevAll().last().html();
+                        else if(data[i].userType === "供应商"){
+                            window.location.href = "/account/adminModify?userType=2&mobileNo="+data[i].mobileNo+"&pwd="+data[i].pwd;
                         }
                     }
-                    else if($(item).text() === "删除订单"){
-                        var res = confirm("确认删除此订单？");
+                });
+            });
+            $("td").find("button.btn-danger").each(function (i, item) {
+                $(item).off("click").on("click", function () {
+                    if($(item).text() === "删除用户"){
+                        var res = confirm("确认删除此用户？");
                         if(!res){
                             return;
                         }
-                        param["serialNo"] = $(item).parent().prevAll().last().html();
-                        param["orderType"] = $(item).parent().prevAll().eq(1).html();
+                        param["userType"] = data[i].userType;
+                        param["mobileNo"] = data[i].mobileNo;
                         $.ajax({
                             type: "POST",
-                            url: "/order/adminDeleteOrder.do",
+                            url: "/account/adminDeleteUser.do",
                             data: param,
                             success: function (data) {
                                 if(data === "success"){
@@ -106,51 +106,6 @@ function queryAllOrder(param) {
                     }
                 });
             });
-        }
-    })
-}
-function queryProOrder(param) {
-    $.ajax({
-        type: "POST",
-        url: "/order/getProOrder.do",
-        data: param,
-        success: function (data) {
-            var pur_serial_no = $("#pur_serial_no");
-            var pro_mobile_no = $("#pro_mobile_no");
-            var offer_price = $("#offer_price");
-            var express_no = $("#express_no");
-            var proSn = data.pro_serial_no;
-
-            pur_serial_no.val(data.pur_serial_no);
-            pro_mobile_no.val(data.provider_name);
-            offer_price.val(data.offer_price);
-            express_no.val(data.express_no);
-            param["pur_serial_no"] = "-1";
-            param["pro_mobile_no"] = "-1";
-            param["offer_price"] = "-1";
-            param["express_no"] = "-1";
-
-            $("#update").off("click").on("click", function () {
-                param["proSerialNo"] = proSn;
-                param["pur_serial_no"] = pur_serial_no.val();
-                param["pro_mobile_no"] = pro_mobile_no.val();
-                param["offer_price"] = offer_price.val();
-                param["express_no"] = express_no.val();
-                modifyProOrder(param);
-            });
-        }
-    });
-}
-function modifyProOrder(param) {
-    $.ajax({
-        type: "POST",
-        url: "/order/adminMdyProOrder.do",
-        data: param,
-        success: function () {
-            successMessage("更新成功");
-            setTimeout(function () {
-                window.location.reload();
-            }, 1000);
         }
     });
 }

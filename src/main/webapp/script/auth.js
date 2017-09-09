@@ -22,14 +22,27 @@ $(document).ready(function () {
                     addTab("/order/addOrderType", "配置中心");
                     addTab("/order/adminGetAll", "订单管理");
                     // addTab("/order/allContract", "合同管理");
-                    addTab("/account/purchaser", "采购商管理");
-                    addTab("/account/provider", "供应商管理");
+                    addTab("/account/userManage", "用户管理");
                 }
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
                     addTab("/order/showPurOrders", "查看订单");
                     addTabWithBadge("/order/confirmSample", "接收样品", "confirmSample");
+                    addTabWithBadge("/order/allContract", "查看合同", "allContract");
                     addTab("/order/addOrderType", "查看联系人");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/getNewSignCnt.do",
+                        success: function (data) {
+                            if(data !== 0){
+                                $("#offeredContract").text(data);
+                            }
+                            else{
+                                $("#offeredContract").text("");
+                            }
+                        }
+                    });
 
                     map["queryType"] = "confirmSample";
                     $.ajax({
@@ -50,7 +63,21 @@ $(document).ready(function () {
                     addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
                     addTabWithBadge("/order/sendSample", "寄送样品", "sendSample");
                     addTab("/order/viewProOrder", "查看订单");
+                    addTabWithBadge("/order/allContract", "查看合同", "allContract");
                     addTab("/order/addOrderType", "查看联系人");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/getProNewCont.do",
+                        success: function (data) {
+                            if(data !== 0){
+                                $("#allContract").text(data);
+                            }
+                            else{
+                                $("#allContract").text("");
+                            }
+                        }
+                    });
 
                     map["queryType"] = "unOffer";
                     $.ajax({

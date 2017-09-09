@@ -25,11 +25,17 @@
     <script type="text/javascript" src="../../../script/themes/fa/theme.min.js"></script>
     <%--my-custom--%>
     <script src="../../../script/order/orderManage.js"></script>
+    <script src="../../../script/citypick/jquery.cxselect.min.js"></script>
 </head>
 <body>
 
 <div class="container">
     <form class="form-horizontal" role="form">
+        <br>
+        <div id="type_picker">
+            <select class="type_category form-control"></select>
+            <select class="type_content form-control"></select>
+        </div>
         <br>
         <div class="input-group">
             <span class="input-group-addon">购买类型</span>

@@ -7,15 +7,64 @@ var picker, orderAmount, expect, moreDetail, selectedType, regionFilter;
 
 $(document).ready(function () {
     if(window.location.pathname === "/order/addOrderType") {
+        var orderType = $("#orderType");
+        var unitType = $("#unitType");
+        var typeCategory = $("#typeCategory");
+        var type_picker = $("#type_picker");
+        type_picker.cxSelect({
+            url: "/order/showOrdTypeGrpByCat.do",
+            selects: ['type_category', 'type_content'],
+            required: true,
+            jsonName: 'name',
+            jsonValue: 'typeUnit',
+            jsonSub: 'types'
+        });
+        type_picker.change(function () {
+            typeCategory.val($("select.type_category").find("option:selected").text());
+            orderType.val($("select.type_content").find("option:selected").text());
+            unitType.val($("select.type_content").find("option:selected").attr("value"));
+        });
         $("#addNew").click(function () {
-            param['orderType'] = $("#orderType").val();
-            param["typeUnit"] = $("#unitType").val();
+            param['orderType'] = orderType.val();
+            param["typeUnit"] = unitType.val();
+            param["typeCategory"] = typeCategory.val();
+            var res = confirm("是否添加这个类型？");
+            if(!res){
+                return;
+            }
             $.ajax({
                 type: "POST",
                 url: "/order/addOrderType.do",
                 data: param,
-                success: function () {
-                    successMessage("添加成功");
+                success: function (data) {
+                    if(data === "success") {
+                        successMessage("添加成功");
+                    }
+                    else{
+                        successMessage("更新成功");
+                    }
+                }
+            });
+        });
+        $("#delete").click(function () {
+            param['orderType'] = orderType.val();
+            param["typeUnit"] = unitType.val();
+            param["typeCategory"] = typeCategory.val();
+            var res = confirm("是否删除这个类型？");
+            if(!res){
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/order/delOrderType.do",
+                data: param,
+                success: function (data) {
+                    if(data === "success") {
+                        successMessage("删除成功");
+                    }
+                    else{
+                        errorMessage("删除失败");
+                    }
                 }
             });
         });
@@ -33,6 +82,13 @@ $(document).ready(function () {
                     successMessage("更新成功");
                 }
             });
+        });
+        $.ajax({
+            type: "POST",
+            url: "/order/getPageSize.do",
+            success: function (data) {
+                $("#offerPageSize").val(data);
+            }
         });
     }
 
@@ -101,7 +157,7 @@ $(document).ready(function () {
                             if(data === "success") {
                                 successMessage("更新成功");
                                 setTimeout(function () {
-                                    window.location.href = "/order/showPurOrders";
+                                    window.location.reload();
                                 }, 1000);
                             }
                             else if(data === "no_such_type"){
@@ -158,16 +214,32 @@ $(document).ready(function () {
 });
 
 function pageInit() {
+    var type_picker = $("#type_picker");
+    type_picker.cxSelect({
+        url: "/order/showOrdTypeGrpByCat.do",
+        selects: ['type_category', 'type_content'],
+        required: true,
+        jsonName: 'name',
+        jsonValue: 'typeUnit',
+        jsonSub: 'types'
+    });
     selectedType = $("#selectedType");
     picker = $("#distpicker");
     regionFilter = $("#regionFilter");
     orderAmount = $("#orderAmount");
     expect = $("#expect");
     moreDetail = $("#moreDetail");
+    var typeSelectText = $("#typeSelectText");
+    type_picker.change(function () {
+        var selected = $("select.type_content").find("option:selected");
+        typeSelectText.val(selected.text());
+        selectedType.html(successAlert(typeSelectText.val()));
+        selectedType.children("div").attr("type-no", selected.attr("value"));
+    });
+    //添加地区过滤
     picker.citypicker({
         simple: true
     });
-    //添加地区过滤
     $("#addFilter").click(function () {
         var flag = false;
         if(picker.val() === ""){
@@ -216,7 +288,7 @@ function pageInit() {
         }
     });
     //get autocomplete
-    $("#typeSelectText").devbridgeAutocomplete({
+    typeSelectText.devbridgeAutocomplete({
         serviceUrl: '/order/showOrderType.do',
         showNoSuggestionNotice: true,
         paramName: 'typeContent',
