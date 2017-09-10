@@ -27,3 +27,12 @@ INSERT INTO order_types(type_content, type_unit, type_category) VALUES("台灯",
 INSERT INTO order_types(type_content, type_unit, type_category) VALUES("电视", "台", "家电");
 INSERT INTO order_types(type_content, type_unit, type_category) VALUES("洗发露", "箱", "日用品");
 INSERT INTO order_types(type_content, type_unit, type_category) VALUES("化妆品", "箱", "日用品");
+
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('1', '2', '未报价订单');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('2', '2', '待寄送样品');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('3', '2', '已确认收到样品');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('4', '2', '待签订合同');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('5', '1', '需求已被报价');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('6', '1', '待确认样品');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('7', '1', '供应商确认合同');
+

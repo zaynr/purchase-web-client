@@ -17,6 +17,8 @@ DROP TABLE IF EXISTS all_addons;
 DROP TABLE IF EXISTS user_address;
 DROP TABLE IF EXISTS filter_dict;
 DROP TABLE IF EXISTS admin_option;
+DROP TABLE IF EXISTS message;
+DROP TABLE IF EXISTS message_type;
 
 #用户主表
 CREATE TABLE users(
@@ -120,6 +122,20 @@ CREATE TABLE contacts(
   purchaser_mobile_no nvarchar(63),
   provider_mobile_no nvarchar(63),
   coop_count int
+);
+#消息表
+CREATE TABLE message(
+  mobile_no varchar(20) NOT NULL,
+  user_type varchar(20) NOT NULL,
+  message_type_no int,
+  message_cnt int,
+  PRIMARY KEY(mobile_no, user_type, message_type_no)
+);
+#消息类别表
+CREATE TABLE message_type(
+  type_no int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  receiver int,
+  type_describe nvarchar(255)
 );
 #合同表
 CREATE TABLE contracts(

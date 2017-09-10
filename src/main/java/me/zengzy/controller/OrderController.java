@@ -59,6 +59,10 @@ public class OrderController {
     ContractRepository contractRepository;
     @Autowired
     ContactRepository contactRepository;
+    @Autowired
+    MessageTypeRepository messageTypeRepository;
+    @Autowired
+    MessageRepository messageRepository;
 
     ///////////////
     //管理员页面组
@@ -617,12 +621,148 @@ public class OrderController {
         return auth.uploadToken(ApiKey.Qiniu.BucketName);
     }
 
+    @RequestMapping("/getMessage.do")
+    @ResponseBody
+    public ArrayList<Message> getMessage(HttpServletRequest request){
+        int userType = SessionUtil.getUserType(request);
+        String mobileNo = SessionUtil.getMobileNo(request);
+        ArrayList<MessageType> messageTypes = messageTypeRepository.getByReceiver(userType);
+        ArrayList<Message> messages;
+        StringBuilder builder = new StringBuilder();
+        for(MessageType a : messageTypes){
+            String temp = String.valueOf(a.getType_no()) + ",";
+            builder.append(temp);
+        }
+        messages = (messageRepository.getByPriKyeAndType(mobileNo, userType, builder.toString()));
+        return messages;
+    }
+
+    @RequestMapping("/messageUpdate.do")
+    @ResponseBody
+    public void messageUpdate(HttpServletRequest request){
+        int userType = SessionUtil.getUserType(request);
+        String mobileNo = SessionUtil.getMobileNo(request);
+        Message message;
+        message = new Message();
+        message.setMobile_no(mobileNo);
+        message.setUser_type(userType);
+        ArrayList<Message> messages = new ArrayList<Message>();
+        if(userType == Type.User.PURCHASER){
+            ArrayList<PurOrders> purOrders;
+            ArrayList<ProOrders> proOrders;
+            //获取已报价订单
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            purOrders = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
+            message.setMessage_type_no(5);
+            if(purOrders != null) {
+                message.setMessage_cnt(purOrders.size());
+            }
+            else{
+                message.setMessage_cnt(0);
+            }
+            messages.add(message);
+            //获取待确认样品
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            int cnt = 0;
+            String statusSet = String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
+                    String.valueOf(Status.Order.OFFERED_SAMPLE) + "," +
+                    String.valueOf(Status.Order.CONFIRM_SAMPLE);
+            purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNo, statusSet);
+            for(PurOrders a : purOrders){
+                proOrders = proOrderRepository.getByPurSerialNo(a.getPurSerialNo());
+                for(ProOrders b : proOrders){
+                    if(b.getOrder_status() == Status.Order.OFFERED_SAMPLE){
+                        cnt++;
+                    }
+                }
+            }
+            message.setMessage_type_no(6);
+            message.setMessage_cnt(cnt);
+            messages.add(message);
+            //获取已签合同
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            statusSet = String.valueOf(Status.Order.SIGNED);
+            purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNo, statusSet);
+            message.setMessage_type_no(7);
+            if(purOrders != null) {
+                message.setMessage_cnt(purOrders.size());
+            }
+            else{
+                message.setMessage_cnt(0);
+            }
+            messages.add(message);
+        }
+        else if(userType == Type.User.PROVIDER){
+            ArrayList<PurOrders> orders;
+            ArrayList<ProOrders> proOrders;
+            Providers provider = providerRepository.getProviderByMobileNo(mobileNo);
+            List<String> types = Arrays.asList(provider.getProvide_type().split(","));
+            UserAddress address = addressRepository.queryByPrimaryKey(mobileNo, userType);
+            //获取未报价订单
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            orders = purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC);
+            orders = filterByRegionAndType(orders, address, types);
+            message.setMessage_type_no(1);
+            if(orders != null) {
+                message.setMessage_cnt(orders.size());
+            }
+            else{
+                message.setMessage_cnt(0);
+            }
+            messages.add(message);
+            //获取待寄送样品
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.REQUIRE_SAMPLE));
+            message.setMessage_type_no(2);
+            message.setMessage_cnt(proOrders.size());
+            messages.add(message);
+            //获取已确认收到样品
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.CONFIRM_SAMPLE));
+            message.setMessage_type_no(3);
+            if(proOrders != null) {
+                message.setMessage_cnt(proOrders.size());
+            }
+            else{
+                message.setMessage_cnt(0);
+            }
+            messages.add(message);
+            //获取待签合同
+            message = new Message();
+            message.setMobile_no(mobileNo);
+            message.setUser_type(userType);
+            proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.OFFERED_CONTRACT));
+            message.setMessage_type_no(4);
+            if(proOrders != null) {
+                message.setMessage_cnt(proOrders.size());
+            }
+            else{
+                message.setMessage_cnt(0);
+            }
+            messages.add(message);
+        }
+        messageRepository.save(messages);
+    }
+
     @RequestMapping("/showSpicStatusPurOrder.do")
     @ResponseBody
     public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
         ArrayList<PurOrders> orders = null;
         Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
         List<String> types = Arrays.asList(provider.getProvide_type().split(","));
+        UserAddress address = addressRepository.queryByPrimaryKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
         if(param.get("queryType").equals("unOffer")) {
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC);
         }
@@ -635,40 +775,9 @@ public class OrderController {
         else if(param.get("queryType").equals("confirmedSample")){
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.CONFIRM_SAMPLE);
         }
-        if(orders != null) {
-            for (int i = 0; i < orders.size(); i++) {
-                ArrayList<FilterDict> filters = filterDictRepository.getByOrderSerialNo(orders.get(i).getPurSerialNo());
-                UserAddress address = addressRepository.queryByPrimaryKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
-                boolean flag = true;
-                if (filters.size() > 0) {
-                    for (FilterDict a : filters) {
-                        if (a.getProvince().equals(address.getProvince())) {
-                            if (a.getCity().equals(address.getCity())) {
-                                if (a.getDist().equals(address.getDist())) {
-                                    flag = false;
-                                    break;
-                                }
-                                else if(a.getDist().equals("null")){
-                                    flag = false;
-                                }
-                            }
-                            else if(a.getCity().equals("null")){
-                                flag = false;
-                            }
-                        }
-                        else if(a.getProvince().equals("null")){
-                            flag = false;
-                        }
-                    }
-                }
-                else{
-                    flag = false;
-                }
-                if (!types.contains(String.valueOf(orders.get(i).getTypeNo())) || flag) {
-                    orders.remove(i);
-                    i--;
-                }
-            }
+        orders = filterByRegionAndType(orders, address, types);
+        if(orders == null) {
+            return null;
         }
         return packPurOrderBeans(orders, request);
     }
@@ -1160,5 +1269,43 @@ public class OrderController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<PurOrders> filterByRegionAndType(ArrayList<PurOrders> orders, UserAddress address, List<String> types){
+        if(orders != null) {
+            for (int i = 0; i < orders.size(); i++) {
+                ArrayList<FilterDict> filters = filterDictRepository.getByOrderSerialNo(orders.get(i).getPurSerialNo());
+                boolean flag = true;
+                if (filters.size() > 0) {
+                    for (FilterDict a : filters) {
+                        if (a.getProvince().equals(address.getProvince())) {
+                            if (a.getCity().equals(address.getCity())) {
+                                if (a.getDist().equals(address.getDist())) {
+                                    flag = false;
+                                    break;
+                                }
+                                else if(a.getDist().equals("null")){
+                                    flag = false;
+                                }
+                            }
+                            else if(a.getCity().equals("null")){
+                                flag = false;
+                            }
+                        }
+                        else if(a.getProvince().equals("null")){
+                            flag = false;
+                        }
+                    }
+                }
+                else{
+                    flag = false;
+                }
+                if (!types.contains(String.valueOf(orders.get(i).getTypeNo())) || flag) {
+                    orders.remove(i);
+                    i--;
+                }
+            }
+        }
+        return orders;
     }
 }

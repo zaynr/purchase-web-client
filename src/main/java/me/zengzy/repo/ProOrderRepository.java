@@ -26,6 +26,9 @@ public interface ProOrderRepository extends CrudRepository<ProOrders, Long> {
     @Query(value = "SELECT * FROM pro_orders WHERE FIND_IN_SET(order_status, :status_set) AND provider_name = :provider_name ORDER BY pro_serial_no DESC LIMIT :cur, :pageSize", nativeQuery = true)
     ArrayList<ProOrders> getByProviderNameAndStatus(@Param("provider_name") String provider_name, @Param("status_set") String status_set, @Param("cur") int cur, @Param("pageSize") int pageSize);
 
+    @Query(value = "SELECT * FROM pro_orders WHERE FIND_IN_SET(order_status, :status_set) AND provider_name = :provider_name", nativeQuery = true)
+    ArrayList<ProOrders> getByProviderNameAndStatus(@Param("provider_name") String provider_name, @Param("status_set") String status_set);
+
     @Query(value = "SELECT * FROM pro_orders WHERE pro_serial_no = :no", nativeQuery = true)
     ProOrders getByProSerialNo(@Param("no") int pro_serial_no);
 

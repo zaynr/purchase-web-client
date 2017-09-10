@@ -4,8 +4,7 @@
 <html>
     <head>
         <jsp:include page="script-sources.jsp"/>
-        <script src="../../script/login/login.js"></script>
-        <script src="../../script/login/jQuery-MD5.js"></script>
+        <script src="../../script/message/msgDisplay.js"></script>
         <title>简单交易 Simple Trade</title>
     </head>
     <body>
@@ -15,11 +14,11 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4" id="row1">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" id="row2">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" id="row3">
                 </div>
             </div>
         </div> <!-- /container -->

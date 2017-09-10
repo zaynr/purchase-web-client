@@ -18,6 +18,10 @@ $(document).ready(function () {
                     + "注销"
                     + "</button>"
                 );
+                $.ajax({
+                    type: "POST",
+                    url: "/order/messageUpdate.do"
+                });
                 if(data === "0"){
                     addTab("/order/addOrderType", "配置中心");
                     addTab("/order/adminGetAll", "订单管理");
@@ -34,29 +38,30 @@ $(document).ready(function () {
                     function queryPurInfo() {
                         $.ajax({
                             type: "POST",
-                            url: "/order/getNewSignCnt.do",
+                            url: "/order/getMessage.do",
                             success: function (data) {
-                                if(data !== 0){
-                                    $("#allContract").text(data);
-                                }
-                                else{
-                                    $("#allContract").text("");
-                                }
-                            }
-                        });
-
-                        map["queryType"] = "confirmSample";
-                        $.ajax({
-                            type: "POST",
-                            url: "/order/querySentSample.do",
-                            data: map,
-                            success: function (data) {
-                                if (data.length === 0) {
-                                    $("#confirmSample").text("");
-                                }
-                                else {
-                                    $("#confirmSample").text(data.length);
-                                }
+                                $.each(data, function (i, item) {
+                                    switch(item.message_type_no){
+                                        case 5:
+                                            break;
+                                        case 6:
+                                            if(item.message_cnt === 0){
+                                                $("#confirmSample").text("");
+                                            }
+                                            else{
+                                                $("#confirmSample").text(item.message_cnt);
+                                            }
+                                            break;
+                                        case 7:
+                                            if(item.message_cnt === 0){
+                                                $("#allContract").text("");
+                                            }
+                                            else{
+                                                $("#allContract").text(item.message_cnt);
+                                            }
+                                            break;
+                                    }
+                                });
                             }
                         });
                     }
@@ -74,63 +79,48 @@ $(document).ready(function () {
                     addTab("/order/allContacts", "查看联系人");
 
                     function queryProInfo() {
-                        map["queryType"] = "confirmedSample";
                         $.ajax({
                             type: "POST",
-                            url: "/order/getProNewCont.do",
+                            url: "/order/getMessage.do",
                             success: function (data) {
-                                if (data !== 0) {
-                                    $("#allContract").text(data);
-                                }
-                                else {
-                                    $("#allContract").text("");
-                                }
+                                $.each(data, function (i, item) {
+                                    switch(item.message_type_no){
+                                        case 1:
+                                            if(item.message_cnt === 0){
+                                                $("#unOffer").text("");
+                                            }
+                                            else{
+                                                $("#unOffer").text(item.message_cnt);
+                                            }
+                                            break;
+                                        case 2:
+                                            if(item.message_cnt === 0){
+                                                $("#sendSample").text("");
+                                            }
+                                            else{
+                                                $("#sendSample").text(item.message_cnt);
+                                            }
+                                            break;
+                                        case 3:
+                                            if(item.message_cnt === 0){
+                                                $("#viewProOrder").text("");
+                                            }
+                                            else{
+                                                $("#viewProOrder").text(item.message_cnt);
+                                            }
+                                            break;
+                                        case 4:
+                                            if(item.message_cnt === 0){
+                                                $("#allContract").text("");
+                                            }
+                                            else{
+                                                $("#allContract").text(item.message_cnt);
+                                            }
+                                            break;
+                                    }
+                                });
                             }
                         });
-
-                        map["queryType"] = "confirmedSample";
-                        $.ajax({
-                            type: "POST",
-                            url: "/order/showSpicStatusPurOrder.do",
-                            data: map,
-                            success: function (data) {
-                                if (data.length === 0) {
-                                    $("#viewProOrder").text("");
-                                }
-                                else {
-                                    $("#viewProOrder").text(data.length);
-                                }
-                            }
-                        });
-
-                        map["queryType"] = "unOffer";
-                        $.ajax({
-                            type: "POST",
-                            url: "/order/showSpicStatusPurOrder.do",
-                            data: map,
-                            success: function (data) {
-                                if (data.length === 0) {
-                                    $("#unOffer").text("");
-                                }
-                                else {
-                                    $("#unOffer").text(data.length);
-                                }
-                            }
-                        });
-
-                        $.ajax({
-                            type: "POST",
-                            url: "/order/queryRequiredSample.do",
-                            success: function (data) {
-                                if (data.length === 0) {
-                                    $("#sendSample").text("");
-                                }
-                                else {
-                                    $("#sendSample").text(data.length);
-                                }
-                            }
-                        });
-
                     }
 
                     queryProInfo();
@@ -138,6 +128,13 @@ $(document).ready(function () {
                         queryProInfo();
                     }, 3000);
                 }
+
+                setInterval(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/messageUpdate.do"
+                    });
+                }, 10000);
 
                 setInterval(function () {
                     $("#navTabs").find("li").each(function () {
