@@ -650,6 +650,10 @@ public class OrderController {
         }
         ArrayList<PurOrderBean> beans = packPurOrderBeans(orders, request);
         for(PurOrderBean a : beans){
+            if(a.getOrderStatusNo() == Status.Order.SIGNED || a.getOrderStatusNo() == Status.Order.DONE){
+                int contractSn = contractRepository.getByPurSn(a.getPurSerialNo()).getContract_serial_no();
+                a.setAddonUrl(addonsRepository.queryByOrderSerialNo(contractSn).get(0).getAddon_url());
+            }
             a.setPageIndex(pageIndex);
             a.setPageSize(pageSize);
         }

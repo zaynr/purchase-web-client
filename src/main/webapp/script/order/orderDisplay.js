@@ -134,6 +134,10 @@ $(document).ready(function () {
                     }
                     var temp = item.datetime.split(":");
                     item.datetime = temp[0] + ":" + temp[1];
+                    var btn = "<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消需求</button><button my-attr='op' type=\"button\" class=\"btn btn-warning\">修改需求</button>";
+                    if(item.orderStatusNo === 5 || item.orderStatusNo === 10){
+                        btn = "<a target='_blank' class='btn btn-success' href='"+item.addonUrl+"'>下载合同</a>"
+                    }
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(item.purSerialNo) +
@@ -143,7 +147,7 @@ $(document).ready(function () {
                         tableItemWrap(item.datetime) +
                         tableItemWrap(item.providerName) +
                         tableItemWrap(item.orderStatus) +
-                        tableItemWrap("<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消需求</button><button my-attr='op' type=\"button\" class=\"btn btn-warning\">修改需求</button>") +
+                        tableItemWrap(btn) +
                         "</tr>"
                     );
                     if($("#cur").html() === '1'){
@@ -176,7 +180,7 @@ $(document).ready(function () {
                             $(item).text("查看报价");
                         }
                     }
-                    else if($(item).parent().prevAll().first().html() === "已签合同" || $(item).parent().prevAll().first().html() === "已发送合同" || $(item).parent().prevAll().first().html() === "已完成"){
+                    else if($(item).parent().prevAll().first().html() === "已签合同"){
                         rmModify(item);
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-success");

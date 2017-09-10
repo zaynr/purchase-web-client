@@ -24,6 +24,15 @@ public class PurOrderBean {
     private int showExpectPrice;
     private int pageSize, pageIndex;
     private String datetime;
+    private String addonUrl;
+
+    public String getAddonUrl() {
+        return addonUrl;
+    }
+
+    public void setAddonUrl(String addonUrl) {
+        this.addonUrl = addonUrl;
+    }
 
     public String getDatetime() {
         return datetime;
