@@ -17,6 +17,8 @@
 <div class="container">
     <div align="center">
         <br>
+        <div id="message"></div>
+        <br>
         <ul class="nav nav-pills" role="tablist">
             <li role="presentation" class="active"><a id="current">查看未签合同</a></li>
             <li role="presentation"><a id="his">查看已签合同</a></li>
@@ -26,12 +28,7 @@
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>
-            <tr>
-                <th>合同序号</th>
-                <th>需求序号</th>
-                <th>报价序号</th>
-                <th>合同下载</th>
-                <th>操作</th>
+            <tr id="tableHead">
             </tr>
             </thead>
             <tbody id="orderTableContent">

@@ -17,7 +17,6 @@
 <body>
 <div class="jumbotron" style="padding: 1% 10%;">
     <br>
-    <div id="message"></div>
     <form class="form-horizontal" role="form">
         <h3>类型管理</h3>
         <br>
@@ -48,6 +47,8 @@
             <button id="delete" class="btn btn-danger">删除</button>
         </div>
     </div>
+    <br>
+    <div id="message"></div>
     <br>
 </div>
 <div class="container">

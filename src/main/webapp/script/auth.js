@@ -69,7 +69,7 @@ $(document).ready(function () {
                     queryPurInfo();
                     setInterval(function () {
                         queryPurInfo();
-                    }, 3000);
+                    }, 1000);
                 }
                 else if(data === "2"){
                     addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
@@ -126,7 +126,7 @@ $(document).ready(function () {
                     queryProInfo();
                     setInterval(function () {
                         queryProInfo();
-                    }, 3000);
+                    }, 1000);
                 }
 
                 setInterval(function () {
@@ -134,7 +134,7 @@ $(document).ready(function () {
                         type: "POST",
                         url: "/order/messageUpdate.do"
                     });
-                }, 10000);
+                }, 1000);
 
                 setInterval(function () {
                     $("#navTabs").find("li").each(function () {

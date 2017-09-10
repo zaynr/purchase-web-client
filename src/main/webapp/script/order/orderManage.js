@@ -39,9 +39,15 @@ $(document).ready(function () {
                 success: function (data) {
                     if(data === "success") {
                         successMessage("添加成功");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
                     }
                     else{
                         successMessage("更新成功");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
                     }
                 }
             });
@@ -61,7 +67,9 @@ $(document).ready(function () {
                 success: function (data) {
                     if(data === "success") {
                         successMessage("删除成功");
-                        window.location.reload();
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
                     }
                     else{
                         errorMessage("删除失败");

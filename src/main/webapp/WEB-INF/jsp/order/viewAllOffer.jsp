@@ -24,16 +24,14 @@
     <br>
     <div id="message"></div>
     <br>
+    <div id="detail"></div>
+    <br>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>
             <tr>
-                <th>报价序列号</th>
                 <th>供应商报价</th>
                 <th>供应商手机号</th>
-                <th>需求序列号</th>
-                <th>需求数量</th>
-                <th>需求类型</th>
                 <th>快递单号</th>
                 <th>报价状态</th>
                 <th>操作</th>

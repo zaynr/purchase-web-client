@@ -35,4 +35,6 @@ INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) V
 INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('5', '1', '需求已被报价');
 INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('6', '1', '待确认样品');
 INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('7', '1', '供应商确认合同');
+INSERT INTO `purchase`.`message_type` (`type_no`, `receiver`, `type_describe`) VALUES ('8', '1', '供应商拒绝合同');
+
 

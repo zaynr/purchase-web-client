@@ -28,6 +28,28 @@ $(document).ready(function () {
         map["serialNo"] = getUrlParam('serialNo');
         pager(queryOfferOrder);
         queryOfferOrder(map);
+        var current;
+        $.ajax({
+            url: "/order/getOfferNum.do",
+            type: "POST",
+            data: map,
+            success: function (data) {
+                current = data;
+            }
+        });
+        setInterval(function () {
+            $.ajax({
+                url: "/order/getOfferNum.do",
+                type: "POST",
+                data: map,
+                success: function (data) {
+                    if(current !== data){
+                        window.location.reload();
+                    }
+                }
+            });
+        }, 1000);
+        checkReload(8);
     }
 
     if(window.location.pathname === "/order/showAddOn"){
@@ -87,6 +109,7 @@ $(document).ready(function () {
 
     if(window.location.pathname === "/order/sendSample"){
         queryRequiredSample();
+        checkReload(2);
     }
 
     if(window.location.pathname === "/order/allContacts"){
@@ -109,14 +132,16 @@ $(document).ready(function () {
                     else{
                         item.expectPrice = item.expectPrice + "元";
                     }
+                    var temp = item.datetime.split(":");
+                    item.datetime = temp[0] + ":" + temp[1];
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(item.purSerialNo) +
+                        tableItemWrap(item.typeContent) +
                         tableItemWrap(item.expectPrice) +
                         tableItemWrap(item.orderAmount + item.typeUnit) +
-                        tableItemWrap(item.purchaserName) +
+                        tableItemWrap(item.datetime) +
                         tableItemWrap(item.providerName) +
-                        tableItemWrap(item.typeContent) +
                         tableItemWrap(item.orderStatus) +
                         tableItemWrap("<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消需求</button><button my-attr='op' type=\"button\" class=\"btn btn-warning\">修改需求</button>") +
                         "</tr>"
@@ -135,10 +160,8 @@ $(document).ready(function () {
                     }
                 });
                 $("button.btn").each(function (i, item) {
-                    if($(item).parent().prevAll().first().html() === "撤销" || $(item).parent().prevAll().first().html() === "已完成"){
-                        rmModify(item);
-                        $(item).removeClass("btn-danger");
-                        $(item).text("查看详情");
+                    if($(item).parent().prevAll().first().html() === "撤销"){
+                        $(item).remove();
                     }
                     else if($(item).parent().prevAll().first().html() === "已报价" || $(item).parent().prevAll().first().html() === "待寄送样品" || $(item).parent().prevAll().first().html() === "已寄送样品" || $(item).parent().prevAll().first().html() === "已确认样品"){
                         rmModify(item);
@@ -146,7 +169,14 @@ $(document).ready(function () {
                         $(item).addClass("btn-info");
                         $(item).text("查看报价");
                     }
-                    else if($(item).parent().prevAll().first().html() === "已签合同" || $(item).parent().prevAll().first().html() === "已发送合同"){
+                    else if($(item).parent().prevAll().first().html() === "合同被拒绝"){
+                        if($(item).text() === "修改需求"){
+                            $(item).removeClass("btn-warning");
+                            $(item).addClass("btn-info");
+                            $(item).text("查看报价");
+                        }
+                    }
+                    else if($(item).parent().prevAll().first().html() === "已签合同" || $(item).parent().prevAll().first().html() === "已发送合同" || $(item).parent().prevAll().first().html() === "已完成"){
                         rmModify(item);
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-success");
@@ -239,6 +269,11 @@ $(document).ready(function () {
                     if(item.offeredPrice === -1){
                         item.offeredPrice = "未报价";
                     }
+                    else{
+                        item.offeredPrice += " 元";
+                    }
+                    var temp = item.datetime.split(":");
+                    item.datetime = temp[0] + ":" + temp[1];
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(item.purSerialNo) +
@@ -250,6 +285,7 @@ $(document).ready(function () {
                         tableItemWrap(item.providerName) +
                         tableItemWrap(item.typeContent) +
                         tableItemWrap(item.orderStatus) +
+                        tableItemWrap(item.datetime) +
                         tableItemWrap("<button type=\"button\" class=\"btn btn-success\">提供报价</button>") +
                         "</tr>"
                     );
@@ -261,7 +297,7 @@ $(document).ready(function () {
                     });
                 });
                 $("button.btn-success").each(function (i, item) {
-                    if($(item).parent().prevAll().first().html() === "已报价"){
+                    if($(item).parent().prevAll().eq(4).html() !== "未报价"){
                         $(item).text("修改报价");
                     }
                     $(item).on("click", function () {
@@ -272,7 +308,7 @@ $(document).ready(function () {
                                 return;
                             }
                             var postUrl;
-                            if($(item).parent().prevAll().first().html() === "待报价"){
+                            if($(item).parent().prevAll().eq(4).html() === "未报价"){
                                 postUrl = "/order/placeProOrder.do";
                             }
                             else if($(item).parent().prevAll().first().html() === "已报价"){
@@ -312,15 +348,13 @@ $(document).ready(function () {
             url: "/order/getAllOffer.do",
             data: map,
             success: function (data) {
+                var foo = data[0];
+                $("#detail").append("<h3>需求序列号："+foo.purSerialNo+"；需求类型："+foo.orderType+"；需求数量："+foo.orderAmount+"</h3>")
                 $.each(data, function (i, item) {
                     $("#orderTableContent").append(
                         "<tr>" +
-                        tableItemWrap(item.proSerialNo) +
                         tableItemWrap(item.offerPrice) +
                         tableItemWrap(item.providerMobileNo) +
-                        tableItemWrap(item.purSerialNo) +
-                        tableItemWrap(item.orderAmount) +
-                        tableItemWrap(item.orderType) +
                         tableItemWrap(item.expressNo) +
                         tableItemWrap(item.orderStatus) +
                         tableItemWrap("<button type=\"button\" class=\"btn btn-info\">索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button>") +
@@ -339,7 +373,7 @@ $(document).ready(function () {
                         $("li.next").removeClass("disabled");
                     }
                 });
-                $("button.btn").each(function (i, item) {
+                $("td").find("button.btn").each(function (i, item) {
                     if($(item).parent().prevAll().first().html() === "已寄送样品" && $(item).text() === "索取样品"){
                         $(item).removeClass("btn-info");
                         $(item).addClass("btn-primary");
@@ -354,11 +388,18 @@ $(document).ready(function () {
                     else if($(item).parent().prevAll().first().html() === "已确认样品" && $(item).text() === "索取样品"){
                         $(item).remove();
                     }
+                    else if($(item).parent().prevAll().first().html() === "合同被拒绝" && $(item).text() === "索取样品"){
+                        $(item).remove();
+                    }
+                    else if($(item).parent().prevAll().first().html() === "合同被拒绝" && $(item).text() === "签订合同"){
+                        $(item).text("重发合同");
+                    }
                     $(item).on("click", function () {
                         map['cur'] = $("#cur").html();
                         if($(item).text() === "索取样品"){
-                            map["proSerialNo"] = $(item).parent().prevAll().last().html();
-                            map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
+                            var index = parseInt(i/2);
+                            map["proSerialNo"] = data[index].proSerialNo;
+                            map["purSerialNo"] = data[index].purSerialNo;
                             $.ajax({
                                 type: "POST",
                                 url: "/order/requestSample.do",
@@ -377,9 +418,10 @@ $(document).ready(function () {
                         else if($(item).text() === "确认样品"){
                             window.location.href = "/order/confirmSample"
                         }
-                        else if($(item).text() === "签订合同"){
-                            map["proSerialNo"] = $(item).parent().prevAll().last().html();
-                            map["purSerialNo"] = $(item).parent().prevAll().eq(4).html();
+                        else if($(item).text() === "签订合同" || $(item).text() === "重发合同"){
+                            index = parseInt(i/2);
+                            map["proSerialNo"] = data[index].proSerialNo;
+                            map["purSerialNo"] = data[index].purSerialNo;
                             $("#confirmContract").modal();
                             $("#confirm").click(function () {
                                 $.ajax({
@@ -648,6 +690,12 @@ $(document).ready(function () {
                 $.each(data, function (i, item) {
                     var url = "<a class='btn btn-info' target='_blank' href='" + item.addonUrl + "'>下载合同</a>";
                     var btn = '';
+                    if(item.userType === 1){
+                        $("#tableHead").html("<th>合同序号</th><th>需求序号</th><th>合同下载</th><th>操作</th>");
+                    }
+                    else if(item.userType === 2){
+                        $("#tableHead").html("<th>合同序号</th><th>报价序号</th><th>合同下载</th><th>操作</th>");
+                    }
                     if(map['queryType'] !== 'his'){
                         if (item.userType === 1) {
                             btn = "<button class='btn btn-info'>更改合同</button>";
@@ -656,15 +704,45 @@ $(document).ready(function () {
                             btn = "<button class='btn btn-success'>接受合同</button><button class='btn btn-danger'>拒绝合同</button>";
                         }
                     }
-                    $("#orderTableContent").append(
-                        "<tr>" +
-                        tableItemWrap(item.contractSn) +
-                        tableItemWrap(item.purOrdSn) +
-                        tableItemWrap(item.proOrdSn) +
-                        tableItemWrap(url) +
-                        tableItemWrap(btn) +
-                        "</tr>"
-                    );
+                    else{
+                        if (item.userType === 1 && item.status === 0) {
+                            btn = "<button class='btn btn-info'>确认完成</button>";
+                        }
+                        else{
+                            btn = "订单已完成";
+                        }
+                    }
+                    if(item.userType === 1){
+                        $("#orderTableContent").append(
+                            "<tr>" +
+                            tableItemWrap(item.contractSn) +
+                            tableItemWrap(item.purOrdSn) +
+                            tableItemWrap(url) +
+                            tableItemWrap(btn) +
+                            "</tr>"
+                        );
+                    }
+                    else if(item.userType === 2){
+                        $("#orderTableContent").append(
+                            "<tr>" +
+                            tableItemWrap(item.contractSn) +
+                            tableItemWrap(item.proOrdSn) +
+                            tableItemWrap(url) +
+                            tableItemWrap(btn) +
+                            "</tr>"
+                        );
+                    }
+                    else{
+                        $("#orderTableContent").append(
+                            "<tr>" +
+                            tableItemWrap(item.contractSn) +
+                            tableItemWrap(item.purOrdSn) +
+                            tableItemWrap(item.proOrdSn) +
+                            tableItemWrap(url) +
+                            tableItemWrap(btn) +
+                            "</tr>"
+                        );
+                    }
                     if($("#cur").html() === '1'){
                         $("li.previous").addClass("disabled");
                     }
@@ -704,10 +782,6 @@ $(document).ready(function () {
                         }
                         else if($(item).text() === "拒绝合同") {
                             map["contractSn"] = $(item).parent().prevAll().last().html();
-                            var res = confirm("注意，若拒绝合同，本次报价即结束，建议与采购商重新协商并修改合同！");
-                            if(!res){
-                                return;
-                            }
                             $.ajax({
                                 type: "POST",
                                 url: "/order/declineContract.do",
@@ -729,8 +803,30 @@ $(document).ready(function () {
                             });
                         }
                         else if($(item).text() === "更改合同") {
-                            map["pur_serial_no"] = $(item).parent().prevAll().eq(2).html();
+                            map["pur_serial_no"] = $(item).parent().prevAll().eq(1).html();
                             showContract(map);
+                        }
+                        else if($(item).text() === "确认完成") {
+                            map["contractSn"] = $(item).parent().prevAll().last().html();
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/finishOrder.do",
+                                data: map,
+                                success: function (data) {
+                                    if(data === "success") {
+                                        successMessage("确认成功！");
+                                        setTimeout(function () {
+                                            window.location.href = "/";
+                                        }, 1000);
+                                    }
+                                    else{
+                                        errorMessage("确认失败");
+                                    }
+                                },
+                                error: function () {
+                                    errorMessage("确认失败");
+                                }
+                            });
                         }
                     });
                 });
@@ -744,13 +840,26 @@ $(document).ready(function () {
             data: map,
             success: function (data) {
                 $.each(data, function (i, item) {
-                    $("#orderTableContent").append(
-                        "<tr>" +
-                        tableItemWrap(item.purchaser_mobile_no) +
-                        tableItemWrap(item.provider_mobile_no) +
-                        tableItemWrap(item.coop_count + " 次") +
-                        "</tr>"
-                    );
+                    if(item.userType === 1) {
+                        $("#tableHead").html("<th>供应商联系方式</th><th>合作次数</th><th>操作</th>");
+                        $("#orderTableContent").append(
+                            "<tr>" +
+                            tableItemWrap(item.provider_mobile_no) +
+                            tableItemWrap(item.coop_count + " 次") +
+                            tableItemWrap("<button id='detail' class='btn btn-info'>查看详情</button>") +
+                            "</tr>"
+                        );
+                    }
+                    else if(item.userType === 2){
+                        $("#tableHead").html("<th>采购商联系方式</th><th>合作次数</th><th>操作</th>");
+                        $("#orderTableContent").append(
+                            "<tr>" +
+                            tableItemWrap(item.provider_mobile_no) +
+                            tableItemWrap(item.coop_count + " 次") +
+                            tableItemWrap("<button id='detail' class='btn btn-info'>查看详情</button>") +
+                            "</tr>"
+                        );
+                    }
                     if($("#cur").html() === '1'){
                         $("li.previous").addClass("disabled");
                     }
@@ -764,8 +873,67 @@ $(document).ready(function () {
                         $("li.next").removeClass("disabled");
                     }
                 });
+                $("button.btn-info").each(function (i, item) {
+                    $(item).off("click").on("click", function () {
+                        var param = {};
+                        param['mobileNo'] = $(item).parent().prevAll().last().html();
+                        $.ajax({
+                            type: "POST",
+                            url: "/order/getContactDetail.do",
+                            data: param,
+                            success: function (data) {
+                                $("#contactDetail").html("");
+                                $.each(data, function (i, item) {
+                                    var href = "<a class=\"btn btn-success\" id=\"download\" target=\"_blank\" href=\"" + item.addonUrl + "\">点击下载合同</a>"
+                                    var temp = item.datetime.split(":");
+                                    item.datetime = temp[0] + ":" + temp[1];
+                                    $("#contactDetail").append(
+                                        "<tr>" +
+                                        tableItemWrap(item.contractSn) +
+                                        tableItemWrap(item.orderType) +
+                                        tableItemWrap(item.orderAmount) +
+                                        tableItemWrap(item.orderPrice) +
+                                        tableItemWrap(item.datetime) +
+                                        tableItemWrap(href) +
+                                        "</tr>"
+                                    );
+                                    $("#purOrderDetail").modal();
+                                });
+                            }
+                        })
+                    })
+                });
             }
         });
+    }
+    function checkReload(index) {
+        var current = 0;
+        $.ajax({
+            type: "POST",
+            url: "/order/getMessage.do",
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    if(item.message_type_no === index){
+                        current = item.message_cnt;
+                    }
+                });
+            }
+        });
+        setInterval(function () {
+            $.ajax({
+                type: "POST",
+                url: "/order/getMessage.do",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        if(item.message_type_no === index){
+                            if(current !== item.message_cnt){
+                                window.location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        }, 1000);
     }
 
 //simple logic
@@ -775,14 +943,20 @@ $(document).ready(function () {
         if(window.location.pathname === "/order/showPurOrders") {
             pager(queryPurOrder);
             queryPurOrder(map);
+            checkReload(5);
+            checkReload(8);
+            checkReload(7);
         }
         else if(window.location.pathname === "/order/recOrder"){
             pager(queryUnOfferOrder);
             queryUnOfferOrder(map);
+            checkReload(1);
         }
         else if(window.location.pathname === "/order/allContract"){
             pager(queryAllContract);
             queryAllContract(map);
+            checkReload(7);
+            checkReload(4);
         }
         else if(window.location.pathname === "/order/viewProOrder"){
             pager(queryProOrder);

@@ -253,12 +253,57 @@ public class OrderController {
         for(Contacts a : contacts){
             ContactsBean bean = new ContactsBean();
             bean.setPageSize(pageSize);
+            bean.setUserType(userType);
             bean.setCoop_count(a.getCoop_count());
             bean.setProvider_mobile_no(a.getProvider_mobile_no());
             bean.setPurchaser_mobile_no(a.getPurchaser_mobile_no());
             bean.setSerial_no(a.getSerial_no());
 
             beans.add(bean);
+        }
+        return beans;
+    }
+
+    @RequestMapping("getContactDetail.do")
+    @ResponseBody
+    public ArrayList<ContactDetailBean> getContactDetail(@RequestParam Map<String, String> param, HttpServletRequest request){
+        String mobileNo = param.get("mobileNo");
+        int userType = SessionUtil.getUserType(request);
+        if(mobileNo == null){
+            return null;
+        }
+        ArrayList<ContactDetailBean> beans = new ArrayList<ContactDetailBean>();
+        String statusSet = String.valueOf(Status.Order.DONE) + "," + String.valueOf(Status.Order.SIGNED);
+        if(userType == 1){
+            ArrayList<ProOrders> orders = proOrderRepository.getByProviderNameAndStatus(mobileNo, statusSet);
+            for(ProOrders a : orders){
+                PurOrders foo = purOrderRepository.getPurOrderBySerialNo(a.getPur_serial_no());
+                OrderTypes type = typeRepository.getTypeByNo(foo.getTypeNo());
+                Contract contract = contractRepository.getByProSn(a.getPro_serial_no());
+                ContactDetailBean bean = new ContactDetailBean();
+                bean.setAddonUrl(addonsRepository.queryByOrderSerialNo(contract.getContract_serial_no()).get(0).getAddon_url());
+                bean.setContractSn(contract.getContract_serial_no());
+                bean.setDatetime(ordersRepository.getBySerialNo(a.getPro_serial_no()).getGen_date());
+                bean.setOrderType(type.getType_content());
+                bean.setOrderAmount(foo.getOrder_amount() + type.getType_unit());
+
+                beans.add(bean);
+            }
+        }
+        else if(userType == 2){
+            ArrayList<PurOrders> orders = purOrderRepository.getPurOrderByNameAndStatus(mobileNo, statusSet);
+            for(PurOrders a : orders){
+                OrderTypes type = typeRepository.getTypeByNo(a.getTypeNo());
+                Contract contract = contractRepository.getByPurSn(a.getPurSerialNo());
+                ContactDetailBean bean = new ContactDetailBean();
+                bean.setAddonUrl(addonsRepository.queryByOrderSerialNo(contract.getContract_serial_no()).get(0).getAddon_url());
+                bean.setContractSn(contract.getContract_serial_no());
+                bean.setDatetime(ordersRepository.getBySerialNo(a.getPurSerialNo()).getGen_date());
+                bean.setOrderType(type.getType_content());
+                bean.setOrderAmount(a.getOrder_amount() + type.getType_unit());
+
+                beans.add(bean);
+            }
         }
         return beans;
     }
@@ -274,6 +319,16 @@ public class OrderController {
         Contract contract = contractRepository.getByPrimaryKey(contractSn);
         ProOrders proOrder = proOrderRepository.getByProSerialNo(contract.getPro_serial_no());
         PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(contract.getPur_serial_no());
+        //更改其他报价状态：未被接受
+        ArrayList<ProOrders> orders = proOrderRepository.getByPurSerialNo(contract.getPur_serial_no());
+        for(ProOrders a : orders){
+            a.setOrder_status(Status.Order.UN_SIGNED);
+            AllOrders b = ordersRepository.getBySerialNo(a.getPro_serial_no());
+            b.setOrder_status(Status.Order.UN_SIGNED);
+            ordersRepository.save(b);
+            proOrderRepository.save(a);
+        }
+        //更改状态：已签
         proOrder.setOrder_status(Status.Order.SIGNED);
         purOrder.setOrderStatus(Status.Order.SIGNED);
         proMobileNo = proOrder.getProvider_name();
@@ -315,6 +370,12 @@ public class OrderController {
         SerialNoGen gen = new SerialNoGen();
         gen.setSerial_no(Integer.parseInt(param.get("serialNo")));
         fileUpload(param, gen, SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
+        if(contractRepository.getByPrimaryKey(gen.getSerial_no()) != null){
+            AllAddons allAddons = addonsRepository.queryByOrderSerialNo(gen.getSerial_no()).get(0);
+            CloudFileUtil util = new CloudFileUtil(allAddons.getFile_key());
+            util.deleteFile();
+            addonsRepository.delete(allAddons);
+        }
         return "success";
     }
 
@@ -329,16 +390,26 @@ public class OrderController {
         ProOrders proOrder = proOrderRepository.getByProSerialNo(contract.getPro_serial_no());
         PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(contract.getPur_serial_no());
         contractRepository.delete(contract);
-        proOrder.setOrder_status(Status.Order.UN_SIGNED);
-        purOrder.setOrderStatus(Status.Order.OFFERED_PRICE);
+        proOrder.setOrder_status(Status.Order.DECLINE_CONTRACT);
+        purOrder.setOrderStatus(Status.Order.DECLINE_CONTRACT);
         proOrderRepository.save(proOrder);
         purOrderRepository.save(purOrder);
         AllOrders foo = ordersRepository.getBySerialNo(proOrder.getPro_serial_no());
-        foo.setOrder_status(Status.Order.UN_SIGNED);
+        foo.setOrder_status(Status.Order.DECLINE_CONTRACT);
         ordersRepository.save(foo);
         foo = ordersRepository.getBySerialNo(purOrder.getPurSerialNo());
-        foo.setOrder_status(Status.Order.OFFERED_PRICE);
+        foo.setOrder_status(Status.Order.DECLINE_CONTRACT);
         ordersRepository.save(foo);
+        //delete addon(contract)
+        AllAddons addon = addonsRepository.queryByOrderSerialNo(contractSn).get(0);
+        CloudFileUtil fileUtil = new CloudFileUtil(addon.getFile_key());
+        fileUtil.deleteFile();
+        addonsRepository.delete(addon);
+        int userType = Type.User.PURCHASER;
+        String mobileNo = addon.getUploader_moble_no();
+        Users user = userRepository.queryUserByPriKey(mobileNo, userType);
+        user.setSpace_used(user.getSpace_used() - addon.getFile_size());
+        userRepository.save(user);
         return "success";
     }
 
@@ -351,21 +422,29 @@ public class OrderController {
         int pageSize = AdminOptUtil.getDftPageSize();
         int pageIndex = getPageIndex(param) - 1;
         int userType = SessionUtil.getUserType(request);
-        int queryStatus;
         String mobileNO = SessionUtil.getMobileNo(request);
-        if(param.get("queryType").equals("current")){
-            queryStatus = Status.Order.OFFERED_CONTRACT;
-        }
-        else{
-            queryStatus = Status.Order.SIGNED;
-        }
         if(userType == 1){
-            purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNO, queryStatus, pageIndex*pageSize, pageSize);
+            int queryStatus;
+            String statusSet;
+            if(param.get("queryType").equals("current")){
+                queryStatus = Status.Order.OFFERED_CONTRACT;
+                purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNO, queryStatus, pageIndex*pageSize, pageSize);
+            }
+            else{
+                statusSet = String.valueOf(Status.Order.SIGNED) + "," + String.valueOf(Status.Order.DONE);
+                purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNO, statusSet, pageIndex*pageSize, pageSize);
+            }
             for(PurOrders a : purOrders){
                 ContractBean bean = new ContractBean();
                 Contract contract = contractRepository.getByPurSn(a.getPurSerialNo());
                 bean.setPageSize(pageSize);
                 bean.setUserType(userType);
+                if(a.getOrderStatus() == Status.Order.DONE){
+                    bean.setStatus(1);
+                }
+                else{
+                    bean.setStatus(0);
+                }
                 bean.setContractSn(contract.getContract_serial_no());
                 bean.setPurOrdSn(contract.getPur_serial_no());
                 bean.setProOrdSn(contract.getPro_serial_no());
@@ -374,7 +453,16 @@ public class OrderController {
             }
         }
         else if(userType == 2){
-            proOrders = proOrderRepository.getProOrderByNameAndStatus(mobileNO, queryStatus, pageIndex*pageSize, pageSize);
+            int queryStatus;
+            String statusSet;
+            if(param.get("queryType").equals("current")){
+                queryStatus = Status.Order.OFFERED_CONTRACT;
+                proOrders = proOrderRepository.getProOrderByNameAndStatus(mobileNO, queryStatus, pageIndex*pageSize, pageSize);
+            }
+            else{
+                statusSet = String.valueOf(Status.Order.SIGNED) + "," + String.valueOf(Status.Order.DONE);
+                proOrders = proOrderRepository.getProOrderByNameAndStatus(mobileNO, statusSet, pageIndex*pageSize, pageSize);
+            }
             for(ProOrders a : proOrders){
                 ContractBean bean = new ContractBean();
                 Contract contract = contractRepository.getByProSn(a.getPro_serial_no());
@@ -414,6 +502,33 @@ public class OrderController {
         return "success";
     }
 
+    @RequestMapping("finishOrder.do")
+    @ResponseBody
+    public String finishOrder(@RequestParam() Map<String, String> param, HttpServletRequest request){
+        String temp = param.get("contractSn");
+        if(temp == null){
+            return "ERROR";
+        }
+        int contractSn = Integer.parseInt(temp);
+        Contract contract = contractRepository.getByPrimaryKey(contractSn);
+        ProOrders proOrder = proOrderRepository.getByProSerialNo(contract.getPro_serial_no());
+        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(contract.getPur_serial_no());
+        proOrder.setOrder_status(Status.Order.DONE);
+        purOrder.setOrderStatus(Status.Order.DONE);
+        proOrder.setOrder_status(Status.Order.DONE);
+        AllOrders foo = ordersRepository.getBySerialNo(proOrder.getPro_serial_no());
+        foo.setOrder_status(Status.Order.DONE);
+        ordersRepository.save(foo);
+        foo = ordersRepository.getBySerialNo(purOrder.getPurSerialNo());
+        foo.setOrder_status(Status.Order.DONE);
+        ordersRepository.save(foo);
+        purOrderRepository.save(purOrder);
+        proOrderRepository.save(proOrder);
+        contract.setContract_status(1);
+        contractRepository.save(contract);
+        return "success";
+    }
+
     @RequestMapping("showAddOn.do")
     @ResponseBody
     public ArrayList<AddonBean> showAddOn(@RequestParam() Map<String, String> orderInfo, HttpServletRequest request){
@@ -425,7 +540,11 @@ public class OrderController {
             allAddons = addonsRepository.queryByUploader(SessionUtil.getMobileNo(request));
         }
         else {
-            allAddons = addonsRepository.queryByOrderSerialNo(Integer.parseInt(orderInfo.get("serialNo")));
+            int sn = Integer.parseInt(orderInfo.get("serialNo"));
+            if(contractRepository.getByPrimaryKey(sn) != null){
+                privilege = 0;
+            }
+            allAddons = addonsRepository.queryByOrderSerialNo(sn);
         }
         ArrayList<AddonBean> addonBeans = new ArrayList<AddonBean>();
         for(AllAddons a : allAddons){
@@ -621,6 +740,16 @@ public class OrderController {
         return auth.uploadToken(ApiKey.Qiniu.BucketName);
     }
 
+    @RequestMapping("/getOfferNum.do")
+    @ResponseBody
+    public int getOfferNum(@RequestParam Map<String, String> param){
+        if(param.get("serialNo") == null){
+            return 0;
+        }
+        int serialNo = Integer.parseInt(param.get("serialNo"));
+        return proOrderRepository.getByPurSerialNo(serialNo).size();
+    }
+
     @RequestMapping("/getMessage.do")
     @ResponseBody
     public ArrayList<Message> getMessage(HttpServletRequest request){
@@ -646,14 +775,10 @@ public class OrderController {
         message = new Message();
         message.setMobile_no(mobileNo);
         message.setUser_type(userType);
-        ArrayList<Message> messages = new ArrayList<Message>();
         if(userType == Type.User.PURCHASER){
             ArrayList<PurOrders> purOrders;
             ArrayList<ProOrders> proOrders;
             //获取已报价订单
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
             purOrders = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
             message.setMessage_type_no(5);
             if(purOrders != null) {
@@ -662,11 +787,8 @@ public class OrderController {
             else{
                 message.setMessage_cnt(0);
             }
-            messages.add(message);
+            messageRepository.save(message);
             //获取待确认样品
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
             int cnt = 0;
             String statusSet = String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
                     String.valueOf(Status.Order.OFFERED_SAMPLE) + "," +
@@ -682,11 +804,8 @@ public class OrderController {
             }
             message.setMessage_type_no(6);
             message.setMessage_cnt(cnt);
-            messages.add(message);
+            messageRepository.save(message);
             //获取已签合同
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
             statusSet = String.valueOf(Status.Order.SIGNED);
             purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNo, statusSet);
             message.setMessage_type_no(7);
@@ -696,40 +815,42 @@ public class OrderController {
             else{
                 message.setMessage_cnt(0);
             }
-            messages.add(message);
+            messageRepository.save(message);
+            //获取被拒合同
+            purOrders = purOrderRepository.getPurOrderByNameAndStatus(mobileNo, String.valueOf(Status.Order.DECLINE_CONTRACT));
+            message.setMessage_type_no(8);
+            if(purOrders != null) {
+                message.setMessage_cnt(purOrders.size());
+            }
+            else{
+                message.setMessage_cnt(0);
+            }
+            messageRepository.save(message);
         }
         else if(userType == Type.User.PROVIDER){
-            ArrayList<PurOrders> orders;
+            ArrayList<PurOrders> orders = new ArrayList<PurOrders>();
             ArrayList<ProOrders> proOrders;
             Providers provider = providerRepository.getProviderByMobileNo(mobileNo);
             List<String> types = Arrays.asList(provider.getProvide_type().split(","));
             UserAddress address = addressRepository.queryByPrimaryKey(mobileNo, userType);
             //获取未报价订单
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
-            orders = purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC);
+            orders.addAll(purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC));
+            ArrayList<PurOrders> temp = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
+            for(PurOrders a : temp){
+                if(proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), mobileNo) == null){
+                    orders.add(a);
+                }
+            }
             orders = filterByRegionAndType(orders, address, types);
             message.setMessage_type_no(1);
-            if(orders != null) {
-                message.setMessage_cnt(orders.size());
-            }
-            else{
-                message.setMessage_cnt(0);
-            }
-            messages.add(message);
+            message.setMessage_cnt(orders.size());
+            messageRepository.save(message);
             //获取待寄送样品
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
             proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.REQUIRE_SAMPLE));
             message.setMessage_type_no(2);
             message.setMessage_cnt(proOrders.size());
-            messages.add(message);
+            messageRepository.save(message);
             //获取已确认收到样品
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
             proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.CONFIRM_SAMPLE));
             message.setMessage_type_no(3);
             if(proOrders != null) {
@@ -738,11 +859,8 @@ public class OrderController {
             else{
                 message.setMessage_cnt(0);
             }
-            messages.add(message);
+            messageRepository.save(message);
             //获取待签合同
-            message = new Message();
-            message.setMobile_no(mobileNo);
-            message.setUser_type(userType);
             proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.OFFERED_CONTRACT));
             message.setMessage_type_no(4);
             if(proOrders != null) {
@@ -751,26 +869,36 @@ public class OrderController {
             else{
                 message.setMessage_cnt(0);
             }
-            messages.add(message);
+            messageRepository.save(message);
         }
-        messageRepository.save(messages);
     }
 
     @RequestMapping("/showSpicStatusPurOrder.do")
     @ResponseBody
     public ArrayList<PurOrderBean> showUnRecOrder(@RequestParam Map<String, String> param, HttpServletRequest request){
-        ArrayList<PurOrders> orders = null;
+        String mobileNo = SessionUtil.getMobileNo(request);
+        int userType = SessionUtil.getUserType(request);
+        ArrayList<PurOrders> orders = new ArrayList<PurOrders>();
         Providers provider = providerRepository.getProviderByMobileNo(SessionUtil.getMobileNo(request));
         List<String> types = Arrays.asList(provider.getProvide_type().split(","));
         UserAddress address = addressRepository.queryByPrimaryKey(SessionUtil.getMobileNo(request), SessionUtil.getUserType(request));
         if(param.get("queryType").equals("unOffer")) {
-            orders = purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC);
+            orders.addAll(purOrderRepository.getPurOrderByStatus(Status.Order.UN_REC));
+            ArrayList<PurOrders> temp = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
+            for(PurOrders a : temp){
+                if(proOrderRepository.getByPurSalNoAndName(a.getPurSerialNo(), mobileNo) == null){
+                    orders.add(a);
+                }
+            }
         }
         else if(param.get("queryType").equals("sendSample")){//requireSample
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.REQUIRE_SAMPLE);
         }
         else if(param.get("queryType").equals("offered")){
-            orders = purOrderRepository.getPurOrderByStatus(Status.Order.OFFERED_PRICE);
+            ArrayList<ProOrders> proOrders = proOrderRepository.getByProviderNameAndStatus(mobileNo, String.valueOf(Status.Order.OFFERED_PRICE));
+            for(ProOrders a : proOrders){
+                orders.add(purOrderRepository.getPurOrderBySerialNo(a.getPur_serial_no()));
+            }
         }
         else if(param.get("queryType").equals("confirmedSample")){
             orders = purOrderRepository.getPurOrderByStatus(Status.Order.CONFIRM_SAMPLE);
@@ -974,16 +1102,6 @@ public class OrderController {
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         contract.setSign_time(sdf.format(date));
         contractRepository.save(contract);
-
-        //更改状态：未被接受
-        ArrayList<ProOrders> orders = proOrderRepository.getByPurSerialNo(purSerialNo);
-        for(ProOrders a : orders){
-            a.setOrder_status(Status.Order.UN_SIGNED);
-            AllOrders b = ordersRepository.getBySerialNo(a.getPro_serial_no());
-            b.setOrder_status(Status.Order.UN_SIGNED);
-            ordersRepository.save(b);
-            proOrderRepository.save(a);
-        }
 
         //更改状态：已提供合同
         AllOrders bar = ordersRepository.getBySerialNo(proSerialNo);
@@ -1230,9 +1348,9 @@ public class OrderController {
     }
 
     private String appendHisType(){
-        return String.valueOf(Status.Order.DONE) + "," +
-                String.valueOf(Status.Order.CANCEL) +  "," +
+        return String.valueOf(Status.Order.CANCEL) +  "," +
                 String.valueOf(Status.Order.UN_SIGNED) +  "," +
+                String.valueOf(Status.Order.DONE) +  "," +
                 String.valueOf(Status.Order.SIGNED);
     }
 
@@ -1242,6 +1360,7 @@ public class OrderController {
                 String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
                 String.valueOf(Status.Order.OFFERED_SAMPLE) + "," +
                 String.valueOf(Status.Order.CONFIRM_SAMPLE) + "," +
+                String.valueOf(Status.Order.DECLINE_CONTRACT) + "," +
                 String.valueOf(Status.Order.OFFERED_CONTRACT);
     }
 

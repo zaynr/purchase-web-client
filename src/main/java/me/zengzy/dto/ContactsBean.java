@@ -3,7 +3,16 @@ package me.zengzy.dto;
 public class ContactsBean {
     private int serial_no;
     private String purchaser_mobile_no, provider_mobile_no;
+    private int userType;
     private int coop_count, pageSize;
+
+    public int getUserType() {
+        return userType;
+    }
+
+    public void setUserType(int userType) {
+        this.userType = userType;
+    }
 
     public int getSerial_no() {
         return serial_no;

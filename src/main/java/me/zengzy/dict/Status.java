@@ -8,11 +8,12 @@ public class Status {
         public static final int REQUIRE_SAMPLE = 2;//待提供样品
         public static final int OFFERED_SAMPLE = 3;//已寄送样品
         public static final int CONFIRM_SAMPLE = 4;//已确认样品
-        public static final int OFFERED_CONTRACT = 9;//已发送合同
         public static final int SIGNED = 5;//已签合同
         public static final int UN_SIGNED = 6;//未被采纳
-        public static final int DONE = 7;//已完成
+        public static final int DECLINE_CONTRACT = 7;//合同被拒绝
         public static final int CANCEL = 8;//撤销
+        public static final int OFFERED_CONTRACT = 9;//已发送合同
+        public static final int DONE = 10;//撤销
     }
 
     public static String orderTranslate(int status){
@@ -33,8 +34,8 @@ public class Status {
             case Order.SIGNED:
                 res = "已签合同";
                 break;
-            case Order.DONE:
-                res = "已完成";
+            case Order.DECLINE_CONTRACT:
+                res = "合同被拒绝";
                 break;
             case Order.CANCEL:
                 res = "撤销";
@@ -47,6 +48,9 @@ public class Status {
                 break;
             case Order.OFFERED_CONTRACT:
                 res = "已发送合同";
+                break;
+            case Order.DONE:
+                res = "已完成";
                 break;
         }
         return res;
