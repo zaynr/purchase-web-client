@@ -22,6 +22,10 @@
     <script type="text/javascript" src="../../../script/plugins/sortable.min.js"></script>
     <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
     <script type="text/javascript" src="../../../script/locales/zh.js"></script>
+    <%--datetime-picker--%>
+    <link href="../../../script/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="../../../script/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="../../../script/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.zh-CN.js"></script>
     <%--my-custom--%>
     <script src="../../../script/order/orderManage.js"></script>
     <script src="../../../script/citypick/jquery.cxselect.min.js"></script>
@@ -58,6 +62,12 @@
             <span class="input-group-addon">期望报价</span>
             <input id="expect" not-nec="true" class="form-control" onkeyup="num(this)" placeholder="供应商将会看到">
             <span class="input-group-addon">元</span>
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon">截止时间</span>
+            <input type="text" id="datetimePicker" class="form-control" readonly>
+            <span class="input-group-addon glyphicon glyphicon-calendar"></span>
         </div>
         <br>
         <div class="docs-methods" align="center">

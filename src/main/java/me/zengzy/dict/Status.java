@@ -14,6 +14,8 @@ public class Status {
         public static final int CANCEL = 8;//撤销
         public static final int OFFERED_CONTRACT = 9;//已发送合同
         public static final int DONE = 10;//撤销
+        public static final int ACC_SAMPLE = 11;//撤销
+        public static final int DEC_SAMPLE = 12;//撤销
     }
 
     public static String orderTranslate(int status){
@@ -50,6 +52,12 @@ public class Status {
                 res = "已发送合同";
                 break;
             case Order.DONE:
+                res = "已完成";
+                break;
+            case Order.ACC_SAMPLE:
+                res = "已完成";
+                break;
+            case Order.DEC_SAMPLE:
                 res = "已完成";
                 break;
         }

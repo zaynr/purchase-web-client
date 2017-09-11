@@ -102,6 +102,14 @@ public class OrderController {
         return "order/sendSample";
     }
 
+    @RequestMapping("/viewHisProOrder")
+    public String getViewHisProOrderView(HttpServletRequest request){
+        if(SessionUtil.getUserType(request) == Type.User.PURCHASER){
+            return "error";
+        }
+        return "order/viewHisProOrder";
+    }
+
     @RequestMapping("/viewProOrder")
     public String getViewProOrderView(HttpServletRequest request){
         if(SessionUtil.getUserType(request) == Type.User.PURCHASER){
@@ -128,6 +136,14 @@ public class OrderController {
             return "error";
         }
         return "order/placeOrder";
+    }
+
+    @RequestMapping("/showHisPurOrder")
+    public String getShowHisPurOrderView(HttpServletRequest request){
+        if(SessionUtil.getUserType(request) == Type.User.PROVIDER){
+            return "error";
+        }
+        return "order/showHisPurOrder";
     }
 
     @RequestMapping("/viewAllOffer")
@@ -481,7 +497,7 @@ public class OrderController {
     @RequestMapping("confirmSample.do")
     @ResponseBody
     public void confirmSample(@RequestParam() Map<String, String> orderInfo){
-        ChangeBothOrderStatus(orderInfo, Status.Order.CONFIRM_SAMPLE);
+        changeProOrdStatus(proOrderRepository.getByProSerialNo(Integer.parseInt(orderInfo.get("proSerialNo"))), Status.Order.CONFIRM_SAMPLE);
     }
 
     @RequestMapping("deleteAddon.do")
@@ -572,9 +588,9 @@ public class OrderController {
     @RequestMapping("sendSample.do")
     @ResponseBody
     public void sendSample(@RequestParam() Map<String, String> orderInfo){
-        ChangeBothOrderStatus(orderInfo, Status.Order.OFFERED_SAMPLE);
         ProOrders proOrder = proOrderRepository.getByProSerialNo(Integer.parseInt(orderInfo.get("proSerialNo")));
         proOrder.setExpress_no(orderInfo.get("expressNo"));
+        changeProOrdStatus(proOrder, Status.Order.OFFERED_SAMPLE);
         proOrderRepository.save(proOrder);
     }
 
@@ -602,13 +618,32 @@ public class OrderController {
         int purSerialNo = Integer.parseInt(param.get("serialNo"));
         int pageIndex = getPageIndex(param) - 1;
         int pageSize = AdminOptUtil.getOfferPageSize();
+        String queryType = param.get("queryType");
+        String statusSet = "";
         PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(purSerialNo);
         ArrayList<ProOrders> proOrders;
-        if(purOrder.getExpect_price() == -1){
-            proOrders = proOrderRepository.getByPurOrdSnIncre(purSerialNo, pageIndex*pageSize, pageSize);
+        if(queryType.equals("查看所有报价")){
+            if(purOrder.getExpect_price() == -1){
+                proOrders = proOrderRepository.getByPurOrdSn(purSerialNo, pageIndex*pageSize, pageSize);
+            }
+            else{
+                proOrders = proOrderRepository.getByPurOrdSerWithExp(purSerialNo, purOrder.getExpect_price(), pageIndex*pageSize, pageSize);
+            }
         }
-        else{
-            proOrders = proOrderRepository.getByPurOrdSerWithExp(purSerialNo, purOrder.getExpect_price(), pageIndex*pageSize, pageSize);
+        else {
+            if (queryType.equals("样品接收")) {
+                statusSet += String.valueOf(Status.Order.OFFERED_SAMPLE) + "," + String.valueOf(Status.Order.REQUIRE_SAMPLE);
+            } else if (queryType.equals("样品判断")) {
+                statusSet += String.valueOf(Status.Order.CONFIRM_SAMPLE) + ",";
+            } else if (queryType.equals("发送合同")) {
+                statusSet += String.valueOf(Status.Order.ACC_SAMPLE) + "," + String.valueOf(Status.Order.DECLINE_CONTRACT) + ",";
+            }
+            if(purOrder.getExpect_price() == -1){
+                proOrders = proOrderRepository.getByPurOrdSn(purSerialNo, statusSet, pageIndex*pageSize, pageSize);
+            }
+            else{
+                proOrders = proOrderRepository.getByPurOrdSerWithExp(purSerialNo, purOrder.getExpect_price(), statusSet, pageIndex*pageSize, pageSize);
+            }
         }
         ArrayList<ProOrderBean> beans = packProOrderBeans(proOrders);
         for(ProOrderBean a : beans){
@@ -946,7 +981,12 @@ public class OrderController {
     @RequestMapping("/updatePurOrderStatus.do")
     @ResponseBody
     public String updatePurOrderStatus(@RequestParam Map<String, String> orderInfo){
-        purOrderRepository.updateOrderStatus(Integer.parseInt(orderInfo.get("order_status")), Integer.parseInt(orderInfo.get("pur_serial_no")));
+        int orderStatus = Integer.parseInt(orderInfo.get("order_status"));
+        int sn = Integer.parseInt(orderInfo.get("pur_serial_no"));
+        purOrderRepository.updateOrderStatus(orderStatus, sn);
+        if(orderStatus == Status.Order.CANCEL){
+            proOrderRepository.delete(proOrderRepository.getByPurSerialNo(sn));
+        }
         return "success";
     }
 
@@ -998,11 +1038,7 @@ public class OrderController {
     @ResponseBody
     public String requestSample(@RequestParam() Map<String, String> orderInfo){
         ProOrders proOrder = proOrderRepository.getByProSerialNo(Integer.parseInt(orderInfo.get("proSerialNo")));
-        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(Integer.parseInt(orderInfo.get("purSerialNo")));
-        proOrder.setOrder_status(Status.Order.REQUIRE_SAMPLE);
-        purOrder.setOrderStatus(Status.Order.REQUIRE_SAMPLE);
-        proOrderRepository.save(proOrder);
-        purOrderRepository.save(purOrder);
+        changeProOrdStatus(proOrder, Status.Order.REQUIRE_SAMPLE);
         return "success";
     }
 
@@ -1142,6 +1178,28 @@ public class OrderController {
         else{
             return null;
         }
+    }
+
+    @RequestMapping("/accSample.do")
+    @ResponseBody
+    public String accSample(@RequestParam Map<String, String> param){
+        if(param.get("serialNo") == null){
+            return null;
+        }
+        int sn = Integer.parseInt(param.get("serialNo"));
+        changeProOrdStatus(proOrderRepository.getByProSerialNo(sn), Status.Order.ACC_SAMPLE);
+        return "success";
+    }
+
+    @RequestMapping("/decSample.do")
+    @ResponseBody
+    public String decSample(@RequestParam Map<String, String> param){
+        if(param.get("serialNo") == null){
+            return null;
+        }
+        int sn = Integer.parseInt(param.get("serialNo"));
+        changeProOrdStatus(proOrderRepository.getByProSerialNo(sn), Status.Order.DEC_SAMPLE);
+        return "success";
     }
 
     @RequestMapping("/modifyPurOrder.do")
@@ -1326,15 +1384,6 @@ public class OrderController {
         return beans;
     }
 
-    private void ChangeBothOrderStatus(Map<String, String> orderInfo, int status){
-        ProOrders proOrder = proOrderRepository.getByProSerialNo(Integer.parseInt(orderInfo.get("proSerialNo")));
-        PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(Integer.parseInt(orderInfo.get("purSerialNo")));
-        proOrder.setOrder_status(status);
-        purOrder.setOrderStatus(status);
-        proOrderRepository.save(proOrder);
-        purOrderRepository.save(purOrder);
-    }
-
     private SerialNoGen getSerialNo(){
         SerialNoGen gen = genRepository.getSerialNo();
         gen.setSerial_no(gen.getSerial_no() + 1);
@@ -1394,7 +1443,23 @@ public class OrderController {
         }
     }
 
-    public ArrayList<PurOrders> filterByRegionAndType(ArrayList<PurOrders> orders, UserAddress address, List<String> types){
+    private void changeProOrdStatus(ProOrders a, int status){
+        a.setOrder_status(status);
+        AllOrders foo = ordersRepository.getBySerialNo(a.getPro_serial_no());
+        foo.setOrder_status(status);
+        ordersRepository.save(foo);
+        proOrderRepository.save(a);
+    }
+
+    private void changePurOrdStatus(PurOrders a, int status){
+        a.setOrderStatus(status);
+        AllOrders foo = ordersRepository.getBySerialNo(a.getPurSerialNo());
+        foo.setOrder_status(status);
+        ordersRepository.save(foo);
+        purOrderRepository.save(a);
+    }
+
+    private ArrayList<PurOrders> filterByRegionAndType(ArrayList<PurOrders> orders, UserAddress address, List<String> types){
         if(orders != null) {
             for (int i = 0; i < orders.size(); i++) {
                 ArrayList<FilterDict> filters = filterDictRepository.getByOrderSerialNo(orders.get(i).getPurSerialNo());

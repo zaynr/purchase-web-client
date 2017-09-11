@@ -44,8 +44,14 @@ public interface ProOrderRepository extends CrudRepository<ProOrders, Long> {
     @Query(value = "SELECT * FROM pro_orders WHERE provider_name = :provider_name AND FIND_IN_SET(order_status, :statusSet) ORDER BY pro_serial_no DESC LIMIT :cur, :pgSize", nativeQuery = true)
     ArrayList<ProOrders> getProOrderByNameAndStatus(@Param("provider_name") String name, @Param("statusSet") String statusSet, @Param("cur") int cur, @Param("pgSize") int pgSize);
 
+    @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :sn AND FIND_IN_SET(order_status, :statusSet) ORDER BY offer_price LIMIT :cur, :pgSize", nativeQuery = true)
+    ArrayList<ProOrders> getByPurOrdSn(@Param("sn") int sn, @Param("statusSet") String statusSet, @Param("cur") int cur, @Param("pgSize") int pgSize);
+
     @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :sn AND order_status != 9 ORDER BY offer_price LIMIT :cur, :pgSize", nativeQuery = true)
-    ArrayList<ProOrders> getByPurOrdSnIncre(@Param("sn") int sn, @Param("cur") int cur, @Param("pgSize") int pgSize);
+    ArrayList<ProOrders> getByPurOrdSn(@Param("sn") int sn, @Param("cur") int cur, @Param("pgSize") int pgSize);
+
+    @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :sn AND FIND_IN_SET(order_status, :statusSet) ORDER BY ABS(offer_price - :exp) LIMIT :cur, :pgSize", nativeQuery = true)
+    ArrayList<ProOrders> getByPurOrdSerWithExp(@Param("sn") int sn, @Param("exp") double exp, @Param("statusSet") String statusSet, @Param("cur") int cur, @Param("pgSize") int pgSize);
 
     @Query(value = "SELECT * FROM pro_orders WHERE pur_serial_no = :sn AND order_status != 9 ORDER BY ABS(offer_price - :exp) LIMIT :cur, :pgSize", nativeQuery = true)
     ArrayList<ProOrders> getByPurOrdSerWithExp(@Param("sn") int sn, @Param("exp") double exp, @Param("cur") int cur, @Param("pgSize") int pgSize);

@@ -30,9 +30,13 @@ $(document).ready(function () {
                 }
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
-                    addTab("/order/showPurOrders", "查看订单");
-                    addTabWithBadge("/order/confirmSample", "接收样品", "confirmSample");
-                    addTabWithBadge("/order/allContract", "查看合同", "allContract");
+                    $("#navTabs").append(
+                        dropdownTemplate("查看当前需求")
+                    );
+                    addDropdownItem("/order/showPurOrders", "查看订单");
+                    addDropdownItemWithBadge("/order/confirmSample", "接收样品", "confirmSample");
+                    addDropdownItemWithBadge("/order/allContract", "查看合同", "allContract");
+                    addTab("/order/showHisPurOrder", "历史需求");
                     addTab("/order/allContacts", "查看联系人");
 
                     function queryPurInfo() {
@@ -69,13 +73,17 @@ $(document).ready(function () {
                     queryPurInfo();
                     setInterval(function () {
                         queryPurInfo();
-                    }, 1000);
+                    }, 10000);
                 }
                 else if(data === "2"){
                     addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
-                    addTabWithBadge("/order/sendSample", "寄送样品", "sendSample");
-                    addTabWithBadge("/order/viewProOrder", "查看订单", "viewProOrder");
-                    addTabWithBadge("/order/allContract", "查看合同", "allContract");
+                    $("#navTabs").append(
+                        dropdownTemplate("查看当前需求")
+                    );
+                    addDropdownItemWithBadge("/order/viewProOrder", "查看订单", "viewProOrder");
+                    addDropdownItemWithBadge("/order/sendSample", "寄送样品", "sendSample");
+                    addDropdownItemWithBadge("/order/allContract", "查看合同", "allContract");
+                    addTab("/order/viewHisProOrder", "查看历史需求");
                     addTab("/order/allContacts", "查看联系人");
 
                     function queryProInfo() {
@@ -126,7 +134,7 @@ $(document).ready(function () {
                     queryProInfo();
                     setInterval(function () {
                         queryProInfo();
-                    }, 1000);
+                    }, 10000);
                 }
 
                 setInterval(function () {
@@ -134,7 +142,7 @@ $(document).ready(function () {
                         type: "POST",
                         url: "/order/messageUpdate.do"
                     });
-                }, 1000);
+                }, 10000);
 
                 setInterval(function () {
                     $("#navTabs").find("li").each(function () {
@@ -165,6 +173,28 @@ $(document).ready(function () {
             "\">" +
             content +
             "</a></li>"
+        );
+    }
+
+    function addDropdownItem(href, content) {
+        $("ul.dropdown-menu").append(
+            "<li><a href=\"" +
+            href +
+            "\">" +
+            content +
+            "</a></li>"
+        );
+    }
+
+    function addDropdownItemWithBadge(href, content, badgeId) {
+        $("ul.dropdown-menu").append(
+            "<li><a href=\"" +
+            href +
+            "\">" +
+            content +
+            "<span id='" +
+            badgeId +
+            "' class='badge'></span></a></li>"
         );
     }
 
@@ -245,4 +275,9 @@ function getUrlParam(name) {
 function isPhoneNo(phone) {
     var pattern = /^1[0-9]{10}$/;
     return pattern.test(phone);
+}
+
+function dropdownTemplate(title){
+    var head = "<li class=\"dropdown\"><a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">" + title + "<span class=\"caret\"></span></a><ul class=\"dropdown-menu\"></ul></li>";
+    return head;
 }

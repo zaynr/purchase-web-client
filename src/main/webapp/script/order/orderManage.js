@@ -231,6 +231,10 @@ function pageInit() {
         jsonValue: 'typeNo',
         jsonSub: 'types'
     });
+    $("#datetimePicker").datetimepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN'
+    });
     selectedType = $("#selectedType");
     picker = $("#distpicker");
     regionFilter = $("#regionFilter");

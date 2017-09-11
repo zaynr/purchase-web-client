@@ -22,34 +22,40 @@ $(document).ready(function () {
             queryByType(item);
         }
     });
+    //his, current
 
-    if(window.location.pathname === "/order/viewAllOffer"){
-        fileUpload(map);
-        map["serialNo"] = getUrlParam('serialNo');
-        pager(queryOfferOrder);
-        queryOfferOrder(map);
-        var current;
-        $.ajax({
-            url: "/order/getOfferNum.do",
-            type: "POST",
-            data: map,
-            success: function (data) {
-                current = data;
-            }
-        });
-        setInterval(function () {
-            $.ajax({
-                url: "/order/getOfferNum.do",
-                type: "POST",
-                data: map,
-                success: function (data) {
-                    if(current !== data){
-                        window.location.reload();
-                    }
-                }
-            });
-        }, 1000);
+    if(window.location.pathname === "/order/showHisPurOrder"){
+        map["queryType"] = "his";
+        $("#orderTableContent").html("");
+        pager(queryPurOrder);
+        queryPurOrder(map);
+        checkReload(5);
         checkReload(8);
+        checkReload(7);
+    }
+
+    if(window.location.pathname === "/order/showPurOrders"){
+        map["queryType"] = "current";
+        $("#orderTableContent").html("");
+        pager(queryPurOrder);
+        queryPurOrder(map);
+        checkReload(5);
+        checkReload(8);
+        checkReload(7);
+    }
+
+    if(window.location.pathname === "/order/viewHisProOrder"){
+        map["queryType"] = "his";
+        $("#orderTableContent").html("");
+        pager(queryProOrder);
+        queryProOrder(map);
+    }
+
+    if(window.location.pathname === "/order/viewProOrder"){
+        map["queryType"] = "current";
+        $("#orderTableContent").html("");
+        pager(queryProOrder);
+        queryProOrder(map);
     }
 
     if(window.location.pathname === "/order/showAddOn"){
@@ -353,15 +359,32 @@ $(document).ready(function () {
             data: map,
             success: function (data) {
                 var foo = data[0];
-                $("#detail").append("<h3>需求序列号："+foo.purSerialNo+"；需求类型："+foo.orderType+"；需求数量："+foo.orderAmount+"</h3>")
+                $("#detail").html("<h3>需求序列号："+foo.purSerialNo+"；需求类型："+foo.orderType+"；需求数量："+foo.orderAmount+"</h3>");
                 $.each(data, function (i, item) {
+                    var tabName = $("li.active").children().html();
+                    var btn = "";
+                    if(tabName === "查看所有报价"){
+                        btn="<button type=\"button\" class=\"btn btn-info\">索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button>";
+                        if(item.orderStatus !== "已报价" && item.orderStatus !== "合同被拒绝"){
+                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button>";
+                        }
+                    }
+                    else if(tabName === "样品接收"){
+                        btn="<button type=\"button\" class=\"btn btn-info\">确认样品</button>";
+                    }
+                    else if(tabName === "样品判断"){
+                        btn="<button type=\"button\" class=\"btn btn-info\">接受样品</button><button type=\"button\" class=\"btn btn-info\">拒绝样品</button>";
+                    }
+                    else if(tabName === "发送合同"){
+                        btn="<button type=\"button\" class=\"btn btn-success\">签订合同</button>";
+                    }
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(item.offerPrice) +
                         tableItemWrap(item.providerMobileNo) +
                         tableItemWrap(item.expressNo) +
                         tableItemWrap(item.orderStatus) +
-                        tableItemWrap("<button type=\"button\" class=\"btn btn-info\">索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button>") +
+                        tableItemWrap(btn) +
                         "</tr>"
                     );
                     if($("#cur").html() === '1'){
@@ -378,25 +401,12 @@ $(document).ready(function () {
                     }
                 });
                 $("td").find("button.btn").each(function (i, item) {
-                    if($(item).parent().prevAll().first().html() === "已寄送样品" && $(item).text() === "索取样品"){
-                        $(item).removeClass("btn-info");
-                        $(item).addClass("btn-primary");
-                        $(item).text("确认样品");
-                    }
-                    else if($(item).parent().prevAll().first().html() === "已发送合同" && $(item).text() === "索取样品"){
-                        $(item).remove();
-                    }
-                    else if($(item).parent().prevAll().first().html() === "待寄送样品" && $(item).text() === "索取样品"){
-                        $(item).remove();
-                    }
-                    else if($(item).parent().prevAll().first().html() === "已确认样品" && $(item).text() === "索取样品"){
-                        $(item).remove();
-                    }
-                    else if($(item).parent().prevAll().first().html() === "合同被拒绝" && $(item).text() === "索取样品"){
-                        $(item).remove();
-                    }
-                    else if($(item).parent().prevAll().first().html() === "合同被拒绝" && $(item).text() === "签订合同"){
+                    var statusName = $(item).parent().prevAll().first().html();
+                    if(statusName === "合同被拒绝" && $(item).text() === "签订合同"){
                         $(item).text("重发合同");
+                    }
+                    else if(statusName === "合同被拒绝" && $(item).text() !== "签订合同"){
+                        $(item).remove();
                     }
                     $(item).on("click", function () {
                         map['cur'] = $("#cur").html();
@@ -420,7 +430,59 @@ $(document).ready(function () {
                             });
                         }
                         else if($(item).text() === "确认样品"){
-                            window.location.href = "/order/confirmSample"
+                            index = parseInt(i/2);
+                            map["proSerialNo"] = data[index].proSerialNo;
+                            map["purSerialNo"] = data[index].purSerialNo;
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/confirmSample.do",
+                                data: map,
+                                success: function () {
+                                    successMessage("确认成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                },
+                                error: function () {
+                                    errorMessage("确认失败");
+                                }
+                            });
+                        }
+                        else if($(item).text() === "接受样品"){
+                            index = parseInt(i/2);
+                            map["serialNo"] = data[index].proSerialNo;
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/accSample.do",
+                                data: map,
+                                success: function () {
+                                    successMessage("确认成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                },
+                                error: function () {
+                                    errorMessage("确认失败");
+                                }
+                            });
+                        }
+                        else if($(item).text() === "拒绝样品"){
+                            index = parseInt(i/2);
+                            map["serialNo"] = data[index].proSerialNo;
+                            $.ajax({
+                                type: "POST",
+                                url: "/order/decSample.do",
+                                data: map,
+                                success: function () {
+                                    successMessage("拒绝成功");
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                },
+                                error: function () {
+                                    errorMessage("拒绝失败");
+                                }
+                            });
                         }
                         else if($(item).text() === "签订合同" || $(item).text() === "重发合同"){
                             index = parseInt(i/2);
@@ -937,7 +999,7 @@ $(document).ready(function () {
                     });
                 }
             });
-        }, 1000);
+        }, 5000);
     }
 
 //simple logic
@@ -965,6 +1027,36 @@ $(document).ready(function () {
         else if(window.location.pathname === "/order/viewProOrder"){
             pager(queryProOrder);
             queryProOrder(map);
+        }
+        else if(window.location.pathname === "/order/viewAllOffer"){
+            fileUpload(map);
+            map["serialNo"] = getUrlParam('serialNo');
+            map["queryType"] = $(item).children().html();
+            pager(queryOfferOrder);
+            queryOfferOrder(map);
+
+            var current;
+            $.ajax({
+                url: "/order/getOfferNum.do",
+                type: "POST",
+                data: map,
+                success: function (data) {
+                    current = data;
+                }
+            });
+            setInterval(function () {
+                $.ajax({
+                    url: "/order/getOfferNum.do",
+                    type: "POST",
+                    data: map,
+                    success: function (data) {
+                        if(current !== data){
+                            window.location.reload();
+                        }
+                    }
+                });
+            }, 1000);
+            checkReload(8);
         }
     }
     function rmModify(item) {

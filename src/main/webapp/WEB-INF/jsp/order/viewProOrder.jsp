@@ -11,7 +11,7 @@
 <head>
     <jsp:include page="../script-sources.jsp"/>
     <script src="../../../script/order/orderDisplay.js"></script>
-    <title>查看报价订单</title>
+    <title>查看当前需求</title>
 </head>
 <body>
 
@@ -19,14 +19,6 @@
     <br>
     <div id="message"></div>
     <br>
-    <div align="center">
-        <br>
-        <ul class="nav nav-pills" role="tablist">
-            <li role="presentation" class="active"><a id="current">查看当前需求</a></li>
-            <li role="presentation"><a id="his">查看历史需求</a></li>
-        </ul>
-        <br>
-    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>

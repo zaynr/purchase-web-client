@@ -26,6 +26,16 @@
     <br>
     <div id="detail"></div>
     <br>
+    <div align="center">
+        <br>
+        <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a>查看所有报价</a></li>
+            <li role="presentation"><a>样品接收</a></li>
+            <li role="presentation"><a>样品判断</a></li>
+            <li role="presentation"><a>发送合同</a></li>
+        </ul>
+        <br>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" >
             <thead>
