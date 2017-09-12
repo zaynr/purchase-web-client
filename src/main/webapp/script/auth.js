@@ -94,14 +94,14 @@ $(document).ready(function () {
                                                 $("#unOffer").text(item.message_cnt);
                                             }
                                             break;
-                                        // case 2:
-                                        //     if(item.message_cnt === 0){
-                                        //         $("#viewProOrder").text("");
-                                        //     }
-                                        //     else{
-                                        //         $("#viewProOrder").text(item.message_cnt);
-                                        //     }
-                                        //     break;
+                                        case 2:
+                                            if(item.message_cnt === 0){
+                                                $("#viewProOrder").text("");
+                                            }
+                                            else{
+                                                $("#viewProOrder").text(item.message_cnt);
+                                            }
+                                            break;
                                         // case 3:
                                         //     if(item.message_cnt === 0){
                                         //         $("#viewProOrder").text("");

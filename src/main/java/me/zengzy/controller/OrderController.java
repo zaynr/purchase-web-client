@@ -1469,8 +1469,7 @@ public class OrderController {
     private String appendPurHisType(){
         return String.valueOf(Status.Order.CANCEL) +  "," +
                 String.valueOf(Status.Order.UN_SIGNED) +  "," +
-                String.valueOf(Status.Order.DONE) +  "," +
-                String.valueOf(Status.Order.SIGNED);
+                String.valueOf(Status.Order.DONE);
     }
 
     private String appendPurCurrentType(){
@@ -1479,6 +1478,7 @@ public class OrderController {
                 String.valueOf(Status.Order.REQUIRE_SAMPLE) + "," +
                 String.valueOf(Status.Order.EXAM_SAMPLE) + "," +
                 String.valueOf(Status.Order.DECLINE_CONTRACT) + "," +
+                String.valueOf(Status.Order.SIGNED) +  "," +
                 String.valueOf(Status.Order.OFFERED_CONTRACT);
     }
 
@@ -1504,8 +1504,7 @@ public class OrderController {
     private String appendHisType(){
         return String.valueOf(Status.Order.CANCEL) +  "," +
                 String.valueOf(Status.Order.UN_SIGNED) +  "," +
-                String.valueOf(Status.Order.DONE) +  "," +
-                String.valueOf(Status.Order.SIGNED);
+                String.valueOf(Status.Order.DONE);
     }
 
     private String appendCurrentType(){
@@ -1518,6 +1517,7 @@ public class OrderController {
                 String.valueOf(Status.Order.DECLINE_CONTRACT) + "," +
                 String.valueOf(Status.Order.ACC_SAMPLE) + "," +
                 String.valueOf(Status.Order.DEC_SAMPLE) + "," +
+                String.valueOf(Status.Order.SIGNED) +  "," +
                 String.valueOf(Status.Order.OFFERED_CONTRACT);
     }
 

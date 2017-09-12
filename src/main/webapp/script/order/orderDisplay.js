@@ -147,11 +147,11 @@ $(document).ready(function () {
                     var temp = item.datetime.split(":");
                     item.datetime = temp[0] + ":" + temp[1];
                     var btn = "<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消需求</button><button my-attr='op' type=\"button\" class=\"btn btn-warning\">修改需求</button>";
-                    if(item.orderStatusNo === 9 || item.orderStatusNo === 10){
+                    if(item.orderStatusNo === 9 || item.orderStatusNo === 10 || item.orderStatusNo === 5){
                         btn = "<a target='_blank' class='btn btn-success' href='"+item.addonUrl+"'>下载合同</a>"
                     }
-                    else if(item.orderStatusNo === 5){
-                        btn = "<a class='btn btn-success' href='/order/viewContract?purSerialNo="+item.purSerialNo+"&queryType=his'>查看合同</a>"
+                    if(item.orderStatusNo === 5){
+                        btn += "<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消需求</button><button my-attr='op' type=\"button\" class=\"btn btn-warning\">修改需求</button>";
                     }
                     $("#orderTableContent").append(
                         "<tr>" +
@@ -183,7 +183,7 @@ $(document).ready(function () {
                     if($(item).parent().prevAll().first().html() === "撤销"){
                         $(item).remove();
                     }
-                    else if($(item).parent().prevAll().first().html() === "已报价" || $(item).parent().prevAll().first().html() === "待寄送样品" || $(item).parent().prevAll().first().html() === "检验样品"){
+                    else if($(item).parent().prevAll().first().html() === "已报价" || $(item).parent().prevAll().first().html() === "待寄送样品" || $(item).parent().prevAll().first().html() === "检验样品" || $(item).parent().prevAll().first().html() === "已签合同"){
                         rmModify(item);
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-info");
@@ -444,7 +444,7 @@ $(document).ready(function () {
                         map['cur'] = $("#cur").html();
                         var index;
                         if(tabName === "查看所有报价"){
-                            index = parseInt(i/5);
+                            index = parseInt(i/6);
                         }
                         else{
                             index = parseInt(i/2);
@@ -1239,6 +1239,7 @@ $(document).ready(function () {
                 var foo = data;
                 var input = '';
                 var btn = '';
+                foo.purDateTime = foo.purDateTime.split(":")[0]+":"+foo.purDateTime.split(":")[1];
                 if(tabName === '查看当前需求'){
                     $("#detail").html("<h3>需求类型："+foo.orderType+"；需求数量："+foo.orderAmount+"；需求状态："+foo.purOrderStatus+"</h3><br><h4>采购商地址："+foo.purAddress+"</h4>");
                     if(foo.orderStatus === '待寄送样品'){
@@ -1425,7 +1426,9 @@ $(document).ready(function () {
                         }
                     }
                 });
-            }, 1000);
+            }, 5000);
+            checkReload(6);
+            checkReload(7);
             checkReload(8);
         }
         else if(window.location.pathname === "/order/purOrderDetail"){
