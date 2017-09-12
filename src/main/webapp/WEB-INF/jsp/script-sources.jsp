@@ -21,7 +21,7 @@
     <link href="../../css/jumbotron.css" rel="stylesheet">
 
     <script type="text/javascript" src="../../script/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="../../script/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../bower_components/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="../../script/auth.js"></script>
 </head>
 <body>

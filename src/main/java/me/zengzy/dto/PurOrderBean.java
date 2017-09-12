@@ -25,6 +25,24 @@ public class PurOrderBean {
     private int pageSize, pageIndex;
     private String datetime;
     private String addonUrl;
+    private String expireDate;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(String expireDate) {
+        this.expireDate = expireDate;
+    }
 
     public String getAddonUrl() {
         return addonUrl;

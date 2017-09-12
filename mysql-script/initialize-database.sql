@@ -96,7 +96,8 @@ CREATE TABLE pur_orders(
   read_flag int,
   more_detail nvarchar(1023),
   filter_dict nvarchar(255),
-  type_no int
+  type_no int,
+  expire_date date
 );
 #过滤地区表
 CREATE TABLE filter_dict(

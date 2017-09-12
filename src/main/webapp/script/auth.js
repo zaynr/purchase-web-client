@@ -30,12 +30,8 @@ $(document).ready(function () {
                 }
                 else if(data === "1"){
                     addTab("/order/placeOrder", "发布需求");
-                    $("#navTabs").append(
-                        dropdownTemplate("查看当前需求")
-                    );
-                    addDropdownItem("/order/showPurOrders", "查看订单");
-                    addDropdownItemWithBadge("/order/confirmSample", "接收样品", "confirmSample");
-                    addDropdownItemWithBadge("/order/allContract", "查看合同", "allContract");
+                    addTab("/order/showPurOrders", "查看当前需求");
+                    // addDropdownItemWithBadge("/order/allContract", "查看合同", "allContract");
                     addTab("/order/showHisPurOrder", "历史需求");
                     addTab("/order/allContacts", "查看联系人");
 
@@ -77,12 +73,9 @@ $(document).ready(function () {
                 }
                 else if(data === "2"){
                     addTabWithBadge("/order/recOrder", "提供报价", "unOffer");
-                    $("#navTabs").append(
-                        dropdownTemplate("查看当前需求")
-                    );
-                    addDropdownItemWithBadge("/order/viewProOrder", "查看订单", "viewProOrder");
-                    addDropdownItemWithBadge("/order/sendSample", "寄送样品", "sendSample");
-                    addDropdownItemWithBadge("/order/allContract", "查看合同", "allContract");
+                    addTabWithBadge("/order/viewProOrder", "查看当前需求", "viewProOrder");
+                    // addDropdownItemWithBadge("/order/sendSample", "寄送样品", "sendSample");
+                    // addDropdownItemWithBadge("/order/allContract", "查看合同", "allContract");
                     addTab("/order/viewHisProOrder", "查看历史需求");
                     addTab("/order/allContacts", "查看联系人");
 
@@ -101,22 +94,22 @@ $(document).ready(function () {
                                                 $("#unOffer").text(item.message_cnt);
                                             }
                                             break;
-                                        case 2:
-                                            if(item.message_cnt === 0){
-                                                $("#sendSample").text("");
-                                            }
-                                            else{
-                                                $("#sendSample").text(item.message_cnt);
-                                            }
-                                            break;
-                                        case 3:
-                                            if(item.message_cnt === 0){
-                                                $("#viewProOrder").text("");
-                                            }
-                                            else{
-                                                $("#viewProOrder").text(item.message_cnt);
-                                            }
-                                            break;
+                                        // case 2:
+                                        //     if(item.message_cnt === 0){
+                                        //         $("#viewProOrder").text("");
+                                        //     }
+                                        //     else{
+                                        //         $("#viewProOrder").text(item.message_cnt);
+                                        //     }
+                                        //     break;
+                                        // case 3:
+                                        //     if(item.message_cnt === 0){
+                                        //         $("#viewProOrder").text("");
+                                        //     }
+                                        //     else{
+                                        //         $("#viewProOrder").text(item.message_cnt);
+                                        //     }
+                                        //     break;
                                         case 4:
                                             if(item.message_cnt === 0){
                                                 $("#allContract").text("");

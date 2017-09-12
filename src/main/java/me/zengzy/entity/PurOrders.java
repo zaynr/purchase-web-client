@@ -23,6 +23,15 @@ public class PurOrders {
     private String filter_dict;
     private int expect_status;
     private int read_flag;
+    private String expire_date;
+
+    public String getExpire_date() {
+        return expire_date;
+    }
+
+    public void setExpire_date(String expire_date) {
+        this.expire_date = expire_date;
+    }
 
     public int getRead_flag() {
         return read_flag;

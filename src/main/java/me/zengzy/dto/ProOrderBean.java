@@ -8,12 +8,56 @@ public class ProOrderBean {
     private String offerPrice;
     private int orderTypeNo;
     private String orderStatus;
+    private String purOrderStatus;
     private String expressNo;
     private int pageSize, pageIndex;
     private String datetime;
     private String purchaserMobileNo;
     private String orderAmount;
     private String orderType;
+    private String purDateTime;
+    private String proUserName, purUserName;
+    private int contractSn;
+
+    public int getContractSn() {
+        return contractSn;
+    }
+
+    public void setContractSn(int contractSn) {
+        this.contractSn = contractSn;
+    }
+
+    public String getPurOrderStatus() {
+        return purOrderStatus;
+    }
+
+    public void setPurOrderStatus(String purOrderStatus) {
+        this.purOrderStatus = purOrderStatus;
+    }
+
+    public String getPurDateTime() {
+        return purDateTime;
+    }
+
+    public void setPurDateTime(String purDateTime) {
+        this.purDateTime = purDateTime;
+    }
+
+    public String getProUserName() {
+        return proUserName;
+    }
+
+    public void setProUserName(String proUserName) {
+        this.proUserName = proUserName;
+    }
+
+    public String getPurUserName() {
+        return purUserName;
+    }
+
+    public void setPurUserName(String purUserName) {
+        this.purUserName = purUserName;
+    }
 
     public String getDatetime() {
         return datetime;

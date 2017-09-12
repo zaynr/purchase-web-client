@@ -23,9 +23,9 @@
     <script type="text/javascript" src="../../../script/fileinput.min.js"></script>
     <script type="text/javascript" src="../../../script/locales/zh.js"></script>
     <%--datetime-picker--%>
-    <link href="../../../script/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <script src="../../../script/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="../../../script/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="../../../bower_components/moment/min/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="../../../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="../../../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
     <%--my-custom--%>
     <script src="../../../script/order/orderManage.js"></script>
     <script src="../../../script/citypick/jquery.cxselect.min.js"></script>
@@ -66,7 +66,7 @@
         <br>
         <div class="input-group">
             <span class="input-group-addon">截止时间</span>
-            <input type="text" id="datetimePicker" class="form-control" readonly>
+            <input type="text" id="datetimePicker" class="form-control">
             <span class="input-group-addon glyphicon glyphicon-calendar"></span>
         </div>
         <br>

@@ -151,6 +151,7 @@ $(document).ready(function () {
 
                     //init param
                     param["pur_serial_no"] = data.purSerialNo;
+                    param['expireDate'] = $("#datetimePicker").val();
                     param["orderAmount"] = orderAmount.val();
                     param["expect"] = expect.val();
                     param["more_detail"] = moreDetail.val();
@@ -192,6 +193,7 @@ $(document).ready(function () {
                 errorMessage("请选择类型！");
                 return;
             }
+            param['expireDate'] = $("#datetimePicker").val();
             param["type_no"] = selectedType.children("div").attr("type-no");
             param["orderAmount"] = orderAmount.val();
             param["expect"] = expect.val();
@@ -232,8 +234,9 @@ function pageInit() {
         jsonSub: 'types'
     });
     $("#datetimePicker").datetimepicker({
-        format: 'yyyy-mm-dd',
-        language: 'zh-CN'
+        format : 'YYYY-MM-DD',
+        minDate: moment(new Date()).add(1,'days'),
+        locale: 'zh-cn'
     });
     selectedType = $("#selectedType");
     picker = $("#distpicker");

@@ -16,6 +16,7 @@ public class Status {
         public static final int DONE = 10;//撤销
         public static final int ACC_SAMPLE = 11;//撤销
         public static final int DEC_SAMPLE = 12;//撤销
+        public static final int EXAM_SAMPLE = 13;//撤销
     }
 
     public static String orderTranslate(int status){
@@ -55,10 +56,13 @@ public class Status {
                 res = "已完成";
                 break;
             case Order.ACC_SAMPLE:
-                res = "已完成";
+                res = "样品合格";
                 break;
             case Order.DEC_SAMPLE:
-                res = "已完成";
+                res = "样品不合格";
+                break;
+            case Order.EXAM_SAMPLE:
+                res = "检验样品";
                 break;
         }
         return res;
