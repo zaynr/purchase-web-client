@@ -663,8 +663,8 @@ public class OrderController {
                 statusSet += String.valueOf(Status.Order.OFFERED_SAMPLE) + "," + String.valueOf(Status.Order.REQUIRE_SAMPLE);
             } else if (queryType.equals("样品判断")) {
                 statusSet += String.valueOf(Status.Order.CONFIRM_SAMPLE) + ",";
-            } else if (queryType.equals("发送合同")) {
-                statusSet += String.valueOf(Status.Order.ACC_SAMPLE) + "," + String.valueOf(Status.Order.DECLINE_CONTRACT) + ",";
+            } else if (queryType.equals("合同操作")) {
+                statusSet += String.valueOf(Status.Order.ACC_SAMPLE) + "," + String.valueOf(Status.Order.DECLINE_CONTRACT) + "," + String.valueOf(Status.Order.SIGNED) + ",";
             }
             if(purOrder.getExpect_price() == -1){
                 proOrders = proOrderRepository.getByPurOrdSn(purSerialNo, statusSet, pageIndex*pageSize, pageSize);
@@ -1025,7 +1025,6 @@ public class OrderController {
         AllOrders order = ordersRepository.getBySerialNo(serialNo);
         PurOrders purOrder = purOrderRepository.getPurOrderBySerialNo(serialNo);
         order.setOrder_status(Status.Order.OFFERED_PRICE);
-        order.setOrder_cat(Type.Order.PROVIDE_ORDER);
         purOrder.setOrderStatus(Status.Order.OFFERED_PRICE);
         ordersRepository.save(order);
         purOrderRepository.save(purOrder);
@@ -1044,8 +1043,8 @@ public class OrderController {
         Date date = new Date();
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         allOrder.setGen_date(sdf.format(date));
-        ordersRepository.save(allOrder);
         allOrder.setOrder_cat(Type.Order.PROVIDE_ORDER);
+        ordersRepository.save(allOrder);
         order.setPro_serial_no(gen.getSerial_no());
         order.setOrder_status(Status.Order.OFFERED_PRICE);
         order.setPur_serial_no(Integer.parseInt(orderInfo.get("pur_serial_no")));
@@ -1225,7 +1224,7 @@ public class OrderController {
         else if(queryType.equals("寄送样品") && order.getOrder_status()==Status.Order.REQUIRE_SAMPLE) {
             return packProOrderBean(proOrderRepository.getByProSerialNo(sn));
         }
-        else if(queryType.equals("查阅合同") && order.getOrder_status()==Status.Order.OFFERED_CONTRACT) {
+        else if(queryType.equals("查阅合同") && (order.getOrder_status()==Status.Order.OFFERED_CONTRACT || order.getOrder_status()==Status.Order.SIGNED || order.getOrder_status()==Status.Order.DONE)) {
             return packProOrderBean(proOrderRepository.getByProSerialNo(sn));
         }
         return null;
@@ -1361,6 +1360,7 @@ public class OrderController {
         Contract contract = contractRepository.getByProSn(order.getPro_serial_no());
         if(contract != null){
             bean.setContractSn(contract.getContract_serial_no());
+            bean.setContractUrl(addonsRepository.queryByOrderSerialNo(contract.getContract_serial_no()).get(0).getAddon_url());
         }
         bean.setPurUserName(userRepository.queryUserByPriKey(purOrderRepository.getPurOrderBySerialNo(order.getPur_serial_no()).getPurchaserName(), Type.User.PURCHASER).getUserName());
         bean.setProUserName(userRepository.queryUserByPriKey(order.getProvider_name(), Type.User.PROVIDER).getUserName());
@@ -1484,6 +1484,7 @@ public class OrderController {
 
     private String appendProHisType(){
         return String.valueOf(Status.Order.CANCEL) +  "," +
+                String.valueOf(Status.Order.DEC_SAMPLE) + "," +
                 String.valueOf(Status.Order.UN_SIGNED) +  "," +
                 String.valueOf(Status.Order.DONE) +  "," +
                 String.valueOf(Status.Order.SIGNED);
@@ -1497,13 +1498,13 @@ public class OrderController {
                 String.valueOf(Status.Order.CONFIRM_SAMPLE) + "," +
                 String.valueOf(Status.Order.DECLINE_CONTRACT) + "," +
                 String.valueOf(Status.Order.ACC_SAMPLE) + "," +
-                String.valueOf(Status.Order.DEC_SAMPLE) + "," +
                 String.valueOf(Status.Order.OFFERED_CONTRACT);
     }
 
     private String appendHisType(){
         return String.valueOf(Status.Order.CANCEL) +  "," +
                 String.valueOf(Status.Order.UN_SIGNED) +  "," +
+                String.valueOf(Status.Order.DEC_SAMPLE) + "," +
                 String.valueOf(Status.Order.DONE);
     }
 
@@ -1516,7 +1517,6 @@ public class OrderController {
                 String.valueOf(Status.Order.EXAM_SAMPLE) + "," +
                 String.valueOf(Status.Order.DECLINE_CONTRACT) + "," +
                 String.valueOf(Status.Order.ACC_SAMPLE) + "," +
-                String.valueOf(Status.Order.DEC_SAMPLE) + "," +
                 String.valueOf(Status.Order.SIGNED) +  "," +
                 String.valueOf(Status.Order.OFFERED_CONTRACT);
     }

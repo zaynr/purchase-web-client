@@ -18,8 +18,20 @@ $(document).ready(function () {
             $(item).addClass("active");
             queryByType(item);
         });
-        if($(item).attr("class") === "active"){
-            queryByType(item);
+        var tabIndex = getUrlParam('tabIndex');
+        if(tabIndex === null) {
+            if ($(item).attr("class") === "active") {
+                queryByType(item);
+            }
+        }
+        else{
+            if(i === parseInt(tabIndex)){
+                $("li").each(function (i, item) {
+                    $(item).removeClass("active");
+                });
+                $(item).addClass("active");
+                queryByType(item);
+            }
         }
     });
     //his, current
@@ -153,6 +165,9 @@ $(document).ready(function () {
                     if(item.orderStatusNo === 5){
                         btn += "<button my-attr='op' type=\"button\" class=\"btn btn-danger\">取消需求</button><button my-attr='op' type=\"button\" class=\"btn btn-warning\">修改需求</button>";
                     }
+                    if(item.orderStatusNo !== 0 && map["queryType"] === "current") {
+                        btn += "<div class=\"dropdown theme-dropdown clearfix\"><a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">更多操作<span class=\"caret\"></span></a><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\"><li class=\"active\"><a href=\"/order/viewAllOffer?serialNo=" + item.purSerialNo + "&tabIndex=0\">查看报价</a></li><li><a href=\"/order/viewAllOffer?serialNo=" + item.purSerialNo + "&tabIndex=1\">样品接收</a></li><li><a href=\"/order/viewAllOffer?serialNo=" + item.purSerialNo + "&tabIndex=2\">样品判断</a></li><li><a href=\"/order/viewAllOffer?serialNo=" + item.purSerialNo + "&tabIndex=3\">合同发送</a></li></ul></div>";
+                    }
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(item.purSerialNo) +
@@ -183,24 +198,36 @@ $(document).ready(function () {
                     if($(item).parent().prevAll().first().html() === "撤销"){
                         $(item).remove();
                     }
-                    else if($(item).parent().prevAll().first().html() === "已报价" || $(item).parent().prevAll().first().html() === "待寄送样品" || $(item).parent().prevAll().first().html() === "检验样品" || $(item).parent().prevAll().first().html() === "已签合同"){
+                    else if($(item).parent().prevAll().first().html() === "已报价"){
                         rmModify(item);
                         $(item).removeClass("btn-danger");
                         $(item).addClass("btn-info");
                         $(item).text("查看报价");
                     }
+                    else if($(item).parent().prevAll().first().html() === "待寄送样品"){
+                        rmModify(item);
+                        $(item).removeClass("btn-danger");
+                        $(item).addClass("btn-info");
+                        $(item).text("样品接收");
+                    }
+                    else if( $(item).parent().prevAll().first().html() === "检验样品" ){
+                        rmModify(item);
+                        $(item).removeClass("btn-danger");
+                        $(item).addClass("btn-info");
+                        $(item).text("样品判断");
+                    }
+                    else if($(item).parent().prevAll().first().html() === "已签合同"){
+                        rmModify(item);
+                        $(item).removeClass("btn-danger");
+                        $(item).addClass("btn-info");
+                        $(item).text("操作合同");
+                    }
                     else if($(item).parent().prevAll().first().html() === "合同被拒绝"){
                         if($(item).text() === "修改需求"){
                             $(item).removeClass("btn-warning");
                             $(item).addClass("btn-info");
-                            $(item).text("查看报价");
+                            $(item).text("发送合同");
                         }
-                    }
-                    else if($(item).parent().prevAll().first().html() === "已发送合同"){
-                        rmModify(item);
-                        $(item).removeClass("btn-danger");
-                        $(item).addClass("btn-success");
-                        $(item).text("更改合同");
                     }
                     $(item).on("click", function () {
                         if($(item).attr("my-attr") !== "op"){
@@ -213,7 +240,19 @@ $(document).ready(function () {
                             hint = "是否取消需求";
                         }
                         else if($(item).text() === "查看报价"){
-                            window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"];
+                            window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"] + "&tabIndex=0";
+                            return;
+                        }
+                        else if($(item).text() === "样品接收"){
+                            window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"] + "&tabIndex=1";
+                            return;
+                        }
+                        else if($(item).text() === "样品判断"){
+                            window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"] + "&tabIndex=2";
+                            return;
+                        }
+                        else if($(item).text() === "发送合同" || $(item).text() === "操作合同"){
+                            window.location.href="/order/viewAllOffer?serialNo=" + param["pur_serial_no"] + "&tabIndex=3";
                             return;
                         }
                         else if($(item).text() === "修改需求"){
@@ -375,25 +414,28 @@ $(document).ready(function () {
                 $.each(data, function (i, item) {
                     var btn = "";
                     if(tabName === "查看所有报价"){
-                        btn="<button type=\"button\" class=\"btn btn-info\">索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
+                        btn="<button type=\"button\" class=\"btn btn-info\">索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button>";
+                            // <button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
                         if(item.orderStatus === "待寄送样品" || item.orderStatus === "样品不合格"){
-                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
+                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button>";
+                            // <button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
                         }
-                        else if(item.orderStatus === "已寄送样品"){
-                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\">收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
-                        }
-                        else if(item.orderStatus === "已确认样品"){
-                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\">接受样品</button><button type=\"button\" class=\"btn btn-danger\">拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
-                        }
+                        // else if(item.orderStatus === "已寄送样品"){
+                        //     btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\">收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
+                        // }
+                        // else if(item.orderStatus === "已确认样品"){
+                        //     btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\">接受样品</button><button type=\"button\" class=\"btn btn-danger\">拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
+                        // }
                         else if(item.orderStatus === "样品合格"){
-                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
+                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button>";
+                            // <button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
                         }
-                        else if(item.orderStatus === "已签合同"){
-                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info'>确认完成</button>";
-                        }
-                        else if(item.orderStatus === "合同被拒绝"){
-                            btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
-                        }
+                        // else if(item.orderStatus === "已签合同"){
+                        //     btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info'>确认完成</button>";
+                        // }
+                        // else if(item.orderStatus === "合同被拒绝"){
+                        //     btn="<button type=\"button\" class=\"btn btn-info\" disabled>索取样品</button><button type=\"button\" class=\"btn btn-success\">签订合同</button><button type=\"button\" class=\"btn btn-info\" disabled>收到样品</button><button type=\"button\" class=\"btn btn-success\" disabled>接受样品</button><button type=\"button\" class=\"btn btn-danger\" disabled>拒绝样品</button><button class='btn btn-info' disabled>确认完成</button>";
+                        // }
                     }
                     else if(tabName === "样品接收"){
                         if(item.orderStatus === "待寄送样品"){
@@ -406,8 +448,13 @@ $(document).ready(function () {
                     else if(tabName === "样品判断"){
                         btn="<button type=\"button\" class=\"btn btn-success\">接受样品</button><button type=\"button\" class=\"btn btn-danger\">拒绝样品</button>";
                     }
-                    else if(tabName === "发送合同"){
-                        btn="<button type=\"button\" class=\"btn btn-success\">签订合同</button><button class='btn btn-info'>确认完成</button>";
+                    else if(tabName === "合同操作"){
+                        if(item.orderStatus === "已签合同"){
+                            btn = "<button type=\"button\" class=\"btn btn-success\" disabled>签订合同</button><button class='btn btn-info' >确认完成</button>";
+                        }
+                        else {
+                            btn = "<button type=\"button\" class=\"btn btn-success\">签订合同</button><button class='btn btn-info' disabled>确认完成</button>";
+                        }
                     }
                     $("#orderTableContent").append(
                         "<tr>" +
@@ -443,8 +490,8 @@ $(document).ready(function () {
                     $(item).on("click", function () {
                         map['cur'] = $("#cur").html();
                         var index;
-                        if(tabName === "查看所有报价"){
-                            index = parseInt(i/6);
+                        if(tabName === "样品接收"){
+                            index = parseInt(i);
                         }
                         else{
                             index = parseInt(i/2);
@@ -668,7 +715,13 @@ $(document).ready(function () {
             data: map,
             success: function (data) {
                 $.each(data, function (i, item) {
-                    var btn = "<a href='/order/purOrderDetail?proSerialNo="+item.proSerialNo+"&queryType=current' class='btn btn-warning'>报价操作</a>";
+                    var btn = "<a href='/order/purOrderDetail?proSerialNo=" + item.proSerialNo + "&queryType=current' class='btn btn-warning'>查看需求</a>";
+                    if(item.orderStatus === "待寄送样品") {
+                        btn = "<a href='/order/purOrderDetail?proSerialNo=" + item.proSerialNo + "&queryType=current&tabIndex=1' class='btn btn-warning'>寄送样品</a>";
+                    }
+                    else if(item.orderStatus === "已发送合同") {
+                        btn = "<a href='/order/purOrderDetail?proSerialNo=" + item.proSerialNo + "&queryType=current&tabIndex=2' class='btn btn-warning'>查阅合同</a>";
+                    }
                     // if(item.orderStatus === "待寄送样品"){
                     //     btn += "<a href='/order/sendSample?proSerialNo="+item.proSerialNo+"' class='btn btn-success'>寄送样品</a>";
                     // }
@@ -679,6 +732,9 @@ $(document).ready(function () {
                     //     btn += "<a href='/order/viewContract?proSerialNo="+item.proSerialNo+"&queryType=his' class='btn btn-success'>查看合同</a>";
                     // }
                     btn += "<button type=\"button\" class=\"btn btn-info\">查看详情</button>";
+                    if(map["queryType"] === "current") {
+                        btn += "<div class=\"dropdown theme-dropdown clearfix\"><a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">更多操作<span class=\"caret\"></span></a><ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\"><li class=\"active\"><a href=\"/order/purOrderDetail?proSerialNo=" + item.proSerialNo + "&queryType=current&tabIndex=0\">查看需求</a></li><li><a href=\"/order/purOrderDetail?proSerialNo=" + item.proSerialNo + "&queryType=current&tabIndex=1\">样品寄送</a></li><li><a href=\"/order/purOrderDetail?proSerialNo=" + item.proSerialNo + "&queryType=current&tabIndex=2\">合同查阅</a></li>";
+                    }
                     var temp = item.datetime.split(":");
                     item.datetime = temp[0]+":"+temp[1];
                     $("#orderTableContent").append(
@@ -1242,18 +1298,13 @@ $(document).ready(function () {
                 foo.purDateTime = foo.purDateTime.split(":")[0]+":"+foo.purDateTime.split(":")[1];
                 if(tabName === '查看当前需求'){
                     $("#detail").html("<h3>需求类型："+foo.orderType+"；需求数量："+foo.orderAmount+"；需求状态："+foo.purOrderStatus+"</h3><br><h4>采购商地址："+foo.purAddress+"</h4>");
-                    if(foo.orderStatus === '待寄送样品'){
-                        btn = '<button class="btn btn-info">寄送样品</button><button class="btn btn-success" disabled>接受合同</button><button class="btn btn-danger" disabled>拒绝合同</button>';
-                        input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\">";
-                    }
-                    else if(foo.orderStatus === '已发送合同'){
-                        btn = '<button class="btn btn-info" disabled>寄送样品</button><button class="btn btn-success" >接受合同</button><button class="btn btn-danger" >拒绝合同</button>';
-                        input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\" readonly>";
+                    if(foo.orderStatus === '已签合同'){
+                        btn = '<a  class="btn btn-info" target="_blank" href="' + foo.contractUrl + '">下载合同</a>';
                     }
                     else{
-                        btn = '<button class="btn btn-info" disabled>寄送样品</button><button class="btn btn-success" disabled>接受合同</button><button class="btn btn-danger" disabled>拒绝合同</button>';
-                        input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\" readonly>";
+                        btn = '<button class="btn btn-info" disabled>下载合同</button>';
                     }
+                    input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\" readonly>";
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(foo.proUserName) +
@@ -1267,7 +1318,12 @@ $(document).ready(function () {
                 }
                 else if(tabName === '寄送样品' && data !== ""){
                     btn = '<button class="btn btn-info">寄送样品</button>';
-                    input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\" readonly>";
+                    if(foo.orderStatus === "待寄送样品") {
+                        input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\">";
+                    }
+                    else{
+                        input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\" readonly>";
+                    }
                     $("#orderTableContent").append(
                         "<tr>" +
                         tableItemWrap(foo.proUserName) +
@@ -1280,7 +1336,12 @@ $(document).ready(function () {
                     );
                 }
                 else if(tabName === '查阅合同' && data !== ""){
-                    btn = '<button class="btn btn-success" >接受合同</button><button class="btn btn-danger" >拒绝合同</button>';
+                    if(foo.orderStatus === "已签合同" || foo.orderStatus === "已完成") {
+                        btn = '<a  class="btn btn-info" target="_blank" href="' + foo.contractUrl + '">下载合同</a><button class="btn btn-success" disabled>接受合同</button><button class="btn btn-danger" disabled>拒绝合同</button>';
+                    }
+                    else{
+                        btn = '<a  class="btn btn-info" target="_blank" href="' + foo.contractUrl + '">下载合同</a><button class="btn btn-success" >接受合同</button><button class="btn btn-danger" >拒绝合同</button>';
+                    }
                     input = "<input type=\"text\" class=\"form-control\" id=\"expressNo\" placeholder=\"填写寄送的快递单号\" readonly>";
                     $("#orderTableContent").append(
                         "<tr>" +

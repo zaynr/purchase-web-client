@@ -82,7 +82,7 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
-    Spring WebSocket Dependency
+    <!--Spring WebSocket Dependency-->
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>webjars-locator</artifactId>

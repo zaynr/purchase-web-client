@@ -18,6 +18,15 @@ public class ProOrderBean {
     private String purDateTime;
     private String proUserName, purUserName;
     private int contractSn;
+    private String contractUrl;
+
+    public String getContractUrl() {
+        return contractUrl;
+    }
+
+    public void setContractUrl(String contractUrl) {
+        this.contractUrl = contractUrl;
+    }
 
     public int getContractSn() {
         return contractSn;
